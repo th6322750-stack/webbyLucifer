@@ -1,26 +1,24 @@
 # webbyLucifer — `change_web`
 
-> **Mission:** Turn a single client brief into a client-approved WEB/MOBILE design, an AI-readable implementation master, a production UI asset pack, a real frontend/backend implementation, and a verified production-ready website.
+> **Mission:** Turn one client brief into approved WEB/MOBILE design files, an AI-readable implementation master, a production UI asset pack, a real frontend/backend implementation, and a verified production-ready website.
 >
-> **Operating principle:** webbyLucifer is continuously evolving. Learn from every real project, propose reusable improvements, but never persist or deploy those improvements to this canonical public repository without explicit user approval.
+> **Operating principle:** webbyLucifer continuously learns from real projects. It may propose reusable improvements, but it must never deploy them to the canonical public repository without explicit user approval.
 
 ---
 
 ## 0. Core operating model
 
-`webbyLucifer` is a staged workflow. Each stage has a clear owner and an entry/exit gate so different AIs do not overlap, guess, or rewrite the same work at the same time.
+`webbyLucifer` is a gated seven-stage workflow. Every stage has one clear owner.
 
-### Stage map
+1. **GĐ1 — DEMO DESIGN** — ChatGPT
+2. **GĐ2 — MASTER UI** — ChatGPT
+3. **GĐ3 — UI DECOMPOSITION / UI ASSET PACK** — ChatGPT
+4. **GĐ4 — STATIC FRONTEND BUILD** — Codex or Claude
+5. **GĐ5 — UX / FRONTEND ENHANCEMENT** — Codex or Claude
+6. **GĐ6 — BACKEND / CMS / LOGIC** — Codex or Claude
+7. **GĐ7 — QA / PRODUCTION** — ChatGPT reviews; executor fixes
 
-1. **GĐ1 — DEMO DESIGN** — Owner: ChatGPT
-2. **GĐ2 — MASTER UI** — Owner: ChatGPT
-3. **GĐ3 — UI DECOMPOSITION / UI ASSET PACK** — Owner: ChatGPT
-4. **GĐ4 — STATIC FRONTEND BUILD** — Owner: Codex or Claude
-5. **GĐ5 — UX / FRONTEND ENHANCEMENT** — Owner: Codex or Claude
-6. **GĐ6 — BACKEND / CMS / LOGIC** — Owner: Codex or Claude
-7. **GĐ7 — QA / PRODUCTION** — ChatGPT reviews, executor fixes
-
-The default end-to-end input should be **one client brief**. The skill should ask only for information that is truly blocking progress.
+The default input is one client brief. Ask only questions that genuinely block a usable result.
 
 ---
 
@@ -32,20 +30,40 @@ The default end-to-end input should be **one client brief**. The skill should as
 
 ## Goal
 
-From the client's brief, references, logo, images, copy, colors, or even a very rough idea, design and render a complete WEB and MOBILE visual demo for client approval.
+From the client brief, references, logo, imagery, copy, colors, or even a rough idea, create the complete visual design package for client approval.
 
-## Mandatory Drive connection gate
+## Mandatory Google Drive connection gate
 
-Before starting GĐ1 production work:
+Before any GĐ1 production work:
 
-1. Check whether Google Drive is connected and writable.
-2. If connected, use it as the project delivery workspace.
-3. If not connected, tell the user that Drive must be connected if they want automatic folder creation/upload. Do not pretend the folders were created.
-4. Do not require the user to manually create the folder structure when Drive write access is available.
+1. Verify that Google Drive is connected by performing a minimal read.
+2. Verify that Drive is writable before promising automatic packaging.
+3. When Drive is connected and writable, create the required folders automatically.
+4. If Drive is unavailable, disconnected, or read-only, stop packaging and ask the user to connect or restore Drive access.
+5. Never claim that a Drive folder or upload exists unless the connector confirms it.
 
-## Project folder structure on Drive
+## Mandatory project-type gate
 
-Create:
+Before rendering, classify the request as exactly one of:
+
+- `LANDING_PAGE`
+- `WEBSITE`
+
+If the brief clearly determines the type, classify it automatically.
+
+If genuinely ambiguous, stop and ask exactly:
+
+> Thiết kế này là **Landing Page một trang** hay **Website nhiều trang**?
+
+Do not treat a multi-page website as one landing page. Do not invent unnecessary subpages for a landing page.
+
+---
+
+## GĐ1-A — LANDING_PAGE output contract
+
+A landing page is one long route from Header to Footer.
+
+Create exactly this client-facing Drive structure:
 
 ```text
 TEN-DU-AN/
@@ -57,51 +75,286 @@ TEN-DU-AN/
 │   └── MOBILE_TenDuAn.png
 │
 └── Document fonts/
-    ├── font1.ttf / .otf / .woff2
+    ├── FontHeading.ttf / .otf / .woff2
+    ├── FontBody.ttf / .otf / .woff2
     └── ...
 ```
 
-Client-facing GĐ1 delivery is intentionally minimal. Do not expose source code, GitHub, CMS, Figma source, or internal production assets unless explicitly requested.
+### Mandatory landing render format
 
-## Input tolerance
+`WEB_TenDuAn.png` must be one continuous vertical full-page image:
 
-The client may provide any subset of:
+```text
+HEADER
+↓
+HERO
+↓
+ALL CONTENT SECTIONS
+↓
+CTA / FORM WHEN PRESENT
+↓
+FOOTER
+```
 
-- a short description;
-- industry/business type;
-- a logo;
-- brand colors;
-- rough copy;
-- screenshots;
-- reference websites;
-- product images;
-- existing brand assets;
-- no formal design source at all.
+`MOBILE_TenDuAn.png` must also be one continuous vertical full-page image from Header to Footer using the real mobile composition.
 
-Do not assume `.ai`, Figma, PSD, Sketch, XD, or a complete asset library exists.
+### Forbidden landing outputs
 
-## GĐ1 responsibilities
+Never output:
+
+- a presentation board;
+- a collage;
+- multiple mini screenshots placed on one canvas;
+- a desktop/mobile mockup board;
+- a poster summarizing sections;
+- only the first viewport;
+- a cropped Hero instead of the full page;
+- several disconnected screen fragments;
+- a short, compressed, “vón cục” image that does not represent the entire page length.
+
+The reference behavior is a naturally long website screenshot, not a portfolio presentation sheet.
+
+---
+
+## GĐ1-B — WEBSITE output contract
+
+A website contains multiple routes/pages.
+
+Before rendering:
+
+1. Infer a concise sitemap/page map from the client brief.
+2. Identify all required primary user-facing pages.
+3. Include detail pages when the product requires them, such as product detail, property detail, article detail, project detail, checkout, or contact.
+4. Add Admin/CMS screens only when the brief explicitly requires them.
+5. Keep one coherent visual system across all pages.
+
+Create this client-facing Drive structure:
+
+```text
+TEN-DU-AN/
+│
+├── bản WEB/
+│   ├── 01_TrangChu_WEB.png
+│   ├── 02_TenTrang_WEB.png
+│   ├── 03_TenTrang_WEB.png
+│   └── ...
+│
+├── bản MOBILE/
+│   ├── 01_TrangChu_MOBILE.png
+│   ├── 02_TenTrang_MOBILE.png
+│   ├── 03_TenTrang_MOBILE.png
+│   └── ...
+│
+├── bản ADMIN/                    # only when explicitly required
+│   ├── 01_TongQuan_ADMIN.png
+│   ├── 02_TenManHinh_ADMIN.png
+│   └── ...
+│
+└── Document fonts/
+    ├── FontHeading.ttf / .otf / .woff2
+    ├── FontBody.ttf / .otf / .woff2
+    └── ...
+```
+
+### Mandatory website render format
+
+Every route must be exported as its own separate continuous full-page PNG.
+
+Examples:
+
+```text
+01_TrangChu_WEB.png
+02_DanhSachBDS_WEB.png
+03_ChiTietBDS_WEB.png
+04_DuAn_WEB.png
+05_ChiTietDuAn_WEB.png
+06_TinTuc_WEB.png
+07_ChiTietTinTuc_WEB.png
+08_LienHe_WEB.png
+```
+
+Mobile must contain corresponding separate full-page route renders.
+
+Every page image must run from that page’s Header/navigation area through all page content to its Footer or natural page ending.
+
+### Forbidden website outputs
+
+Never combine all website pages into one promotional board such as:
+
+```text
+[Homepage desktop] [Detail desktop] [Listing desktop]
+[Mobile screen 1]  [Mobile screen 2] [Admin dashboard]
+```
+
+That style may be useful for a portfolio presentation, but it is not the GĐ1 production output.
+
+Never replace per-route files with one image named `TatCaGiaoDien.png`.
+
+---
+
+## Mandatory full-page and resolution contract
+
+All PNGs uploaded to Drive must be:
+
+- full-page vertical renders;
+- high-resolution;
+- readable at 100% zoom;
+- free of blur, broken text, pixelation, compression artifacts, and accidental scaling damage;
+- exported from the final structured composition, not enlarged from a low-resolution preview.
+
+### WEB resolution
+
+Every WEB design PNG must be at least:
+
+```text
+width: 1920 px
+height: natural full-page height
+```
+
+Examples:
+
+```text
+1920 × 6000
+1920 × 8500
+1920 × 12000
+```
+
+The height must follow the actual page. Never squash a long page to fit a short canvas.
+
+### MOBILE resolution
+
+Every MOBILE design PNG must be at least:
+
+```text
+width: 1080 px
+height: natural full-page height
+```
+
+Examples:
+
+```text
+1080 × 8000
+1080 × 12000
+1080 × 16000
+```
+
+The mobile image must be a true mobile composition, not a desktop image resized to 1080px.
+
+### Resolution hard failures
+
+GĐ1 fails if any delivered image is:
+
+- preview-sized;
+- blurry;
+- visibly pixelated;
+- stretched from a smaller source;
+- aggressively compressed;
+- cropped before the page ends;
+- a first-screen-only screenshot;
+- a collage/presentation board;
+- unreadable when opened normally in Drive.
+
+“Full HD” in this skill means at least **1920px-wide WEB** and **1080px-wide MOBILE**, while preserving the entire natural page height.
+
+---
+
+## Mandatory `Document fonts/` contract
+
+`Document fonts/` must always exist in every GĐ1 package.
+
+It must not be silently omitted.
+
+Place the actual font files used by the design into this folder when:
+
+- the files are available;
+- redistribution is permitted;
+- the environment can upload them.
+
+Supported examples include:
+
+- `.ttf`
+- `.otf`
+- `.woff`
+- `.woff2`
+
+Do not add random unused fonts.
+
+Do not substitute a different font after design approval.
+
+Do not redistribute proprietary/system fonts without permission.
+
+When an approved font cannot legally or technically be uploaded, keep `Document fonts/` and add a clear manifest/note containing:
+
+- exact font family;
+- exact style/weight;
+- source or acquisition requirement;
+- affected design roles;
+- reason the binary was not included.
+
+A missing folder is never acceptable. An empty unexplained folder is not considered complete.
+
+---
+
+## GĐ1 design responsibilities
 
 ChatGPT must:
 
-1. understand the brief and intended audience;
-2. infer the appropriate website type and information hierarchy;
-3. choose a coherent visual direction;
-4. create a WEB composition;
-5. create a MOBILE composition as a real mobile layout, not merely a shrunken desktop;
-6. use real/client-approved fonts where available;
-7. render final WEB/MOBILE PNGs;
-8. self-review the two renders for consistency before delivery;
-9. upload the outputs into the Drive folder structure when Drive is available.
+1. understand the brief and audience;
+2. classify `LANDING_PAGE` or `WEBSITE`;
+3. infer the correct information architecture;
+4. define coherent art direction;
+5. create all required WEB compositions;
+6. create all corresponding MOBILE compositions;
+7. use the final approved font choices consistently;
+8. preserve Vietnamese text and accents correctly;
+9. render continuous full-page PNGs;
+10. visually inspect every output before upload;
+11. create the exact Drive folders;
+12. upload every file to the correct folder;
+13. verify the uploads by listing the resulting Drive folders.
+
+## GĐ1 quality inspection
+
+Before upload, inspect for:
+
+- garbled or misspelled text;
+- broken Vietnamese accents;
+- incorrect fonts;
+- clipped sections;
+- duplicated imagery;
+- unfinished placeholders;
+- weak contrast;
+- inconsistent desktop/mobile content;
+- missing pages from the sitemap;
+- missing font files or font manifest;
+- image width below the required minimum;
+- accidental collage or presentation-board composition.
 
 ## GĐ1 exit gate
 
-Do not enter GĐ2 until the user/client explicitly approves the design direction.
+Do not enter GĐ2 until all applicable checks pass:
+
+```text
+[ ] Drive connection verified
+[ ] Project classified as LANDING_PAGE or WEBSITE
+[ ] Exact folder structure created
+[ ] All required WEB page PNGs exist
+[ ] All required MOBILE page PNGs exist
+[ ] Every PNG is full-page and vertically continuous
+[ ] Every WEB PNG is at least 1920px wide
+[ ] Every MOBILE PNG is at least 1080px wide
+[ ] Every image is sharp and readable
+[ ] No collage/presentation-board output exists
+[ ] Document fonts/ exists
+[ ] Correct font files or an explicit font manifest exist
+[ ] Drive upload verified by listing folders
+[ ] User/client has approved the design direction
+```
 
 State transition:
 
 ```text
-DESIGN -> DESIGN_APPROVED
+DESIGN → DESIGN_APPROVED
 ```
 
 ---
@@ -114,11 +367,13 @@ DESIGN -> DESIGN_APPROVED
 
 ## Goal
 
-Create an AI-readable, structured master source that preserves the approved visual design and gives an implementation agent something better than a screenshot to follow.
+Create an AI-readable structured master that preserves the approved design and gives the implementation agent more reliable information than screenshots alone.
 
 ## Mandatory choice gate
 
-Before doing any GĐ2 work, determine whether the user has explicitly selected a master strategy.
+If the user has not selected a strategy, stop and ask:
+
+> Bạn muốn Giai đoạn 2 đi theo hướng nào: **A — Figma Master, B — SVG Master, hay C — Cả hai để benchmark độ ổn định?**
 
 Allowed modes:
 
@@ -126,81 +381,65 @@ Allowed modes:
 - `SVG_MASTER`
 - `BOTH_BENCHMARK`
 
-If no mode has been selected, **STOP and ask exactly this decision**:
-
-> Bạn muốn Giai đoạn 2 đi theo hướng nào: **A — Figma Master, B — SVG Master, hay C — Cả hai để benchmark độ ổn định?**
-
-Do not infer or silently choose a direction.
+Do not silently choose.
 
 ## Strategy A — Figma Master
 
-Use Figma as structured design truth when the environment can create/edit/read the needed Figma source reliably.
+Use Figma only when the environment can reliably create, edit, and read the source.
 
-Expected structure should clearly separate:
+Organize:
 
-- WEB frame(s);
-- MOBILE frame(s);
+- all WEB route frames;
+- all MOBILE route frames;
 - reusable components;
+- variants/states;
 - typography;
 - colors/tokens;
-- images/assets;
-- states/variants where appropriate.
-
-The approved PNGs remain the visual acceptance references.
+- images and vectors;
+- Auto Layout/constraints where meaningful.
 
 ## Strategy B — SVG Master
 
-Use structured SVG as the machine-readable visual master.
-
-Expected output:
+Create structured masters for all approved routes:
 
 ```text
 MASTER/
-├── WEB_TenDuAn.svg
-├── MOBILE_TenDuAn.svg
+├── WEB/
+│   ├── 01_TrangChu.svg
+│   └── ...
+├── MOBILE/
+│   ├── 01_TrangChu.svg
+│   └── ...
 ├── assets/
-└── design-spec.json     # optional but preferred for complex projects
+└── design-spec.json
 ```
 
-The SVG/master must preserve, where technically appropriate:
+For a landing page, WEB and MOBILE may each contain one master file.
 
-- canvas dimensions;
-- x/y geometry;
-- width/height;
-- font family;
-- font size;
-- line height;
-- color;
-- opacity;
-- gradients;
-- clipping/masks;
-- image placement;
-- z/layer order.
+Preserve canvas size, geometry, typography, colors, opacity, gradients, masks, image placement, grouping, and layer order.
 
 ## Strategy C — Both benchmark
 
-Produce both Figma and SVG representations when practical, then compare:
+Create both representations from the same approved design and compare:
 
 - visual fidelity;
 - implementation speed;
-- number of corrections required;
-- responsive interpretability;
-- asset preservation;
+- correction loops;
+- responsive interpretation;
+- asset/font preservation;
 - Codex/Claude comprehension;
 - long-term stability.
 
-Do not permanently declare one method superior until repeated projects provide evidence.
+Do not declare a permanent winner after one project.
 
-## GĐ2 consistency rule
+## GĐ2 consistency gate
 
-The MASTER and the client-approved WEB/MOBILE PNGs must describe the **same design**.
+The Master and the approved full-page PNGs must describe the same routes and visual design.
 
-Never create a new interpretation in GĐ2 just because the master format is different.
-
-## GĐ2 exit gate
+Render the Master back to canonical WEB/MOBILE sizes and compare before handoff.
 
 ```text
-DESIGN_APPROVED -> MASTER_READY
+DESIGN_APPROVED → MASTER_READY
 ```
 
 ---
@@ -209,99 +448,80 @@ DESIGN_APPROVED -> MASTER_READY
 
 ## Owner
 
-**ChatGPT — mandatory owner for all UI asset decomposition and visual source analysis.**
-
-This stage exists because an implementation agent may be able to reproduce a static composition from `.ai`, SVG, Figma, or screenshots, but a production website still needs real reusable assets, real text, real fonts, real components, and explicit responsive/UX intent.
+**ChatGPT — mandatory owner for UI analysis, asset decomposition, typography mapping, and production visual resources.**
 
 ## Goal
 
-Understand the approved `WEB.png` + `MOBILE.png` and the GĐ2 master deeply enough to decompose the visual into a production-ready UI system.
+Understand every approved WEB/MOBILE page and the GĐ2 Master deeply enough to create a production-ready UI system.
 
-## Critical rule learned from failure
+> Lock visual truth first. Then decompose production assets from that truth. Never guess assets before source analysis is complete.
 
-The problem is **not** that assets need to be extracted/rendered. The problem is extracting/rendering them **before the authoritative source and composition are understood**.
+## Responsibilities
 
-Therefore:
+Identify and map:
 
-> **Lock visual truth first. Then decompose production assets from that truth. Never guess production assets before source analysis is complete.**
-
-## GĐ3 responsibilities
-
-ChatGPT must identify and map:
-
-- website sections;
+- all routes and sections;
 - visual layers;
-- background images;
+- backgrounds;
 - foreground/product images;
-- transparent images;
+- transparent assets;
 - vectors;
-- logos/wordmarks;
-- icons;
-- ornaments;
-- gradients;
-- masks/alpha;
-- shadows/glows/effects;
-- typography;
-- all visible text;
+- logos and wordmarks;
+- icons and ornaments;
+- gradients, masks, alpha, shadows, glows, and effects;
+- every visible text string;
 - CTA labels;
-- card/section structure;
-- desktop/mobile differences;
+- exact font roles;
 - reusable components;
-- design tokens.
+- desktop/mobile differences;
+- design tokens;
+- responsive behavior;
+- interaction intent.
 
-## Source-first asset rule
+## Source-first rules
 
-If a real source exists (AI/Figma/SVG/PSD/etc.):
+When AI/Figma/SVG/PSD or another source exists:
 
-1. inspect the source before recreating anything;
-2. extract the original embedded/vector/alpha/mask asset when possible;
-3. do not crop a screenshot to fake an asset when the real source contains it;
-4. do not redraw a logo/icon/ornament by eye if the original vector exists;
-5. do not substitute a similar font when the approved font exists;
-6. do not invent masks/effects until the original effect stack has been inspected.
+1. inspect it before recreating anything;
+2. extract original embedded/vector/alpha/mask resources when possible;
+3. do not fake extractable assets by cropping screenshots;
+4. do not redraw existing vectors by eye;
+5. do not replace approved fonts with similar fonts;
+6. inspect the source effect stack before inventing CSS approximations.
 
-If no structured source exists, decomposition from the approved PNGs is allowed, but uncertainty must be documented.
+When no structured source exists, decomposition from approved PNGs is permitted, but uncertainty must be recorded.
 
-## Typography map
+## Required typography map
 
-Create a definitive mapping for each visible text role:
+For every visible text role record:
 
 - exact copy;
-- semantic role (heading/body/eyebrow/CTA/label/etc.);
+- route and section;
+- semantic role;
 - font family;
-- weight/style;
+- style/weight;
 - desktop size;
 - mobile size;
 - line height;
 - letter spacing;
 - color;
 - alignment;
-- wrapping/line breaks when visually significant.
-
-Do not bake normal editable UI text into images unless the artwork itself requires it.
+- significant line breaks.
 
 ## Preferred UI Asset Pack
 
 ```text
 UI_ASSET_PACK/
 ├── images/
-│   ├── hero-background.webp
-│   ├── hero-product.webp
-│   └── ...
 ├── icons/
-│   └── *.svg
 ├── ornaments/
-│   └── *.svg / transparent web assets
 ├── logos/
-│   ├── logo-mark.svg
-│   ├── logo-wordmark.svg
-│   └── ...
 ├── fonts/
-│   └── approved web-usable font files
 ├── text/
 │   ├── content-map.json
 │   └── font-map.json
 └── spec/
+    ├── route-map.json
     ├── section-map.json
     ├── ui-map.json
     ├── desktop-layout.json
@@ -310,60 +530,14 @@ UI_ASSET_PACK/
     └── RESPONSIVE.md
 ```
 
-Exact file names may vary by project; the conceptual separation should remain.
-
-## Asset format guidance
-
-Prefer, when appropriate:
-
-- logos/icons/line art -> SVG;
-- photographic/raster images -> WebP/AVIF with quality chosen by visual QA;
-- transparency -> SVG, PNG, or alpha-capable WebP depending on source and quality needs;
-- fonts -> web-appropriate legal formats, commonly WOFF2 where licensing permits;
-- motion/video -> MP4/WebM/Lottie only when the approved design/UX requires it.
-
-## GĐ3 UX contract
-
-Static design does not fully specify behavior. ChatGPT must produce explicit behavior contracts for anything not obvious from the static image.
-
-Examples:
-
-```text
-HEADER
-- sticky behavior
-- menu open/close behavior
-- desktop/mobile differences
-
-GALLERY
-- click -> lightbox
-- mobile swipe
-- keyboard behavior
-
-FORM
-- validation
-- loading
-- success
-- error
-```
-
-## GĐ3 responsive contract
-
-Document:
-
-- major layout breakpoints or behavior ranges;
-- components that reflow vs. components that use independent mobile composition;
-- card/grid changes;
-- type scaling behavior;
-- media crop/position behavior;
-- hidden/shown elements;
-- navigation transformation.
+Prefer SVG for vectors, WebP/AVIF for raster imagery after visual QA, alpha-capable formats for transparency, and legal web font formats where licensing permits.
 
 ## GĐ3 exit gate
 
-GĐ3 only passes when the implementation agent can build without guessing the identity of primary assets, visible text, font roles, or the intended desktop/mobile composition.
+The implementation agent must not need to guess primary asset identity, visible copy, font roles, routes, or desktop/mobile composition.
 
 ```text
-MASTER_READY -> UI_ASSET_PACK_READY
+MASTER_READY → UI_ASSET_PACK_READY
 ```
 
 ---
@@ -374,9 +548,9 @@ MASTER_READY -> UI_ASSET_PACK_READY
 
 **Codex or Claude**
 
-## Mandatory executor choice gate
+## Mandatory executor gate
 
-Before implementation, if the user has not selected the executor, **STOP and ask**:
+If no executor is selected, stop and ask:
 
 > Giai đoạn build giao cho **Codex hay Claude**?
 
@@ -385,43 +559,34 @@ Allowed values:
 - `CODEX`
 - `CLAUDE`
 
-Never silently select an implementation agent.
-
 ## Inputs
 
-Executor receives:
-
-- approved WEB/MOBILE PNGs;
-- GĐ2 MASTER;
-- GĐ3 UI_ASSET_PACK;
+- approved full-page WEB/MOBILE PNGs;
+- GĐ2 Master;
+- GĐ3 UI Asset Pack;
+- route and section maps;
 - typography/content maps;
 - responsive contract;
-- any existing repository/project constraints.
+- repository constraints.
 
 ## Goal
 
-Build the static frontend with maximum visual parity **before adding complex UX or backend behavior**.
+Build the static frontend with maximum visual parity before complex UX or backend work.
 
-## Implementation rules
+The executor must use supplied assets and approved fonts, preserve live text where appropriate, respect route structure, and treat WEB/MOBILE as potentially independent compositions.
 
-The executor must:
+Never hide visual errors behind arbitrary CSS filters or blends unless they are source-derived.
 
-- use provided production assets instead of inventing replacements;
-- use approved fonts;
-- preserve live text where appropriate;
-- respect source geometry and composition;
-- treat WEB and MOBILE as potentially independent compositions;
-- not hide visual mismatches behind arbitrary CSS filters/blends unless they are source-derived;
-- not self-certify “100% pixel-perfect”.
+Never self-certify “100% pixel-perfect”.
 
-## Static visual gate
+## Static gate
 
-Render browser screenshots at the approved reference viewports and compare them against the approved design.
+Render every required route at its approved reference viewport and compare against the approved PNG.
 
-Do not move to GĐ5 while material visual mismatch remains.
+Do not enter GĐ5 while material visual mismatch remains.
 
 ```text
-UI_ASSET_PACK_READY -> STATIC_UI_PASS
+UI_ASSET_PACK_READY → STATIC_UI_PASS
 ```
 
 ---
@@ -430,33 +595,27 @@ UI_ASSET_PACK_READY -> STATIC_UI_PASS
 
 ## Owner
 
-**Same selected executor unless the user explicitly changes it.**
+**The selected Codex or Claude executor unless the user changes it.**
 
-## Goal
-
-Turn the visually correct static frontend into a complete interactive frontend using the GĐ3 UX/responsive contracts.
-
-Potential work includes only what the project requires:
+Add only required:
 
 - hover/focus/active states;
-- sticky behavior;
+- sticky navigation;
 - menu/drawer;
 - modal/lightbox;
 - slider/carousel;
 - tabs/accordion;
-- forms and UI states;
+- form states;
 - scroll behavior;
 - animation/motion;
 - responsive interaction changes;
-- keyboard accessibility;
+- keyboard support;
 - reduced-motion handling.
 
-## Rule
-
-Do not let animation or interaction changes break approved visual composition. Re-run visual QA after significant UX changes.
+Interaction work must not break approved visual composition. Re-run route-level visual QA after meaningful UX changes.
 
 ```text
-STATIC_UI_PASS -> UX_PASS
+STATIC_UI_PASS → UX_PASS
 ```
 
 ---
@@ -467,37 +626,29 @@ STATIC_UI_PASS -> UX_PASS
 
 **Codex or Claude**
 
-## Goal
-
-Add only the backend capabilities required by the project.
-
-Possible systems:
+Add only capabilities required by the project:
 
 - CMS;
 - API;
 - database;
-- forms/submissions;
+- forms and submissions;
 - email;
 - uploads;
-- blog/news;
-- product data;
+- content/news/product data;
 - search;
-- authentication;
-- roles/permissions;
+- authentication and roles;
 - payments;
 - integrations;
 - dashboards.
 
-A simple landing page may have little or no backend. Do not add backend complexity just because the skill knows how.
-
-## Rule
+A landing page may require little or no backend.
 
 `REFERENCE != DEPENDENCY`
 
-Knowledge of a library/repository does not mean it must be installed.
+Do not install systems merely because the skill knows them.
 
 ```text
-UX_PASS -> FUNCTIONAL_PASS
+UX_PASS → FUNCTIONAL_PASS
 ```
 
 ---
@@ -506,96 +657,54 @@ UX_PASS -> FUNCTIONAL_PASS
 
 ## Roles
 
-- **ChatGPT:** design authority, comparison, review, defect identification, acceptance decision.
-- **Codex/Claude:** implementation/fixes.
-
-Do not allow both roles to modify the same problem concurrently without a clear owner.
+- **ChatGPT:** design authority, review, comparison, defect identification, acceptance.
+- **Codex/Claude:** implementation and fixes.
 
 ## QA dimensions
 
-### Visual QA
+### Visual
 
-Compare approved design vs. implementation:
+Compare every approved route for layout, typography, image identity/crop, spacing, colors, borders/radii, effects, and key states. Prefer screenshot overlays and visual diff over subjective statements.
 
-- layout;
-- typography;
-- image identity/crop;
-- spacing;
-- colors;
-- borders/radii;
-- responsive behavior;
-- visual effects;
-- key interaction states.
+### Responsive
 
-Use screenshot/overlay/diff methods where possible rather than subjective “looks close”.
+Test desktop, tablet when relevant, mobile, and narrow-mobile safety.
 
-### Responsive QA
+### Interaction
 
-Test representative widths for:
+Verify navigation, keyboard behavior, forms, loading/error/success states, modals, drawers, sliders, focus behavior, and reduced motion.
 
-- desktop;
-- tablet where relevant;
-- mobile;
-- narrow mobile safety.
+### Accessibility
 
-### Interaction QA
+Use semantic HTML, keyboard support, visible focus, accessible labels/names, and automated checks where useful.
 
-Verify:
+### Performance
 
-- navigation;
-- keyboard operation;
-- forms;
-- loading/error/success states;
-- modals/drawers;
-- sliders/lightboxes;
-- focus behavior;
-- reduced motion when relevant.
+Check image/font loading, bundle weight, layout shifts, interaction responsiveness, caching, and project-appropriate performance indicators.
 
-### Accessibility QA
+### Backend/security
 
-Use semantic HTML, keyboard support, visible focus, accessible names/labels, and automated accessibility checks where useful.
-
-### Performance QA
-
-Check image/font loading, bundle weight, layout shifts, interaction responsiveness, caching, and core performance indicators appropriate to the project.
-
-### Backend/security QA
-
-When a backend exists, validate:
-
-- authentication/authorization boundaries;
-- server-side validation;
-- input sanitization/normalization as appropriate;
-- secrets handling;
-- API errors;
-- database constraints/migrations;
-- rate/abuse considerations where relevant.
-
-## Final exit
+When applicable, validate authorization, server validation, input handling, secrets, API errors, database constraints/migrations, and abuse/rate considerations.
 
 ```text
-FUNCTIONAL_PASS -> QA_PASS -> PRODUCTION_READY
+FUNCTIONAL_PASS → QA_PASS → PRODUCTION_READY
 ```
 
-Do not claim mathematical 100% identity when browser/OS/font rendering can cause unavoidable rasterization differences. The acceptance target is source-locked composition plus verified visual parity within renderer constraints.
+Do not claim mathematical identity where browser/OS/font rasterization can cause unavoidable differences.
 
 ---
 
 # Source-of-truth hierarchy
 
-At any point, explicitly identify the authoritative source.
-
-General hierarchy when applicable:
-
-1. approved structured master/source;
-2. approved WEB/MOBILE reference PNGs;
-3. original source assets/fonts;
-4. current browser implementation;
+1. approved structured Master/source;
+2. approved full-page WEB/MOBILE PNGs;
+3. original assets and fonts;
+4. browser implementation;
 5. derived/helper assets.
 
-When the project starts from an existing structured source (AI/Figma/SVG/etc.), that source may outrank screenshots until client approval locks a new master.
+An original AI/Figma/SVG source may outrank screenshots until approval locks a new Master.
 
-Never use the current browser implementation as the visual truth merely because it already exists.
+Never treat the current browser implementation as truth merely because it already exists.
 
 ---
 
@@ -603,36 +712,44 @@ Never use the current browser implementation as the visual truth merely because 
 
 ## NEVER
 
-- code before identifying the authoritative visual source;
-- decompose production assets before understanding the source composition;
-- guess an asset when the source already contains it;
-- crop a screenshot to fake an extractable source asset;
-- redraw existing source vectors by eye;
-- replace an available font with a “close enough” font;
-- write long implementation directives before auditing the source;
-- let multiple agents independently “fix” the same visual area without ownership;
-- call something pixel-perfect before comparison;
-- add backend/framework complexity without a requirement;
-- publish client/private material to the public skill repository.
+- code before identifying visual truth;
+- decompose assets before understanding the source composition;
+- guess an existing source asset;
+- crop screenshots to fake extractable assets;
+- redraw existing vectors by eye;
+- replace an approved font with “close enough”;
+- create presentation boards instead of required full-page renders;
+- omit `Document fonts/`;
+- upload low-resolution or broken images;
+- combine multiple routes into one board;
+- let multiple agents independently fix the same area;
+- claim pixel-perfect without comparison;
+- add backend/framework complexity without requirements;
+- publish private client material to this public repository.
 
 ## ALWAYS
 
-- audit inputs first;
+- verify Drive;
+- classify Landing Page or Website;
+- create the exact Drive structure;
+- render full-page continuous images;
+- meet minimum resolution;
+- include fonts or an explicit font manifest;
+- verify uploads;
 - define source of truth;
 - preserve desktop/mobile intent;
-- client-approve design before implementation;
-- lock a master;
-- let ChatGPT own UI decomposition/assets;
-- let executor own implementation;
-- screenshot implementation at known viewports;
-- compare before PASS;
-- record reusable lessons from failures and successes.
+- obtain client design approval;
+- lock a Master;
+- let ChatGPT own UI decomposition;
+- let Codex/Claude own implementation;
+- compare at known viewports before PASS;
+- retain reusable lessons.
 
 ---
 
 # Reference / knowledge pack
 
-Use these repositories and standards as **knowledge references**, not mandatory dependencies.
+Use as references, not mandatory dependencies.
 
 ## UI / accessibility / component architecture
 
@@ -666,164 +783,99 @@ Use these repositories and standards as **knowledge references**, not mandatory 
 - `GoogleChrome/lighthouse`
 - `getsentry/sentry-javascript`
 
-Evaluate better-maintained or more suitable alternatives over time. Do not treat this list as permanent truth.
+Evaluate stronger maintained alternatives over time.
 
 ---
 
 # Continuous Learning & Skill Evolution Policy
 
-`webbyLucifer` must always operate in a continuous-learning state.
+`webbyLucifer` always operates in a continuous-learning state.
 
-Every project and conversation is a potential source of reusable improvements when the lesson is supported by real evidence.
-
-## Learn from each project
+Every project and conversation may reveal evidence-based improvements.
 
 Observe:
 
 - what worked;
 - what caused unnecessary iteration;
 - where intent was misunderstood;
-- where design-to-code handoff failed;
-- which master format was easier for Codex/Claude;
-- which extraction/rendering method was reliable;
-- which fonts/masks/effects caused problems;
-- which prompts produced better execution;
-- which QA methods found real defects;
-- which tools/connectors eliminated manual steps;
-- what can be automated safely next time.
+- where handoff failed;
+- which Master format worked better;
+- which extraction/rendering methods were reliable;
+- which font/mask/effect methods failed;
+- which prompts improved implementation;
+- which QA checks found real defects;
+- which connectors removed manual work.
 
-Do not repeat a failed workflow merely because it exists in this document.
+At meaningful milestones, form a `LESSONS_LEARNED` summary containing successes, failures, root causes, better alternatives, reusable rules, rules to remove, tools worth evaluating, QA additions, and proposed skill changes.
 
-## Project retrospective
+## Public-repository privacy
 
-At meaningful milestones, form a `LESSONS_LEARNED` summary:
+Never publish:
 
-- Successes
-- Failures
-- Root causes
-- Better alternatives
-- Reusable rules
-- Rules to remove/change
-- Repositories/tools worth evaluating
-- QA checks worth adding
-- Proposed changes to webbyLucifer
-
-Lessons must be evidence-based, not speculative.
-
-## Generalize, do not leak client data
-
-Never commit to this public repository:
-
-- client names when unnecessary;
 - private URLs;
-- credentials;
-- API keys;
+- credentials or secrets;
 - personal information;
 - proprietary client assets;
 - private source code;
 - unreleased designs;
 - confidential business information;
-- font files/assets without redistribution rights.
+- font/assets without redistribution rights.
 
-Convert project experience into generalized methodology.
+Generalize the lesson instead of leaking project data.
 
-Bad lesson:
+## Improvement deployment gate
 
-> “Client X hero uses file abc.png at x=987.”
-
-Good lesson:
-
-> “When a source contains embedded transparency, extract and verify the original alpha/mask before browser-side reconstruction.”
-
-## Improvement proposal gate
-
-When a conversation reveals a meaningful reusable improvement, tell the user briefly that a reusable improvement was found and summarize:
+When a reusable improvement is found, explain briefly:
 
 - what was learned;
-- why the current skill should change;
-- which section would change;
+- what section should change;
 - expected benefit;
-- possible regression/risk.
+- possible regression.
 
-Do not deploy the change automatically.
+Do not deploy automatically.
 
-## Explicit permission before Git deployment
+Only after explicit user approval may the AI:
 
-Before modifying this canonical public repository, obtain explicit user approval.
+1. inspect the canonical repo;
+2. make the smallest appropriate generalized change;
+3. verify no private client data is included;
+4. commit it;
+5. push it to the same canonical repository;
+6. report the commit SHA.
 
-Only after approval may the AI:
-
-1. inspect the current canonical repository;
-2. prepare the smallest appropriate change;
-3. verify no client/private information is included;
-4. update docs/rules/tests as appropriate;
-5. commit the improvement;
-6. push to the **same canonical `webbyLucifer` repository**;
-7. report exactly what changed and the commit SHA.
-
-## Canonical repository rule
-
-Approved reusable improvements belong here:
+Canonical repository:
 
 ```text
 th6322750-stack/webbyLucifer
 ```
 
-Do not create random successor repositories (`-v2`, `-new`, `-final-final`) unless the user explicitly requests a fork or major rewrite.
-
-Use normal Git history/tags/releases to evolve the skill.
-
-## Public repository mindset
-
-Every committed rule should be understandable and useful to another person or AI agent that knows nothing about the client project that produced the lesson.
-
-Prefer rules that are:
-
-- generalized;
-- reproducible;
-- testable where possible;
-- explicit about failure modes;
-- explicit about fallback paths;
-- tool-agnostic when possible.
-
-## Failure memory matters
-
-Preserve generalized failure lessons, not only successes.
-
-Example failed pattern:
-
-```text
-screenshot
--> guessed assets
--> guessed masks
--> code
--> visual mismatch
--> recreate assets
--> code again
-```
-
-Generalized lesson:
-
-> Do not decompose production assets before identifying and locking the authoritative visual source.
-
-The purpose of learning is to make the same failure less likely on the next project.
+Do not create `-v2`, `-new`, or `-final-final` repositories unless explicitly requested.
 
 ---
 
-# Suggested project state model
+# Suggested project state
 
 ```yaml
 project_name: null
-website_type: null
+project_type: UNDECIDED # LANDING_PAGE | WEBSITE
 phase: DESIGN
 
 drive:
   connected: unknown
+  writable: unknown
   project_folder: null
+  uploads_verified: false
 
 design:
+  sitemap: []
+  required_web_pages: []
+  required_mobile_pages: []
+  admin_required: false
   web_approved: false
   mobile_approved: false
+  full_page_verified: false
+  resolution_verified: false
+  fonts_packaged: false
 
 master:
   mode: UNDECIDED # FIGMA_MASTER | SVG_MASTER | BOTH_BENCHMARK
@@ -855,13 +907,21 @@ production_ready: false
 ```text
 CLIENT BRIEF
     ↓
-GĐ1 — ChatGPT designs WEB + MOBILE
+GĐ1 — verify Drive
+    ↓
+classify LANDING_PAGE or WEBSITE
+    ↓
+render every required route as separate full-page WEB/MOBILE PNG
+    ↓
+1920px WEB + 1080px MOBILE minimum, sharp and continuous
+    ↓
+create exact Drive structure + mandatory Document fonts/
     ↓ client approves
 GĐ2 — user chooses Figma / SVG / Both
-    ↓ master locked
-GĐ3 — ChatGPT decomposes all UI assets/text/fonts/specs
-    ↓ production UI pack ready
-GĐ4 — user chooses Codex / Claude -> static frontend
+    ↓ Master locked
+GĐ3 — ChatGPT decomposes UI assets, text, fonts, routes, and specs
+    ↓ UI Asset Pack ready
+GĐ4 — user chooses Codex / Claude → static frontend
     ↓ visual parity pass
 GĐ5 — UX/frontend enhancement
     ↓ UX pass
@@ -872,6 +932,6 @@ GĐ7 — ChatGPT QA + executor fixes
 PRODUCTION READY
     ↓
 LESSONS LEARNED
-    ↓ user explicitly approves reusable improvement
+    ↓ explicit user approval
 UPDATE THIS SAME PUBLIC REPOSITORY
 ```
