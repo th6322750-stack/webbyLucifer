@@ -1,72 +1,157 @@
 # webbyLucifer
 
-`webbyLucifer` is a public, continuously evolving workflow/skill for taking a client web brief from **visual concept -> approved WEB/MOBILE demo -> AI-readable master -> production UI asset pack -> frontend/backend implementation -> verified production website**.
+`webbyLucifer` is a public workflow/skill for taking a web project from client brief to **approved full UI -> complete production UI setup -> GitHub handoff -> Claude implementation -> ChatGPT visual QA -> production website**.
 
 The core skill lives in [`SKILL.md`](./SKILL.md).
+
+## Core architecture
+
+```text
+CHATGPT = FULL UI AUTHORITY
+CLAUDE  = IMPLEMENTATION AUTHORITY
+GITHUB  = VERSIONED EXCHANGE LAYER / SHARED PROJECT STATE
+```
+
+The most important rule is simple:
+
+> **Claude must never be forced to guess an approved UI decision. ChatGPT must completely prepare the UI before implementation handoff.**
+
+Implementation may begin only after the hard gate:
+
+```text
+UI_SETUP_COMPLETE
+```
 
 ## Workflow
 
 ```text
-GĐ1 — DEMO DESIGN
+GĐ1 — DESIGN / FULL-PAGE UI
 ChatGPT
-Brief -> WEB.png + MOBILE.png + fonts -> client approval
+Input normalization -> design research -> demo directions -> approved WEB/MOBILE routes
 
-GĐ2 — MASTER UI
+GĐ2 — FULL UI MASTER / DESIGN SYSTEM
 ChatGPT
-User MUST choose:
-A. Figma Master
-B. SVG Master
-C. Both benchmark
+Full Master + typography + colors/tokens + spacing + responsive intent + complete visual component system
 
-GĐ3 — UI DECOMPOSITION / UI ASSET PACK
+GĐ3 — FULL PRODUCTION UI SETUP / GITHUB HANDOFF
 ChatGPT
-Images + vectors + logos + ornaments + masks + fonts + text map + layout map + UX/responsive spec
+SVG/vector/raster/font assets + component states + asset placement + route/section/component maps + CLAUDE_TASK.md + HANDOFF.json
 
-GĐ4 — STATIC FRONTEND BUILD
-User MUST choose Codex or Claude
-Master + UI Asset Pack -> static frontend -> visual parity gate
+              ↓
+
+        UI_SETUP_COMPLETE
+
+              ↓
+
+GĐ4 — STATIC FRONTEND IMPLEMENTATION
+Claude by default
+Translate the supplied visual system into real frontend code without redesigning it
 
 GĐ5 — UX / FRONTEND ENHANCEMENT
-Selected executor
-Interactions + motion + responsive behavior + accessibility
+Claude
+Interactions + motion + application behavior + responsive implementation
 
 GĐ6 — BACKEND / CMS / LOGIC
-Selected executor
-Only what the project actually requires
+Claude
+Only what the project requires
 
 GĐ7 — QA / PRODUCTION
-ChatGPT reviews; executor fixes
-Visual + responsive + UX + accessibility + performance + backend QA
+ChatGPT reviews visual truth; Claude fixes implementation
 ```
 
-## Key principles
+## ChatGPT responsibilities
 
-- **Source first.** Never guess production assets before understanding the authoritative visual source.
-- **ChatGPT owns UI decomposition.** Static design/master is not enough for production; ChatGPT maps every important image, vector, text, font, mask, effect, component and responsive difference into a reusable UI Asset Pack.
-- **Implementation agents do not improvise the visual identity.** Codex/Claude consume the approved master and asset/spec pack.
-- **Static parity before UX, UX before backend.** Keep gates separate so one layer cannot hide errors in another.
-- **Reference != dependency.** Strong public repositories are learning references, not packages that must be installed in every project.
-- **Continuous learning with permission.** Every real project may improve the methodology, but changes are pushed to this public repository only after explicit user approval and only after client/private data has been removed.
+Before handoff, ChatGPT owns the complete visual system:
 
-## GĐ1 Drive behavior
+- art direction;
+- every required WEB/MOBILE route;
+- Admin/CMS visual screens when required;
+- full component visual system;
+- applicable states such as hover/active/focus/loading/error/success;
+- logos/icons/ornaments;
+- SVG/vector and raster production resources;
+- fonts and typography mapping;
+- colors/tokens/spacing/radii/shadows/gradients;
+- responsive visual intent;
+- asset/component placement;
+- route/section/component maps;
+- Claude implementation prompt/handoff;
+- visual QA.
 
-When the environment has Google Drive access, GĐ1 must check that Drive is connected/writable and automatically create the delivery structure:
+If any required approved visual decision is missing, `UI_SETUP_COMPLETE` must remain false.
+
+## Claude responsibilities
+
+Claude owns implementation after the UI handoff:
+
+- frontend code/component architecture;
+- responsive code following the supplied visual contract;
+- UX/interactions/animation implementation;
+- forms/application state;
+- API/CMS/database/auth/backend;
+- accessibility and performance work that preserves the approved visual system;
+- implementation fixes from ChatGPT QA.
+
+Claude is not allowed to silently invent or replace missing approved visual decisions.
+
+## GitHub as the bridge
+
+Each real project should normally use its own project repository.
+
+GitHub acts as:
 
 ```text
-TEN-DU-AN/
-├── bản WEB/
-│   └── WEB_TenDuAn.png
-├── bản MOBILE/
-│   └── MOBILE_TenDuAn.png
-└── Document fonts/
+VERSIONED COMMUNICATION BUS
++ ASSET REGISTRY
++ UI IMPLEMENTATION CONTRACT
++ PROJECT STATE
++ QA EXCHANGE
 ```
 
-The client-facing demo package stays intentionally minimal.
+A typical handoff package contains:
+
+```text
+.webby/
+├── PROJECT_STATE.yaml
+├── HANDOFF.json
+├── CLAUDE_TASK.md
+├── asset-manifest.json
+├── component-map.json
+├── placement-map.json
+├── route-map.json
+├── section-map.json
+├── typography.json
+├── tokens.json
+├── responsive.json
+├── interactions.json
+├── requests/
+└── qa/
+```
+
+Claude pulls the exact UI state/commit, implements it, pushes code, then ChatGPT reviews browser output against the approved visual truth.
+
+If Claude encounters a missing approved UI resource, it should create a request in the project handoff area rather than inventing the UI itself.
+
+## Drive vs GitHub
+
+Google Drive remains useful for client-facing full-resolution WEB/MOBILE design delivery and heavy original materials.
+
+GitHub is the operational bridge between ChatGPT and Claude for production assets, implementation specs, code state and QA exchange.
+
+## Source-first principle
+
+Never guess production assets when an authoritative source exists. Do not crop screenshots to fake extractable assets, redraw existing vectors by eye, replace approved fonts with close alternatives, or convert normal UI sections into giant SVG screenshots.
 
 ## Canonical repository
 
-This repository is the canonical public source of truth for the skill. Improvements should evolve through normal commits/tags/releases rather than creating random `v2`, `final`, or `final-final` repositories.
+This repository is the canonical public source of truth for the skill:
 
-## Privacy / public-repo rule
+```text
+th6322750-stack/webbyLucifer
+```
 
-Do **not** commit client secrets, private URLs, proprietary source code, unreleased designs, personal data, credentials, API keys, or non-redistributable font/assets. Project lessons must be generalized before they become part of the skill.
+Do not create random `v2`, `new`, `final`, or `final-final` replacement repositories. Generalized improvements are committed here only after explicit user approval.
+
+## Privacy
+
+Do not commit client secrets, private URLs, proprietary source code, unreleased designs, personal data, credentials, API keys or non-redistributable font/assets to this public skill repository.
