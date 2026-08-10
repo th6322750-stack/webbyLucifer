@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "uiCommit": "<ui-package-commit>",
+  "assets": [
+    {
+      "id": "hero-gold-wave",
+      "category": "ORNAMENT",
+      "source": "assets/source/vectors/hero-gold-wave.source.svg",
+      "production": "assets/production/svg/hero-gold-wave.svg",
+      "format": "SVG",
+      "authoritative": true,
+      "reconstructed": false,
+      "routes": ["/"],
+      "sections": ["hero"],
+      "colorPolicy": "FIXED_BRAND",
+      "accessibility": "DECORATIVE",
+      "containsRaster": false,
+      "containsExternalRefs": false,
+      "containsScripts": false,
+      "qa": "PASS",
+      "mustNot": [
+        "replace with another visual",
+        "redraw with CSS",
+        "change approved colors"
+      ]
+    }
+  ]
+}
