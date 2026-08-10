@@ -1,13 +1,17 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
+  "handoffId": "UI-2026-001",
   "producer": "CHATGPT",
   "executor": "CLAUDE",
   "status": "UI_SETUP_COMPLETE",
-  "uiCommit": "<git-commit-sha>",
-  "consumedUiCommit": null,
+  "uiRevision": 1,
+  "uiCommit": "<ui-package-commit>",
+  "parentUiCommit": null,
+  "createdAt": "<iso-8601>",
   "requiredInputs": [
     ".webby/CLAUDE_TASK.md",
     ".webby/PROJECT_STATE.yaml",
+    ".webby/WEBBY_LOCK.json",
     ".webby/asset-manifest.json",
     ".webby/component-map.json",
     ".webby/placement-map.json",
@@ -18,11 +22,13 @@
     ".webby/responsive.json",
     ".webby/interactions.json"
   ],
+  "lockFile": ".webby/WEBBY_LOCK.json",
   "hardRules": [
     "Do not redesign approved UI",
     "Do not substitute approved visual assets",
     "Do not replace approved fonts",
     "Do not invent missing approved UI",
+    "Treat active ChatGPT-owned visual contracts as read-only",
     "Request missing UI through .webby/requests instead of guessing"
   ],
   "staticUiRequiredBeforeUx": true,

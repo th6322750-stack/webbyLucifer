@@ -1,27 +1,41 @@
 {
-  "version": 1,
+  "version": 2,
   "uiCommit": "<ui-package-commit>",
   "placements": [
     {
-      "asset": "hero-gold-wave",
+      "placementId": "placement.hero-gold-wave.home",
+      "assetId": "hero-gold-wave",
+      "componentId": "cmp.hero.home",
+      "containerId": "hero-media-container",
       "file": "assets/production/svg/hero-gold-wave.svg",
       "route": "/",
       "section": "hero",
-      "component": "Hero",
       "role": "decorative-background",
+      "referenceViewport": {"width": 1920, "height": 1080},
+      "coordinateSpace": "container",
       "desktop": {
         "position": "absolute",
         "anchor": "bottom-right",
+        "offsetX": 0,
+        "offsetY": 0,
         "width": "48%",
+        "maxWidth": null,
         "zIndex": 2,
         "overflow": "visible"
       },
       "mobile": {
         "position": "absolute",
         "anchor": "bottom-center",
+        "offsetX": 0,
+        "offsetY": 0,
         "width": "92%",
         "zIndex": 2,
         "overflow": "hidden"
+      },
+      "image": {
+        "objectFit": "contain",
+        "objectPosition": "center bottom",
+        "focalPoint": null
       },
       "behavior": {
         "pointerEvents": "none",

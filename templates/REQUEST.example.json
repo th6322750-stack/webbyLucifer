@@ -3,6 +3,7 @@
   "type": "ASSET_REQUEST",
   "requestedBy": "CLAUDE",
   "status": "OPEN",
+  "blocking": true,
   "uiCommit": "<consumed-ui-commit>",
   "route": "/property-detail",
   "section": "features",
@@ -10,6 +11,8 @@
   "missing": "custom swimming-pool icon",
   "reason": "The approved design contains a custom icon but the production asset is absent.",
   "requestedResolution": "ChatGPT supplies or identifies the approved asset and updates the asset/placement manifests.",
+  "resolutionCommit": null,
+  "affectedFiles": [],
   "mustNot": [
     "do not substitute a generic icon",
     "do not redraw the approved icon without ChatGPT visual authority"

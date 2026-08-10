@@ -1,21 +1,19 @@
 {
-  "version": 1,
+  "version": 2,
   "uiCommit": "<ui-package-commit>",
   "components": [
     {
+      "componentId": "cmp.property-card.v1",
       "name": "PropertyCard",
+      "implementationTarget": "src/components/property/PropertyCard.tsx",
+      "parentComponentId": null,
       "routes": ["/properties", "/projects"],
       "sections": ["listing-grid"],
       "visualSource": "MASTER/component-system/PropertyCard",
-      "structure": [
-        "image",
-        "statusBadge",
-        "title",
-        "location",
-        "price",
-        "metadata"
-      ],
+      "slots": ["image", "statusBadge", "title", "location", "price", "metadata"],
       "states": ["default", "hover", "focus", "loading"],
+      "variants": ["default"],
+      "requiredAssets": ["icon-location", "icon-verified"],
       "assets": {
         "locationIcon": "assets/production/svg/icon-location.svg",
         "verifiedBadge": "assets/production/svg/icon-verified.svg"

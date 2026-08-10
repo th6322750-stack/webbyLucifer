@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "uiCommit": "<ui-package-commit>",
   "assets": [
     {
@@ -8,10 +8,14 @@
       "source": "assets/source/vectors/hero-gold-wave.source.svg",
       "production": "assets/production/svg/hero-gold-wave.svg",
       "format": "SVG",
+      "mime": "image/svg+xml",
+      "sha256": null,
+      "byteSize": null,
       "authoritative": true,
       "reconstructed": false,
       "routes": ["/"],
       "sections": ["hero"],
+      "usedBy": ["cmp.hero.home"],
       "colorPolicy": "FIXED_BRAND",
       "accessibility": "DECORATIVE",
       "containsRaster": false,

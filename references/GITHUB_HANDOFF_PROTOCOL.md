@@ -1,30 +1,26 @@
-# GitHub Handoff Protocol
-
-This reference defines the operational bridge between ChatGPT and Claude for `webbyLucifer` projects.
+# GitHub Handoff Protocol — webbyLucifer v2
 
 ## Core ownership
 
 ```text
 CHATGPT = FULL UI AUTHORITY
 CLAUDE = IMPLEMENTATION AUTHORITY
-GITHUB = VERSIONED EXCHANGE LAYER
+GITHUB = VERSIONED EXCHANGE LAYER / SHARED PROJECT STATE
 ```
 
-Claude must never be asked to complete missing approved visual-design decisions.
+The full design/implementation workflow is defined by `SKILL.md` plus `references/WORKFLOW_BASELINE_V1.md`. This document defines the v2 GitHub exchange contract.
 
-The canonical workflow rules remain in `SKILL.md`. This document explains the project-repository exchange contract in more operational detail.
+## 1. Required project handoff
 
----
-
-# 1. Required project handoff package
-
-Before implementation, ChatGPT should publish at least:
+Before implementation, ChatGPT SHOULD publish:
 
 ```text
 .webby/
 ├── PROJECT_STATE.yaml
 ├── HANDOFF.json
+├── WEBBY_LOCK.json
 ├── CLAUDE_TASK.md
+├── visual-contract.json
 ├── asset-manifest.json
 ├── component-map.json
 ├── placement-map.json
@@ -35,200 +31,84 @@ Before implementation, ChatGPT should publish at least:
 ├── responsive.json
 ├── interactions.json
 ├── requests/
+├── implementation/
 └── qa/
 ```
 
-Production assets should be separated from source/reference material.
+## 2. Active UI identity
+
+The active handoff SHOULD identify:
 
 ```text
-assets/
-├── source/
-│   ├── vectors/
-│   └── raster/
-└── production/
-    ├── svg/
-    ├── images/
-    ├── logos/
-    └── ornaments/
+handoffId
+uiRevision
+uiCommit
+parentUiCommit
+createdAt
+status
 ```
 
-Use `references/SVG_PRODUCTION_PIPELINE.md` for production-vector rules.
+The lock file repeats the active identity and lists contract files/assets that belong to that handoff.
 
----
+## 3. UI_SETUP_COMPLETE
 
-# 2. Starter templates
+The baseline visual checklist remains mandatory. v2 additionally requires deterministic handoff state, lock consistency, no known hard UI blocker and validation when available.
 
-The canonical skill repository provides starter files under:
-
-```text
-templates/
-├── CLAUDE_TASK.md
-├── HANDOFF.example.json
-├── PROJECT_STATE.example.yaml
-├── ASSET_MANIFEST.example.json
-├── COMPONENT_MAP.example.json
-├── PLACEMENT_MAP.example.json
-├── REQUEST.example.json
-└── UI_SETUP_CHECKLIST.md
-```
-
-Copy/adapt these into the real project repository. Do not keep placeholder values when handing off to Claude.
-
-Templates are examples of the contract, not a reason to omit project-specific routes, components, assets, responsive rules or implementation constraints.
-
----
-
-# 3. Handoff rule
-
-Claude may begin implementation only when the project handoff declares:
-
-```text
-status = UI_SETUP_COMPLETE
-```
-
-ChatGPT must verify the corresponding hard gate in `SKILL.md` first.
-
-If an applicable UI requirement is missing:
+If validation fails:
 
 ```text
 UI_SETUP_COMPLETE = false
 ```
 
-Do not use handoff wording such as:
+## 4. Lock contract
 
-```text
-choose something suitable
-use a similar icon
-make it premium
-adjust visually as needed
-```
+`.webby/WEBBY_LOCK.json` records the exact contract state expected by the executor. File entries may include `sha256` when tooling can calculate it.
 
-for an approved visual decision.
+A lock is not a substitute for Git commit identity; it complements Git history with explicit handoff scope.
 
----
-
-# 4. Commit synchronization
-
-The handoff must identify the UI state/commit Claude is expected to consume.
-
-Claude should record the UI commit it consumed before implementation. This prevents situations where ChatGPT is reviewing asset/spec revision N while Claude is implementing revision N-2.
-
-Recommended state fields:
-
-```json
-{
-  "producer": "CHATGPT",
-  "executor": "CLAUDE",
-  "status": "UI_SETUP_COMPLETE",
-  "uiCommit": "<sha>",
-  "consumedUiCommit": null
-}
-```
-
-If a metadata file cannot contain the SHA of the same commit that creates it, use the immediately preceding UI-package commit or create a small follow-up metadata commit. The important property is deterministic traceability.
-
-Claude must not silently continue from a stale handoff when the UI package has changed materially.
-
----
-
-# 5. ChatGPT publish contract
-
-Before declaring `UI_SETUP_COMPLETE`, ChatGPT publishes and verifies:
-
-- approved production assets;
-- source-authority information;
-- route/section/component maps;
-- asset manifest;
-- placement map;
-- typography/tokens;
-- responsive intent;
-- visual interaction states;
-- project state;
-- Claude implementation task;
-- handoff state;
-- required hard-gate checklist.
-
-ChatGPT must verify the actual GitHub commit/upload rather than merely claiming the files were created.
-
----
-
-# 6. Claude consume contract
-
-Claude begins by:
+## 5. Claude consume protocol
 
 ```text
 git pull
 ↓
-read .webby/HANDOFF.json
+read HANDOFF.json
 ↓
-verify expected UI commit/state
+read WEBBY_LOCK.json
 ↓
-read .webby/CLAUDE_TASK.md
+compare active UI revision/commit with previously consumed UI state
 ↓
-read route/section/component/asset/placement/typography/responsive specs
+run validator when available
 ↓
-inspect production assets
+read CLAUDE_TASK + maps/assets
 ↓
-implement static visual parity
+record consumed UI state
+↓
+implement static parity
 ```
 
-After static parity, Claude may continue with the project-required:
-
-- UX/interactions;
-- motion;
-- application state;
-- forms;
-- CMS;
-- APIs;
-- database;
-- auth;
-- backend/integrations;
-- accessibility/performance improvements that preserve visual truth.
-
-Claude may improve code architecture but does not gain visual-design authority by doing so.
-
----
-
-# 7. Claude request loop
-
-When implementation discovers a missing approved UI resource, Claude must not invent it.
-
-Create a request in:
+If current active UI changed materially after Claude's consumed revision:
 
 ```text
-.webby/requests/REQUEST-###.json
+STALE_HANDOFF
 ```
 
-Use `templates/REQUEST.example.json` as the starter structure.
+Do not silently continue from the obsolete UI state.
 
-Minimum request information:
+## 6. Ownership boundaries
 
-- request ID/type/status;
-- consumed UI commit when relevant;
-- route;
-- section/component;
-- missing UI resource/decision;
-- why implementation is blocked or ambiguous;
-- requested resolution;
-- forbidden substitutions when relevant.
+Read `references/AGENT_OWNERSHIP_PROTOCOL.md`.
 
-Then:
+Claude must not modify active ChatGPT-owned visual contracts/assets merely to simplify implementation. ChatGPT should not rewrite Claude-owned implementation code during ordinary visual QA.
+
+## 7. Missing UI request lifecycle
+
+Recommended lifecycle:
 
 ```text
-CLAUDE REQUEST
-↓
-GITHUB
-↓
-CHATGPT supplies/clarifies UI resource
-↓
-CHATGPT updates manifests/specs
-↓
-CHATGPT commits new UI state
-↓
-GITHUB
-↓
-CLAUDE pulls and continues
+OPEN → ACKNOWLEDGED → RESOLVED → CONSUMED → CLOSED
 ```
+
+A resolution SHOULD identify the resolution commit/revision and affected files.
 
 Hard rule:
 
@@ -236,65 +116,65 @@ Hard rule:
 MISSING APPROVED UI != CLAUDE DESIGNS IT
 ```
 
----
+## 8. Implementation receipt
 
-# 8. QA exchange
-
-After implementation, ChatGPT reviews browser output against the approved UI truth and may publish defects through:
+After a meaningful implementation milestone Claude SHOULD publish:
 
 ```text
-.webby/qa/defects.json
+.webby/implementation/IMPLEMENTATION_RECEIPT.json
 ```
 
-A useful visual defect records:
+It records consumed UI state, implementation commit, implemented scope, build/test state and unresolved requests/blockers.
 
-- route;
-- viewport;
-- section/component;
-- severity;
-- observed result;
-- expected result;
-- authoritative source/spec reference;
-- implementation commit when useful.
+## 9. QA exchange
 
-Claude fixes implementation and pushes again. ChatGPT re-runs acceptance.
+ChatGPT reviews the browser against approved visual truth and writes stable defect IDs to `.webby/qa/defects.json` or an equivalent contract conforming to the v2 QA schema.
 
-The browser implementation does not become visual truth merely because it exists.
+Claude fixes against defect IDs and marks them `FIXED_PENDING_QA`. ChatGPT re-tests and closes or reopens them.
 
----
+## 10. Commit traceability
 
-# 9. Forbidden shortcuts
-
-- Claude silently replacing missing UI assets.
-- Claude choosing a visually similar font/icon.
-- Claude changing spacing/layout/colors to simplify implementation.
-- Claude inventing mobile behavior when the approved responsive contract exists or should exist.
-- ChatGPT handing off screenshots without component/asset/placement context.
-- ChatGPT declaring `UI_SETUP_COMPLETE` with known hard UI blockers.
-- Both agents independently editing the same visual truth.
-- Treating browser code as visual authority because it already exists.
-- Mixing client/private assets into the public canonical skill repository.
-
----
-
-# 10. Final model
+Recommended commit prefixes:
 
 ```text
-CHATGPT FULL UI SETUP
-        ↓
-GITHUB UI COMMIT + HANDOFF
-        ↓
+webby(ui):
+webby(lock):
+webby(request):
+webby(impl):
+webby(qa):
+webby(fix):
+```
+
+See `references/BRANCH_COMMIT_PROTOCOL.md`.
+
+## 11. Forbidden shortcuts
+
+- handoff without deterministic active UI state when Git state is available;
+- Claude silently substituting missing UI assets/fonts/icons;
+- Claude mutating visual contracts to make code easier;
+- ChatGPT declaring UI setup complete despite known hard blockers;
+- continuing from a materially stale UI handoff;
+- self-closing visual QA defects without ChatGPT re-acceptance;
+- publishing client/private material to the public canonical skill repository.
+
+## 12. Final model
+
+```text
+CHATGPT UI PACKAGE
+↓
+HANDOFF + LOCK + VALIDATION
+↓
 UI_SETUP_COMPLETE
-        ↓
-CLAUDE IMPLEMENTATION
-        ↓
-GITHUB IMPLEMENTATION COMMIT
-        ↓
-CHATGPT QA
-        ↓
-GITHUB DEFECT CONTRACT
-        ↓
+↓
+CLAUDE CONSUMES EXACT UI STATE
+↓
+IMPLEMENTATION + RECEIPT
+↓
+CHATGPT QA DEFECT CONTRACT
+↓
 CLAUDE FIX
-        ↓
-PRODUCTION READY
+↓
+CHATGPT ACCEPTANCE
+↓
+PRODUCTION_READY
 ```
