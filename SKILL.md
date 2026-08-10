@@ -18,7 +18,7 @@
 6. **GĐ6 — BACKEND / CMS / LOGIC** — Codex or Claude
 7. **GĐ7 — QA / PRODUCTION** — ChatGPT reviews; executor fixes
 
-The default input is one client brief. Ask only questions that genuinely block a usable result.
+The default input is one client brief. Ask only questions that genuinely block a usable result, except for mandatory gates explicitly defined in this skill.
 
 ---
 
@@ -30,7 +30,11 @@ The default input is one client brief. Ask only questions that genuinely block a
 
 ## Goal
 
-From the client brief, references, logo, imagery, copy, colors, or even a rough idea, create the complete visual design package for client approval.
+From the client brief, references, logo, imagery, copy, colors, or even a rough idea, create multiple possible visual directions when requested, let the user choose the best direction(s), then create the complete client-facing WEB/MOBILE design package for approval.
+
+GĐ1 is not allowed to jump directly from brief to one arbitrary final design without first passing the demo-direction gate below.
+
+---
 
 ## Mandatory Google Drive connection gate
 
@@ -42,9 +46,13 @@ Before any GĐ1 production work:
 4. If Drive is unavailable, disconnected, or read-only, stop packaging and ask the user to connect or restore Drive access.
 5. Never claim that a Drive folder or upload exists unless the connector confirms it.
 
+The Drive folder structure is the **final delivery workspace**, not the place where every rough visual experiment must be stored.
+
+---
+
 ## Mandatory project-type gate
 
-Before rendering, classify the request as exactly one of:
+Before final rendering, classify the request as exactly one of:
 
 - `LANDING_PAGE`
 - `WEBSITE`
@@ -59,11 +67,140 @@ Do not treat a multi-page website as one landing page. Do not invent unnecessary
 
 ---
 
+# GĐ1.1 — MANDATORY DEMO-DIRECTION PREVIEW GATE
+
+## Purpose
+
+Before spending time rendering the full long WEB/MOBILE package, ChatGPT must let the user see and choose the visual direction first.
+
+The user may want one safe direction or several alternative directions to compare internally or show to the client.
+
+## Mandatory question
+
+Unless the user already explicitly supplied the number in the current request, ChatGPT MUST ask:
+
+> **Bạn muốn mình render trước bao nhiêu phương án giao diện demo để chọn? 1, 2, 3 hay số khác?**
+
+Do not silently default to exactly one design.
+
+If the user already said, for example, “cho tôi 3 phương án”, do not ask the same question again; use `demo_direction_count: 3`.
+
+## What counts as a distinct demo direction
+
+Each requested direction must be meaningfully different in art direction, not just a trivial recolor.
+
+Possible differences may include:
+
+- composition and visual hierarchy;
+- typography pairing;
+- Hero structure;
+- image treatment;
+- spacing rhythm;
+- navigation treatment;
+- card/component language;
+- ornament/effect style;
+- density and content presentation;
+- brand mood such as minimal, luxury, editorial, heritage, technology, playful, premium, etc.
+
+Do not pretend that three nearly identical color variants are three design directions.
+
+## Preview rendering contract
+
+For each requested direction, create a **visual preview** before creating final full-page files.
+
+The preview must be large and clear enough for the user to judge the design direction.
+
+For a `LANDING_PAGE`, each direction should normally preview enough of the page to establish the system, such as:
+
+```text
+HEADER
+↓
+HERO
+↓
+1–2 representative content sections
+```
+
+For a `WEBSITE`, each direction should normally preview the primary/home page art direction and enough shared components to judge how the rest of the site will look.
+
+Where mobile treatment materially affects the concept, include a mobile preview as well.
+
+Preview images are **selection artifacts**, not final GĐ1 delivery assets. Therefore they do not replace the required long full-page files and should not be mistaken for the final Drive package.
+
+## Mandatory presentation to the user
+
+Label previews clearly:
+
+```text
+PHƯƠNG ÁN 01 — <short direction name>
+PHƯƠNG ÁN 02 — <short direction name>
+PHƯƠNG ÁN 03 — <short direction name>
+...
+```
+
+For each direction, provide only a short explanation of the design logic and major tradeoff. Let the image do the main work.
+
+Then ask the user to choose:
+
+- one direction to develop;
+- multiple directions to develop further;
+- or request a hybrid of specific aspects from several directions.
+
+Example:
+
+> Chọn PA01, PA02, PA03; hoặc nói “lấy bố cục PA01 + font PA02 + Hero PA03”.
+
+## Selection lock
+
+Do NOT begin the expensive final full-page rendering step until the user has selected or approved at least one direction.
+
+Allowed states:
+
+```text
+DEMO_DIRECTIONS_REQUESTED
+↓
+DEMO_PREVIEWS_RENDERED
+↓
+USER_DIRECTION_SELECTED
+↓
+FULL_DEMO_PRODUCTION
+```
+
+If the user requests another exploration round, create a new preview round instead of pretending the old direction was approved.
+
+## Multiple directions for client presentation
+
+If the user wants several selected directions developed into complete demos for the client, this is allowed.
+
+Do not change the required root Drive folder names. Keep the canonical folders and distinguish variants by filename.
+
+Example for a landing page with two complete client demo directions:
+
+```text
+TEN-DU-AN/
+│
+├── bản WEB/
+│   ├── PA01_WEB_TenDuAn.png
+│   └── PA02_WEB_TenDuAn.png
+│
+├── bản MOBILE/
+│   ├── PA01_MOBILE_TenDuAn.png
+│   └── PA02_MOBILE_TenDuAn.png
+│
+└── Document fonts/
+    └── ...
+```
+
+If only one direction is selected, use the normal canonical names without a `PAxx_` prefix.
+
+After the client chooses the winning direction, that selected direction becomes the visual acceptance candidate and subsequent phases must not silently mix assets/styles from rejected directions.
+
+---
+
 ## GĐ1-A — LANDING_PAGE output contract
 
 A landing page is one long route from Header to Footer.
 
-Create exactly this client-facing Drive structure:
+For one selected direction, create exactly this client-facing Drive structure:
 
 ```text
 TEN-DU-AN/
@@ -100,7 +237,7 @@ FOOTER
 
 ### Forbidden landing outputs
 
-Never output:
+Never use any of the following as the final GĐ1 output:
 
 - a presentation board;
 - a collage;
@@ -112,7 +249,7 @@ Never output:
 - several disconnected screen fragments;
 - a short, compressed, “vón cục” image that does not represent the entire page length.
 
-The reference behavior is a naturally long website screenshot, not a portfolio presentation sheet.
+The final reference behavior is a naturally long website screenshot, not a portfolio presentation sheet.
 
 ---
 
@@ -120,13 +257,14 @@ The reference behavior is a naturally long website screenshot, not a portfolio p
 
 A website contains multiple routes/pages.
 
-Before rendering:
+Before final full-page rendering:
 
 1. Infer a concise sitemap/page map from the client brief.
 2. Identify all required primary user-facing pages.
 3. Include detail pages when the product requires them, such as product detail, property detail, article detail, project detail, checkout, or contact.
 4. Add Admin/CMS screens only when the brief explicitly requires them.
 5. Keep one coherent visual system across all pages.
+6. Apply the direction approved in GĐ1.1 consistently across the whole sitemap.
 
 Create this client-facing Drive structure:
 
@@ -160,7 +298,7 @@ TEN-DU-AN/
 
 Every route must be exported as its own separate continuous full-page PNG.
 
-Examples:
+Example:
 
 ```text
 01_TrangChu_WEB.png
@@ -179,14 +317,14 @@ Every page image must run from that page’s Header/navigation area through all 
 
 ### Forbidden website outputs
 
-Never combine all website pages into one promotional board such as:
+Never combine all final website pages into one promotional board such as:
 
 ```text
 [Homepage desktop] [Detail desktop] [Listing desktop]
 [Mobile screen 1]  [Mobile screen 2] [Admin dashboard]
 ```
 
-That style may be useful for a portfolio presentation, but it is not the GĐ1 production output.
+That style may be useful as an optional portfolio presentation, but it is not the GĐ1 production output.
 
 Never replace per-route files with one image named `TatCaGiaoDien.png`.
 
@@ -194,7 +332,7 @@ Never replace per-route files with one image named `TatCaGiaoDien.png`.
 
 ## Mandatory full-page and resolution contract
 
-All PNGs uploaded to Drive must be:
+All **final GĐ1 PNGs uploaded to Drive** must be:
 
 - full-page vertical renders;
 - high-resolution;
@@ -204,7 +342,7 @@ All PNGs uploaded to Drive must be:
 
 ### WEB resolution
 
-Every WEB design PNG must be at least:
+Every final WEB design PNG must be at least:
 
 ```text
 width: 1920 px
@@ -223,7 +361,7 @@ The height must follow the actual page. Never squash a long page to fit a short 
 
 ### MOBILE resolution
 
-Every MOBILE design PNG must be at least:
+Every final MOBILE design PNG must be at least:
 
 ```text
 width: 1080 px
@@ -242,7 +380,7 @@ The mobile image must be a true mobile composition, not a desktop image resized 
 
 ### Resolution hard failures
 
-GĐ1 fails if any delivered image is:
+GĐ1 fails if any final delivered image is:
 
 - preview-sized;
 - blurry;
@@ -256,15 +394,20 @@ GĐ1 fails if any delivered image is:
 
 “Full HD” in this skill means at least **1920px-wide WEB** and **1080px-wide MOBILE**, while preserving the entire natural page height.
 
+Important distinction:
+
+- GĐ1.1 preview renders exist only to choose art direction.
+- Final Drive renders must always satisfy this full-page high-resolution contract.
+
 ---
 
 ## Mandatory `Document fonts/` contract
 
-`Document fonts/` must always exist in every GĐ1 package.
+`Document fonts/` must always exist in every final GĐ1 package.
 
 It must not be silently omitted.
 
-Place the actual font files used by the design into this folder when:
+Place the actual font files used by the selected design into this folder when:
 
 - the files are available;
 - redistribution is permitted;
@@ -293,6 +436,8 @@ When an approved font cannot legally or technically be uploaded, keep `Document 
 
 A missing folder is never acceptable. An empty unexplained folder is not considered complete.
 
+If multiple complete demo directions use different font families, the font manifest must map each font to the relevant `PAxx` direction so rejected fonts are not accidentally carried into production later.
+
 ---
 
 ## GĐ1 design responsibilities
@@ -301,22 +446,32 @@ ChatGPT must:
 
 1. understand the brief and audience;
 2. classify `LANDING_PAGE` or `WEBSITE`;
-3. infer the correct information architecture;
-4. define coherent art direction;
-5. create all required WEB compositions;
-6. create all corresponding MOBILE compositions;
-7. use the final approved font choices consistently;
-8. preserve Vietnamese text and accents correctly;
-9. render continuous full-page PNGs;
-10. visually inspect every output before upload;
-11. create the exact Drive folders;
-12. upload every file to the correct folder;
-13. verify the uploads by listing the resulting Drive folders.
+3. ask how many demo directions the user wants unless already specified;
+4. render the requested preview directions;
+5. present the preview directions clearly for selection;
+6. wait for the user to choose/approve direction(s);
+7. infer the correct information architecture;
+8. define and lock the selected art direction;
+9. create all required final WEB compositions;
+10. create all corresponding final MOBILE compositions;
+11. use the final approved font choices consistently;
+12. preserve Vietnamese text and accents correctly;
+13. render continuous full-page PNGs;
+14. visually inspect every final output before upload;
+15. create the exact Drive folders;
+16. upload every final file to the correct folder;
+17. verify the uploads by listing the resulting Drive folders.
+
+---
 
 ## GĐ1 quality inspection
 
-Before upload, inspect for:
+Before final upload, inspect for:
 
+- the user was never given a demo-direction choice;
+- requested preview count was not produced;
+- “different” previews are merely trivial recolors;
+- a rejected direction leaked into the selected final design;
 - garbled or misspelled text;
 - broken Vietnamese accents;
 - incorrect fonts;
@@ -330,6 +485,8 @@ Before upload, inspect for:
 - image width below the required minimum;
 - accidental collage or presentation-board composition.
 
+---
+
 ## GĐ1 exit gate
 
 Do not enter GĐ2 until all applicable checks pass:
@@ -337,24 +494,32 @@ Do not enter GĐ2 until all applicable checks pass:
 ```text
 [ ] Drive connection verified
 [ ] Project classified as LANDING_PAGE or WEBSITE
-[ ] Exact folder structure created
+[ ] Demo-direction count explicitly known
+[ ] Requested demo previews rendered
+[ ] User selected/approved at least one direction
+[ ] Selected direction locked for final production
+[ ] Exact final Drive folder structure created
 [ ] All required WEB page PNGs exist
 [ ] All required MOBILE page PNGs exist
-[ ] Every PNG is full-page and vertically continuous
-[ ] Every WEB PNG is at least 1920px wide
-[ ] Every MOBILE PNG is at least 1080px wide
-[ ] Every image is sharp and readable
-[ ] No collage/presentation-board output exists
+[ ] Every final PNG is full-page and vertically continuous
+[ ] Every final WEB PNG is at least 1920px wide
+[ ] Every final MOBILE PNG is at least 1080px wide
+[ ] Every final image is sharp and readable
+[ ] No collage/presentation-board used as final output
 [ ] Document fonts/ exists
 [ ] Correct font files or an explicit font manifest exist
 [ ] Drive upload verified by listing folders
-[ ] User/client has approved the design direction
+[ ] User/client approved the design direction
 ```
 
 State transition:
 
 ```text
-DESIGN → DESIGN_APPROVED
+DESIGN
+→ DEMO_PREVIEWS_RENDERED
+→ DESIGN_DIRECTION_SELECTED
+→ FULL_DEMO_READY
+→ DESIGN_APPROVED
 ```
 
 ---
@@ -702,6 +867,8 @@ Do not claim mathematical identity where browser/OS/font rasterization can cause
 4. browser implementation;
 5. derived/helper assets.
 
+Rejected GĐ1 demo directions are not implementation sources of truth.
+
 An original AI/Figma/SVG source may outrank screenshots until approval locks a new Master.
 
 Never treat the current browser implementation as truth merely because it already exists.
@@ -712,16 +879,20 @@ Never treat the current browser implementation as truth merely because it alread
 
 ## NEVER
 
+- skip the GĐ1 demo-direction choice and silently force one arbitrary visual direction;
+- present trivial recolors as meaningfully different demo directions;
+- start final full-page production before at least one preview direction is selected;
+- mix rejected visual directions into an approved direction without explicit instruction;
 - code before identifying visual truth;
 - decompose assets before understanding the source composition;
 - guess an existing source asset;
 - crop screenshots to fake extractable assets;
 - redraw existing vectors by eye;
 - replace an approved font with “close enough”;
-- create presentation boards instead of required full-page renders;
+- create presentation boards instead of required final full-page renders;
 - omit `Document fonts/`;
-- upload low-resolution or broken images;
-- combine multiple routes into one board;
+- upload low-resolution or broken final images;
+- combine multiple routes into one final board;
 - let multiple agents independently fix the same area;
 - claim pixel-perfect without comparison;
 - add backend/framework complexity without requirements;
@@ -731,8 +902,11 @@ Never treat the current browser implementation as truth merely because it alread
 
 - verify Drive;
 - classify Landing Page or Website;
-- create the exact Drive structure;
-- render full-page continuous images;
+- explicitly know the desired demo-direction count;
+- render previews before expensive final full-page production;
+- get user selection/approval of the design direction;
+- create the exact final Drive structure;
+- render final full-page continuous images;
 - meet minimum resolution;
 - include fonts or an explicit font manifest;
 - verify uploads;
@@ -799,6 +973,7 @@ Observe:
 - what caused unnecessary iteration;
 - where intent was misunderstood;
 - where handoff failed;
+- which demo-direction process helped the user/client decide faster;
 - which Master format worked better;
 - which extraction/rendering methods were reliable;
 - which font/mask/effect methods failed;
@@ -867,6 +1042,11 @@ drive:
   uploads_verified: false
 
 design:
+  demo_direction_count: null
+  demo_preview_round: 0
+  demo_previews_rendered: false
+  selected_directions: []
+  direction_locked: false
   sitemap: []
   required_web_pages: []
   required_mobile_pages: []
@@ -911,7 +1091,15 @@ GĐ1 — verify Drive
     ↓
 classify LANDING_PAGE or WEBSITE
     ↓
-render every required route as separate full-page WEB/MOBILE PNG
+ASK: user wants how many demo directions?
+    ↓
+ChatGPT renders visual preview directions
+    ↓
+user selects one / several / hybrid direction
+    ↓
+lock selected direction
+    ↓
+render every required final route as separate full-page WEB/MOBILE PNG
     ↓
 1920px WEB + 1080px MOBILE minimum, sharp and continuous
     ↓
