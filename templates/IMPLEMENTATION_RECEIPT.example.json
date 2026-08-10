@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "executor": "CLAUDE",
+  "consumedUiCommit": "<ui-package-commit>",
+  "consumedUiRevision": 1,
+  "implementationCommit": "<implementation-commit>",
+  "implementedRoutes": ["/"],
+  "implementedComponents": ["cmp.hero.home"],
+  "buildStatus": "PASS",
+  "testStatus": "PASS",
+  "openRequests": [],
+  "blockers": [],
+  "previewUrl": null
+}

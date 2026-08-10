@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "webbyLucifer Implementation Receipt",
+  "type": "object",
+  "required": ["schemaVersion", "executor", "consumedUiCommit", "implementationCommit", "implementedRoutes"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "executor": {"type": "string", "minLength": 1},
+    "consumedUiCommit": {"type": "string", "minLength": 7},
+    "consumedUiRevision": {"type": ["integer", "null"], "minimum": 1},
+    "implementationCommit": {"type": "string", "minLength": 7},
+    "implementedRoutes": {"type": "array", "items": {"type": "string"}},
+    "implementedComponents": {"type": "array", "items": {"type": "string"}},
+    "buildStatus": {"type": ["string", "null"]},
+    "testStatus": {"type": ["string", "null"]},
+    "openRequests": {"type": "array", "items": {"type": "string"}},
+    "blockers": {"type": "array", "items": {"type": "string"}},
+    "previewUrl": {"type": ["string", "null"]}
+  },
+  "additionalProperties": true
+}

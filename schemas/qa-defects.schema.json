@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "webbyLucifer QA Defects",
+  "type": "object",
+  "required": ["schemaVersion", "implementationCommit", "defects"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "implementationCommit": {"type": "string", "minLength": 7},
+    "defects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["defectId", "route", "viewport", "severity", "observed", "expected", "status"],
+        "properties": {
+          "defectId": {"type": "string", "minLength": 1},
+          "route": {"type": "string"},
+          "viewport": {"type": "object"},
+          "section": {"type": ["string", "null"]},
+          "componentId": {"type": ["string", "null"]},
+          "severity": {"enum": ["BLOCKER", "HIGH", "MEDIUM", "LOW"]},
+          "observed": {"type": "string"},
+          "expected": {"type": "string"},
+          "authoritativeReference": {"type": ["string", "null"]},
+          "evidence": {"type": "array", "items": {"type": "string"}},
+          "acceptanceCriteria": {"type": ["string", "null"]},
+          "status": {"enum": ["OPEN", "FIXED_PENDING_QA", "CLOSED", "REOPENED"]}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

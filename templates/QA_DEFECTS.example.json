@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "implementationCommit": "<implementation-commit>",
+  "defects": [
+    {
+      "defectId": "VIS-001",
+      "route": "/",
+      "viewport": {"width": 1440, "height": 1000},
+      "section": "hero",
+      "componentId": "cmp.hero.home",
+      "severity": "HIGH",
+      "observed": "Hero artwork is vertically misaligned.",
+      "expected": "Match approved Master placement and crop.",
+      "authoritativeReference": ".webby/placement-map.json#hero-artwork-main",
+      "evidence": [],
+      "acceptanceCriteria": "Overlay alignment matches the approved reference within normal browser-rendering tolerance.",
+      "status": "OPEN"
+    }
+  ]
+}

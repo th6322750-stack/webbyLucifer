@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://webbylucifer.dev/schemas/handoff.schema.json",
+  "title": "webbyLucifer HANDOFF",
+  "type": "object",
+  "required": ["schemaVersion", "handoffId", "producer", "executor", "status", "uiRevision", "uiCommit", "requiredInputs"],
+  "properties": {
+    "schemaVersion": {"const": 2},
+    "handoffId": {"type": "string", "minLength": 1},
+    "producer": {"const": "CHATGPT"},
+    "executor": {"type": "string", "minLength": 1},
+    "status": {"enum": ["NOT_READY", "UI_SETUP_COMPLETE", "SUPERSEDED"]},
+    "uiRevision": {"type": "integer", "minimum": 1},
+    "uiCommit": {"type": "string", "minLength": 7},
+    "parentUiCommit": {"type": ["string", "null"]},
+    "createdAt": {"type": "string"},
+    "requiredInputs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "lockFile": {"type": "string", "default": ".webby/WEBBY_LOCK.json"},
+    "hardRules": {"type": "array", "items": {"type": "string"}},
+    "visualAuthority": {"const": "CHATGPT"},
+    "implementationAuthority": {"type": "string"}
+  },
+  "additionalProperties": true
+}

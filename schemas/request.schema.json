@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "webbyLucifer Request",
+  "type": "object",
+  "required": ["id", "type", "requestedBy", "status", "missing", "reason"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "type": {"type": "string", "minLength": 1},
+    "requestedBy": {"type": "string", "minLength": 1},
+    "status": {"enum": ["OPEN", "ACKNOWLEDGED", "RESOLVED", "CONSUMED", "CLOSED"]},
+    "uiCommit": {"type": ["string", "null"]},
+    "route": {"type": ["string", "null"]},
+    "section": {"type": ["string", "null"]},
+    "component": {"type": ["string", "null"]},
+    "missing": {"type": "string", "minLength": 1},
+    "reason": {"type": "string", "minLength": 1},
+    "requestedResolution": {"type": ["string", "null"]},
+    "resolutionCommit": {"type": ["string", "null"]},
+    "affectedFiles": {"type": "array", "items": {"type": "string"}},
+    "mustNot": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

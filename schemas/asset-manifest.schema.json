@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "webbyLucifer Asset Manifest",
+  "type": "object",
+  "required": ["version", "assets"],
+  "properties": {
+    "version": {"type": "integer", "minimum": 1},
+    "uiCommit": {"type": "string"},
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "production", "category"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "category": {"type": "string", "minLength": 1},
+          "source": {"type": ["string", "null"]},
+          "production": {"type": "string", "minLength": 1},
+          "sha256": {"type": ["string", "null"], "pattern": "^[a-fA-F0-9]{64}$"},
+          "mime": {"type": ["string", "null"]},
+          "byteSize": {"type": ["integer", "null"], "minimum": 0},
+          "authoritative": {"type": "boolean"},
+          "reconstructed": {"type": "boolean"},
+          "usedBy": {"type": "array", "items": {"type": "string"}},
+          "mustNot": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "skillVersion": "2.0.0",
+  "handoffId": "UI-2026-001",
+  "uiRevision": 1,
+  "uiCommit": "<ui-package-commit>",
+  "createdAt": "<iso-8601>",
+  "files": [
+    {"path": ".webby/HANDOFF.json", "sha256": null, "required": true},
+    {"path": ".webby/component-map.json", "sha256": null, "required": true},
+    {"path": ".webby/asset-manifest.json", "sha256": null, "required": true},
+    {"path": ".webby/placement-map.json", "sha256": null, "required": true}
+  ]
+}

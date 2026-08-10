@@ -1,0 +1,175 @@
+#!/usr/bin/env python3
+"""Dependency-light semantic validator for a webbyLucifer project handoff."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import sys
+from pathlib import Path
+
+REQUIRED_HANDOFF_KEYS = {
+    "schemaVersion", "handoffId", "producer", "executor", "status",
+    "uiRevision", "uiCommit", "requiredInputs",
+}
+REQUIRED_LOCK_KEYS = {
+    "schemaVersion", "skillVersion", "handoffId", "uiRevision", "uiCommit", "files",
+}
+
+
+def load_json(path: Path):
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        raise ValueError(f"missing file: {path}")
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"invalid JSON: {path}: {exc}")
+
+
+def sha256_file(path: Path) -> str:
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def validate_project(root: Path) -> list[str]:
+    errors: list[str] = []
+    webby = root / ".webby"
+    handoff_path = webby / "HANDOFF.json"
+    lock_path = webby / "WEBBY_LOCK.json"
+
+    try:
+        handoff = load_json(handoff_path)
+    except ValueError as exc:
+        return [str(exc)]
+
+    missing = REQUIRED_HANDOFF_KEYS - set(handoff)
+    if missing:
+        errors.append(f"HANDOFF missing keys: {sorted(missing)}")
+
+    if handoff.get("status") == "UI_SETUP_COMPLETE":
+        if handoff.get("producer") != "CHATGPT":
+            errors.append("UI_SETUP_COMPLETE handoff producer must be CHATGPT")
+        if not handoff.get("uiCommit"):
+            errors.append("UI_SETUP_COMPLETE requires uiCommit")
+
+    for rel in handoff.get("requiredInputs", []):
+        if not (root / rel).exists():
+            errors.append(f"required input does not exist: {rel}")
+
+    try:
+        lock = load_json(lock_path)
+    except ValueError as exc:
+        errors.append(str(exc))
+        return errors
+
+    missing = REQUIRED_LOCK_KEYS - set(lock)
+    if missing:
+        errors.append(f"WEBBY_LOCK missing keys: {sorted(missing)}")
+
+    if handoff.get("handoffId") != lock.get("handoffId"):
+        errors.append("handoffId mismatch between HANDOFF and WEBBY_LOCK")
+    if handoff.get("uiRevision") != lock.get("uiRevision"):
+        errors.append("uiRevision mismatch between HANDOFF and WEBBY_LOCK")
+    if handoff.get("uiCommit") != lock.get("uiCommit"):
+        errors.append("uiCommit mismatch between HANDOFF and WEBBY_LOCK")
+
+    for entry in lock.get("files", []):
+        rel = entry.get("path")
+        if not rel:
+            errors.append("lock entry missing path")
+            continue
+        target = root / rel
+        if entry.get("required", True) and not target.exists():
+            errors.append(f"locked file does not exist: {rel}")
+            continue
+        expected = entry.get("sha256")
+        if expected and target.exists():
+            actual = sha256_file(target)
+            if actual.lower() != expected.lower():
+                errors.append(f"sha256 mismatch: {rel}")
+
+    asset_manifest_path = webby / "asset-manifest.json"
+    if asset_manifest_path.exists():
+        try:
+            manifest = load_json(asset_manifest_path)
+            seen = set()
+            for asset in manifest.get("assets", []):
+                aid = asset.get("id")
+                if not aid:
+                    errors.append("asset without id")
+                elif aid in seen:
+                    errors.append(f"duplicate asset id: {aid}")
+                else:
+                    seen.add(aid)
+                prod = asset.get("production")
+                if prod and not (root / prod).exists():
+                    errors.append(f"production asset does not exist: {prod}")
+        except ValueError as exc:
+            errors.append(str(exc))
+
+    component_map_path = webby / "component-map.json"
+    if component_map_path.exists():
+        try:
+            data = load_json(component_map_path)
+            seen = set()
+            for comp in data.get("components", []):
+                cid = comp.get("componentId") or comp.get("name")
+                if not cid:
+                    errors.append("component without componentId/name")
+                elif cid in seen:
+                    errors.append(f"duplicate component id: {cid}")
+                else:
+                    seen.add(cid)
+        except ValueError as exc:
+            errors.append(str(exc))
+
+    request_dir = webby / "requests"
+    if request_dir.exists():
+        for request_file in sorted(request_dir.glob("*.json")):
+            try:
+                req = load_json(request_file)
+                if req.get("status") == "OPEN" and req.get("blocking") is True and handoff.get("status") == "UI_SETUP_COMPLETE":
+                    errors.append(f"blocking OPEN request conflicts with UI_SETUP_COMPLETE: {request_file.name}")
+            except ValueError as exc:
+                errors.append(str(exc))
+
+    return errors
+
+
+def self_check(repo: Path) -> list[str]:
+    errors = []
+    for path in sorted((repo / "schemas").glob("*.json")):
+        try:
+            load_json(path)
+        except ValueError as exc:
+            errors.append(str(exc))
+    for path in sorted((repo / "templates").glob("*.json")):
+        try:
+            load_json(path)
+        except ValueError as exc:
+            errors.append(str(exc))
+    return errors
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("project", nargs="?", default=".")
+    parser.add_argument("--self-check", action="store_true")
+    args = parser.parse_args()
+    root = Path(args.project).resolve()
+    errors = self_check(root) if args.self_check else validate_project(root)
+    if errors:
+        print("WEBBY_VALIDATION_FAIL")
+        for error in errors:
+            print(f"- {error}")
+        return 1
+    print("WEBBY_VALIDATION_PASS")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
