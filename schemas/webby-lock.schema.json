@@ -10,6 +10,8 @@
     "handoffId": {"type": "string", "minLength": 1},
     "uiRevision": {"type": "integer", "minimum": 1},
     "uiCommit": {"type": "string", "minLength": 7},
+    "contractDigest": {"type": ["string", "null"], "pattern": "^sha256:[a-fA-F0-9]{64}$"},
+    "claudePackDigest": {"type": ["string", "null"], "pattern": "^sha256:[a-fA-F0-9]{64}$"},
     "createdAt": {"type": "string"},
     "files": {
       "type": "array",
@@ -19,7 +21,8 @@
         "properties": {
           "path": {"type": "string", "minLength": 1},
           "sha256": {"type": ["string", "null"], "pattern": "^[a-fA-F0-9]{64}$"},
-          "required": {"type": "boolean", "default": true}
+          "required": {"type": "boolean", "default": true},
+          "audience": {"enum": ["CHATGPT", "CLAUDE", "SHARED", "VALIDATOR"]}
         },
         "additionalProperties": true
       }
