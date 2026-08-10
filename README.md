@@ -1,29 +1,28 @@
-# webbyLucifer v2
+# webbyLucifer v2.1
 
-`webbyLucifer` is a public multi-agent Design→Code workflow for taking a web project from client brief to **approved full UI → complete production UI setup → machine-verifiable GitHub handoff → Claude implementation → ChatGPT visual QA → production website**.
+`webbyLucifer` is a public multi-agent Design→Code workflow for taking a web project from client brief to **approved full UI → production UI contract → compressed implementation handoff → Claude implementation → ChatGPT visual QA → reusable learning → production website**.
 
 ```text
 CHATGPT = FULL UI AUTHORITY
+WEBBY   = ROUTE + COMPRESS + VERIFY
 CLAUDE  = IMPLEMENTATION AUTHORITY
 GITHUB  = VERSIONED EXCHANGE LAYER / SHARED PROJECT STATE
 ```
 
 The canonical entrypoint is [`SKILL.md`](./SKILL.md).
 
-## What changed in v2
+## What changed in v2.1
 
-The GĐ1→GĐ7 workflow is preserved. v2 strengthens the exchange layer with:
+v2.1 focuses on **lower Claude token usage and lower UI drift**.
 
-- machine-readable schemas;
-- deterministic UI revision/commit tracking;
-- `WEBBY_LOCK.json`;
-- stale-handoff detection;
-- agent ownership/write boundaries;
-- implementation receipts;
-- structured QA defects;
-- a dependency-light handoff validator.
-
-The full v1 workflow is preserved unchanged in `references/WORKFLOW_BASELINE_V1.md` and incorporated by the v2 skill.
+- phase/actor-aware protocol loading;
+- the legacy v1 baseline is no longer mandatory runtime context;
+- Claude receives a minimal `.webby/claude-pack/` instead of the full design knowledge base;
+- ChatGPT keeps all material UI decisions;
+- Webby compresses those decisions into deterministic implementation facts;
+- handoff identity adds optional `contractDigest` / `handoffCommit` semantics;
+- semantic validation checks more contract cross-references;
+- project QA/request outcomes can feed an evidence-backed learning loop without dumping history into Claude context.
 
 ## Core workflow
 
@@ -32,7 +31,9 @@ GĐ1 — DESIGN / FULL-PAGE UI                    ChatGPT
 GĐ2 — FULL UI MASTER / DESIGN SYSTEM           ChatGPT
 GĐ3 — FULL PRODUCTION UI SETUP / HANDOFF       ChatGPT
                  ↓
-       SCHEMA + LOCK + VALIDATION
+        WEBBY VALIDATE + LOCK
+                 ↓
+        COMPILE CLAUDE PACK
                  ↓
           UI_SETUP_COMPLETE
                  ↓
@@ -40,6 +41,32 @@ GĐ4 — STATIC FRONTEND IMPLEMENTATION           Claude
 GĐ5 — UX / FRONTEND ENHANCEMENT                Claude
 GĐ6 — BACKEND / CMS / LOGIC                    Claude
 GĐ7 — QA / PRODUCTION                          ChatGPT QA ↔ Claude fixes
+                 ↓
+          LEARNING EXTRACTION
+```
+
+## Claude minimal handoff
+
+By default Claude should consume only the implementation-relevant subset:
+
+```text
+.webby/claude-pack/
+├── TASK.md
+├── contract.json
+├── components.json
+├── assets.json
+├── responsive.json
+└── lock.json
+```
+
+Claude does **not** need to read the full legacy workflow, design knowledge pack, SVG design/reconstruction instructions, rejected UI history or unrelated QA history unless an exceptional implementation ambiguity requires it.
+
+The principle is:
+
+```text
+CHATGPT = THINK + DESIGN
+WEBBY   = COMPRESS + VERIFY
+CLAUDE  = IMPLEMENT
 ```
 
 ## Package
@@ -50,6 +77,9 @@ webbyLucifer/
 ├── VERSION
 ├── CHANGELOG.md
 ├── references/
+│   ├── PHASE_ROUTER.md
+│   ├── CLAUDE_MINIMAL_HANDOFF.md
+│   ├── LEARNING_LOOP.md
 │   ├── WORKFLOW_BASELINE_V1.md
 │   ├── GITHUB_HANDOFF_PROTOCOL.md
 │   ├── AGENT_OWNERSHIP_PROTOCOL.md
@@ -65,29 +95,11 @@ webbyLucifer/
 │   ├── placement-map.schema.json
 │   ├── request.schema.json
 │   ├── implementation-receipt.schema.json
-│   └── qa-defects.schema.json
+│   ├── qa-defects.schema.json
+│   └── learning.schema.json
 ├── templates/
-│   ├── WEBBY_LOCK.example.json
-│   ├── IMPLEMENTATION_RECEIPT.example.json
-│   ├── QA_DEFECTS.example.json
-│   └── existing v1 starter templates
 └── scripts/
     └── webby-validate.py
-```
-
-## Hard handoff gate
-
-Claude does not begin implementation simply because a prompt says the UI is ready. The project must satisfy the applicable visual setup rules and publish a deterministic active UI state.
-
-```text
-UI_SETUP_COMPLETE =
-approved visual scope
-+ complete production UI contract
-+ deterministic handoff
-+ lock
-+ no hard UI blocker
-+ non-stale state
-+ validation when available
 ```
 
 ## Typical project `.webby/`
@@ -97,7 +109,6 @@ approved visual scope
 ├── PROJECT_STATE.yaml
 ├── HANDOFF.json
 ├── WEBBY_LOCK.json
-├── CLAUDE_TASK.md
 ├── visual-contract.json
 ├── asset-manifest.json
 ├── component-map.json
@@ -109,26 +120,59 @@ approved visual scope
 ├── responsive.json
 ├── interactions.json
 ├── requests/
+├── claude-pack/
 ├── implementation/
 │   └── IMPLEMENTATION_RECEIPT.json
-└── qa/
-    ├── defects.json
-    └── qa-report.json
+├── qa/
+│   ├── defects.json
+│   └── qa-report.json
+└── learning/
+    ├── PROJECT_LESSONS.json
+    ├── UI_PATTERNS.json
+    └── FAILURE_PATTERNS.json
+```
+
+## Hard handoff gate
+
+Claude does not begin implementation simply because a prompt says the UI is ready.
+
+```text
+UI_SETUP_COMPLETE =
+approved visual scope
++ complete production UI contract
++ deterministic handoff
++ lock
++ no hard UI blocker
++ non-stale state
++ validation when available
++ compilable minimal Claude pack
 ```
 
 ## Validation
 
-Run the dependency-light semantic validator against a real project repository:
+Run the dependency-light semantic validator against a project repository:
 
 ```bash
 python scripts/webby-validate.py /path/to/project
 ```
 
-JSON Schemas under `schemas/` provide stronger machine contracts for schema-aware tooling.
+It checks handoff/lock identity, locked files and hashes, selected asset/component/placement cross-references, blocking requests, Claude-pack presence when declared, and learning-ID integrity. JSON Schemas under `schemas/` remain the canonical structural contracts for schema-aware tooling.
+
+## Learning loop
+
+Project lessons are owned by ChatGPT/Webby and are retrieved selectively. They are not copied wholesale into Claude prompts.
+
+```text
+requests + QA defects + outcomes
+→ concise reusable lessons
+→ future ChatGPT design/packaging
+→ smaller implementation contract
+→ fewer repeated defects
+```
 
 ## Compatibility
 
-v2 is an infrastructure/protocol upgrade, not a redesign of the workflow. Existing GĐ1–GĐ7 responsibilities, source-first rules, full WEB/MOBILE design requirements, SVG pipeline, request loop and visual QA principles remain active through the preserved baseline.
+v2.1 preserves the GĐ1→GĐ7 responsibilities and v1 visual/source-first principles. `references/WORKFLOW_BASELINE_V1.md` remains compatibility authority, but it is no longer mandatory runtime context for every actor and phase.
 
 ## Canonical repository
 

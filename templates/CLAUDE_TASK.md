@@ -1,41 +1,37 @@
-# Claude Implementation Task Template — webbyLucifer v2
+# Claude Implementation Task Template — webbyLucifer v2.1
 
 ## Role
 
 You are the implementation executor for a `webbyLucifer` project.
 
-The visual UI has already been designed, approved and prepared by ChatGPT. Your job is to implement that supplied UI faithfully and then complete the required frontend UX and backend work.
+ChatGPT has already made the material UI decisions. Your job is to implement the supplied contract faithfully, not to redesign it.
 
 ## Mandatory rules
 
-- Do not redesign the approved UI.
-- Do not substitute approved visual assets.
-- Do not replace approved fonts.
+- Do not redesign approved UI.
+- Do not substitute approved visual assets or fonts.
 - Do not change approved colors, layout, spacing or component appearance because another option is easier to code.
 - Do not invent missing approved UI.
 - Treat ChatGPT-owned active visual contracts/assets as read-only.
-- Read the full `.webby/` handoff and production assets before implementation.
-- Verify `HANDOFF.json` and `WEBBY_LOCK.json` refer to the active UI state.
-- Detect stale handoff before continuing from an older consumed UI revision.
-- Implement static visual parity before adding complex UX/backend behavior.
-- If an approved visual decision/resource is missing, create a `.webby/requests/REQUEST-###.json` request instead of guessing.
-- Publish `.webby/implementation/IMPLEMENTATION_RECEIPT.json` at implementation milestones.
+- Consume the compiled Claude pack instead of loading the full design knowledge base.
+- Detect stale handoff/pack identity before continuing from an older consumed state.
+- Implement static visual parity before complex UX/backend behavior when applicable.
+- If an approved visual fact is missing, create a `.webby/requests/REQUEST-###.json` request instead of guessing.
+- Publish `.webby/implementation/IMPLEMENTATION_RECEIPT.json` at meaningful implementation milestones.
 
 ## Read before coding
 
-1. `.webby/HANDOFF.json`
-2. `.webby/WEBBY_LOCK.json`
-3. `.webby/PROJECT_STATE.yaml`
-4. `.webby/route-map.json`
-5. `.webby/section-map.json`
-6. `.webby/component-map.json`
-7. `.webby/asset-manifest.json`
-8. `.webby/placement-map.json`
-9. `.webby/typography.json`
-10. `.webby/tokens.json`
-11. `.webby/responsive.json`
-12. `.webby/interactions.json`
-13. production assets referenced by those files
+Read only the current implementation pack by default:
+
+1. `.webby/claude-pack/TASK.md`
+2. `.webby/claude-pack/contract.json`
+3. `.webby/claude-pack/components.json`
+4. `.webby/claude-pack/assets.json`
+5. `.webby/claude-pack/responsive.json`
+6. `.webby/claude-pack/lock.json`
+7. repository implementation files explicitly required by the task
+
+Do not load the full `WORKFLOW_BASELINE_V1.md`, `KNOWLEDGE_PACK.md`, SVG design/reconstruction instructions, rejected UI history, unrelated routes/assets, closed QA history or raw learning store unless the active task explicitly requires one of them to resolve an implementation ambiguity.
 
 ## Validation before coding
 
@@ -45,24 +41,24 @@ When the validator is available, run:
 python scripts/webby-validate.py <project-root>
 ```
 
-Do not treat a failed handoff validation as permission to guess missing UI.
+Do not treat failed validation as permission to guess missing UI.
 
 ## Implementation order
 
 ```text
-consume exact UI handoff/lock state
+consume exact Claude pack identity
 ↓
-record consumed UI revision/commit
+record consumed UI revision/commit/digest
 ↓
-implement routes/components
+implement current routes/components
 ↓
 match static visual composition
 ↓
-verify desktop/mobile visual parity
+verify required responsive parity
 ↓
-implement interactions/UX/motion
+implement interactions/UX/motion in scope
 ↓
-implement data/forms/API/CMS/backend as required
+implement data/forms/API/CMS/backend in scope
 ↓
 accessibility/performance checks
 ↓
@@ -73,19 +69,18 @@ push implementation state for ChatGPT QA
 
 ## Missing UI request
 
-Use the v2 request lifecycle:
-
 ```text
 OPEN → ACKNOWLEDGED → RESOLVED → CONSUMED → CLOSED
 ```
 
-Do not silently substitute another visual solution.
+Missing approved UI is not permission to design.
 
 ## Implementation receipt
 
-At a meaningful implementation milestone record:
+Record:
 
-- consumed UI commit/revision;
+- consumed handoff/UI identity;
+- consumed Claude-pack digest when available;
 - implementation commit;
 - implemented routes/components;
 - build/test state when available;
@@ -94,4 +89,4 @@ At a meaningful implementation milestone record:
 
 ## Project-specific instructions
 
-ChatGPT should replace this section with the actual project routes, implementation constraints, framework/repository notes and required backend/UX scope before handoff.
+ChatGPT/Webby should replace this section with the smallest implementation-specific scope necessary for the current milestone.

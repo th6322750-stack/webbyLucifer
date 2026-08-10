@@ -1,41 +1,39 @@
-# GitHub Handoff Protocol — webbyLucifer v2
+# GitHub Handoff Protocol — webbyLucifer v2.1
 
 ## Core ownership
 
 ```text
 CHATGPT = FULL UI AUTHORITY
+WEBBY = ROUTE + COMPRESS + VERIFY
 CLAUDE = IMPLEMENTATION AUTHORITY
 GITHUB = VERSIONED EXCHANGE LAYER / SHARED PROJECT STATE
 ```
 
-The full design/implementation workflow is defined by `SKILL.md` plus `references/WORKFLOW_BASELINE_V1.md`. This document defines the v2 GitHub exchange contract.
+The source UI contract may be rich. The implementation executor should receive only the subset required for the current implementation scope.
 
-## 1. Required project handoff
+## 1. Source handoff
 
-Before implementation, ChatGPT SHOULD publish:
+Before implementation, ChatGPT/Webby SHOULD publish the applicable source truth under `.webby/`, including handoff/lock identity, visual contracts, maps, production assets and request state.
+
+## 2. Compiled implementation handoff
+
+For Claude, compile:
 
 ```text
-.webby/
-├── PROJECT_STATE.yaml
-├── HANDOFF.json
-├── WEBBY_LOCK.json
-├── CLAUDE_TASK.md
-├── visual-contract.json
-├── asset-manifest.json
-├── component-map.json
-├── placement-map.json
-├── route-map.json
-├── section-map.json
-├── typography.json
-├── tokens.json
+.webby/claude-pack/
+├── TASK.md
+├── contract.json
+├── components.json
+├── assets.json
 ├── responsive.json
-├── interactions.json
-├── requests/
-├── implementation/
-└── qa/
+└── lock.json
 ```
 
-## 2. Active UI identity
+Read `references/CLAUDE_MINIMAL_HANDOFF.md`.
+
+The pack contains implementation facts, not the full design knowledge base.
+
+## 3. Active UI identity
 
 The active handoff SHOULD identify:
 
@@ -44,77 +42,73 @@ handoffId
 uiRevision
 uiCommit
 parentUiCommit
+handoffCommit when known
+contractDigest when available
 createdAt
 status
 ```
 
-The lock file repeats the active identity and lists contract files/assets that belong to that handoff.
+`uiCommit` identifies the UI package state. A later handoff commit may reference that commit; do not require a Git commit to contain its own final SHA.
 
-## 3. UI_SETUP_COMPLETE
+The lock repeats active identity and may include a Claude-pack digest.
 
-The baseline visual checklist remains mandatory. v2 additionally requires deterministic handoff state, lock consistency, no known hard UI blocker and validation when available.
+## 4. UI_SETUP_COMPLETE
 
-If validation fails:
+The applicable visual checklist remains mandatory. v2.1 additionally requires deterministic handoff state, lock consistency, no known hard UI blocker, validation when available, and a compilable implementation pack for the requested scope.
+
+If available validation fails:
 
 ```text
 UI_SETUP_COMPLETE = false
 ```
-
-## 4. Lock contract
-
-`.webby/WEBBY_LOCK.json` records the exact contract state expected by the executor. File entries may include `sha256` when tooling can calculate it.
-
-A lock is not a substitute for Git commit identity; it complements Git history with explicit handoff scope.
 
 ## 5. Claude consume protocol
 
 ```text
 git pull
 ↓
-read HANDOFF.json
+read compiled Claude pack
 ↓
-read WEBBY_LOCK.json
+verify pack/handoff identity
 ↓
-compare active UI revision/commit with previously consumed UI state
+compare with previously consumed state
 ↓
 run validator when available
 ↓
-read CLAUDE_TASK + maps/assets
+record consumed identity
 ↓
-record consumed UI state
-↓
-implement static parity
+implement current scope
 ```
 
-If current active UI changed materially after Claude's consumed revision:
+Claude MUST NOT load the full legacy workflow, design knowledge pack, SVG design-generation material, rejected UI history or unrelated QA/learning history by default.
+
+If active UI changed materially:
 
 ```text
 STALE_HANDOFF
 ```
 
-Do not silently continue from the obsolete UI state.
+Consume the new pack or create a request when migration is ambiguous.
 
 ## 6. Ownership boundaries
 
 Read `references/AGENT_OWNERSHIP_PROTOCOL.md`.
 
-Claude must not modify active ChatGPT-owned visual contracts/assets merely to simplify implementation. ChatGPT should not rewrite Claude-owned implementation code during ordinary visual QA.
+Claude must not modify active ChatGPT-owned visual contracts/assets merely to simplify implementation. ChatGPT should publish QA defects rather than casually rewriting Claude-owned implementation code.
 
 ## 7. Missing UI request lifecycle
-
-Recommended lifecycle:
 
 ```text
 OPEN → ACKNOWLEDGED → RESOLVED → CONSUMED → CLOSED
 ```
-
-A resolution SHOULD identify the resolution commit/revision and affected files.
 
 Hard rule:
 
 ```text
 MISSING APPROVED UI != CLAUDE DESIGNS IT
 ```
+
+A resolution SHOULD identify the affected UI revision/commit and files. Webby then recompiles affected implementation facts.
 
 ## 8. Implementation receipt
 
@@ -124,57 +118,67 @@ After a meaningful implementation milestone Claude SHOULD publish:
 .webby/implementation/IMPLEMENTATION_RECEIPT.json
 ```
 
-It records consumed UI state, implementation commit, implemented scope, build/test state and unresolved requests/blockers.
+It records consumed UI/pack identity, implementation commit, implemented scope, build/test state and unresolved requests/blockers.
 
 ## 9. QA exchange
 
-ChatGPT reviews the browser against approved visual truth and writes stable defect IDs to `.webby/qa/defects.json` or an equivalent contract conforming to the v2 QA schema.
+ChatGPT reviews the browser against approved visual truth and writes stable defect IDs to `.webby/qa/defects.json` or an equivalent v2 contract.
 
 Claude fixes against defect IDs and marks them `FIXED_PENDING_QA`. ChatGPT re-tests and closes or reopens them.
 
-## 10. Commit traceability
+## 10. Learning exchange
 
-Recommended commit prefixes:
+After QA, ChatGPT/Webby MAY extract evidence-backed lessons according to `references/LEARNING_LOOP.md`.
+
+Learning is used to improve future design/packaging. It is not copied wholesale into Claude context.
+
+## 11. Commit traceability
+
+Recommended prefixes:
 
 ```text
 webby(ui):
 webby(lock):
+webby(pack):
 webby(request):
 webby(impl):
 webby(qa):
 webby(fix):
+webby(learn):
 ```
 
 See `references/BRANCH_COMMIT_PROTOCOL.md`.
 
-## 11. Forbidden shortcuts
+## 12. Forbidden shortcuts
 
 - handoff without deterministic active UI state when Git state is available;
 - Claude silently substituting missing UI assets/fonts/icons;
+- Claude loading full design history by default when the compiled pack is sufficient;
 - Claude mutating visual contracts to make code easier;
 - ChatGPT declaring UI setup complete despite known hard blockers;
 - continuing from a materially stale UI handoff;
 - self-closing visual QA defects without ChatGPT re-acceptance;
+- dumping raw learning/history into implementation context without relevance filtering;
 - publishing client/private material to the public canonical skill repository.
 
-## 12. Final model
+## 13. Final model
 
 ```text
-CHATGPT UI PACKAGE
+CHATGPT UI SOURCE CONTRACT
 ↓
-HANDOFF + LOCK + VALIDATION
+WEBBY VALIDATE + LOCK + COMPILE
 ↓
-UI_SETUP_COMPLETE
+MINIMAL CLAUDE PACK
 ↓
-CLAUDE CONSUMES EXACT UI STATE
-↓
-IMPLEMENTATION + RECEIPT
+CLAUDE IMPLEMENTATION + RECEIPT
 ↓
 CHATGPT QA DEFECT CONTRACT
 ↓
 CLAUDE FIX
 ↓
 CHATGPT ACCEPTANCE
+↓
+LEARNING EXTRACTION
 ↓
 PRODUCTION_READY
 ```

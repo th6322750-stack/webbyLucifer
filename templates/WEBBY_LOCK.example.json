@@ -1,14 +1,20 @@
 {
   "schemaVersion": 1,
-  "skillVersion": "2.0.0",
+  "skillVersion": "2.1.0",
   "handoffId": "UI-2026-001",
   "uiRevision": 1,
   "uiCommit": "<ui-package-commit>",
+  "contractDigest": null,
+  "claudePackDigest": null,
   "createdAt": "<iso-8601>",
   "files": [
-    {"path": ".webby/HANDOFF.json", "sha256": null, "required": true},
-    {"path": ".webby/component-map.json", "sha256": null, "required": true},
-    {"path": ".webby/asset-manifest.json", "sha256": null, "required": true},
-    {"path": ".webby/placement-map.json", "sha256": null, "required": true}
+    {"path": ".webby/HANDOFF.json", "sha256": null, "required": true, "audience": "SHARED"},
+    {"path": ".webby/component-map.json", "sha256": null, "required": true, "audience": "CHATGPT"},
+    {"path": ".webby/asset-manifest.json", "sha256": null, "required": true, "audience": "CHATGPT"},
+    {"path": ".webby/placement-map.json", "sha256": null, "required": true, "audience": "CHATGPT"},
+    {"path": ".webby/claude-pack/contract.json", "sha256": null, "required": true, "audience": "CLAUDE"},
+    {"path": ".webby/claude-pack/components.json", "sha256": null, "required": true, "audience": "CLAUDE"},
+    {"path": ".webby/claude-pack/assets.json", "sha256": null, "required": true, "audience": "CLAUDE"},
+    {"path": ".webby/claude-pack/responsive.json", "sha256": null, "required": true, "audience": "CLAUDE"}
   ]
 }

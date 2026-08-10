@@ -13,5 +13,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Compile validator
+        run: python -m py_compile scripts/webby-validate.py
       - name: Validate schemas and JSON templates
         run: python scripts/webby-validate.py --self-check
