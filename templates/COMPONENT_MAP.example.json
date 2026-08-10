@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "uiCommit": "<ui-package-commit>",
+  "components": [
+    {
+      "name": "PropertyCard",
+      "routes": ["/properties", "/projects"],
+      "sections": ["listing-grid"],
+      "visualSource": "MASTER/component-system/PropertyCard",
+      "structure": [
+        "image",
+        "statusBadge",
+        "title",
+        "location",
+        "price",
+        "metadata"
+      ],
+      "states": ["default", "hover", "focus", "loading"],
+      "assets": {
+        "locationIcon": "assets/production/svg/icon-location.svg",
+        "verifiedBadge": "assets/production/svg/icon-verified.svg"
+      },
+      "responsive": {
+        "desktop": "vertical-card",
+        "tablet": "vertical-card",
+        "mobile": "horizontal-card"
+      },
+      "mustNot": [
+        "change approved typography",
+        "replace supplied custom icons",
+        "invent a new mobile composition"
+      ]
+    }
+  ]
+}
