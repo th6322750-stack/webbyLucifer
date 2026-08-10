@@ -1,14 +1,14 @@
 # webbyLucifer — `change_web`
 
-> **Mission:** Turn one client brief into approved WEB/MOBILE design files, an AI-readable implementation master, a production UI asset pack, a real frontend/backend implementation, and a verified production-ready website.
+> **Mission:** Turn a client brief into approved WEB/MOBILE design files, an AI-readable implementation master, a production UI asset pack, a real frontend/backend implementation, and a verified production-ready website.
 >
-> **Operating principle:** webbyLucifer continuously learns from real projects. It may propose reusable improvements, but it must never deploy them to the canonical public repository without explicit user approval.
+> **Operating principle:** webbyLucifer continuously learns from real projects. It may propose reusable improvements, but it must never deploy learned changes to this canonical public repository without explicit user approval.
 
 ---
 
-## 0. Core operating model
+# 0. CORE OPERATING MODEL
 
-`webbyLucifer` is a gated seven-stage workflow. Every stage has one clear owner.
+`webbyLucifer` is a gated seven-stage workflow with clear ownership.
 
 1. **GĐ1 — DEMO DESIGN** — ChatGPT
 2. **GĐ2 — MASTER UI** — ChatGPT
@@ -18,7 +18,7 @@
 6. **GĐ6 — BACKEND / CMS / LOGIC** — Codex or Claude
 7. **GĐ7 — QA / PRODUCTION** — ChatGPT reviews; executor fixes
 
-The default input is one client brief. Ask only questions that genuinely block a usable result, except for mandatory gates explicitly defined in this skill.
+The default input is one client brief. Ask only questions that genuinely block useful progress, except for mandatory gates explicitly defined below.
 
 ---
 
@@ -30,40 +30,239 @@ The default input is one client brief. Ask only questions that genuinely block a
 
 ## Goal
 
-From the client brief, references, logo, imagery, copy, colors, or even a rough idea, create multiple possible visual directions when requested, let the user choose the best direction(s), then create the complete client-facing WEB/MOBILE design package for approval.
+Understand the client brief, research the right design language, propose one or more meaningful visual directions, render previews for the user to choose from, then produce the final full-page WEB/MOBILE design package for client approval.
 
-GĐ1 is not allowed to jump directly from brief to one arbitrary final design without first passing the demo-direction gate below.
+GĐ1 MUST NOT jump directly from a brief to one arbitrary final design.
+
+The required order is:
+
+```text
+CLIENT BRIEF
+↓
+DRIVE GATE
+↓
+PROJECT TYPE GATE
+↓
+GĐ1.0 DESIGN RESEARCH & KNOWLEDGE GATE
+↓
+GĐ1.1 DEMO-DIRECTION PREVIEW GATE
+↓
+USER SELECTS DIRECTION
+↓
+FULL-PAGE FINAL DEMO PRODUCTION
+↓
+DRIVE DELIVERY
+↓
+CLIENT APPROVAL
+```
 
 ---
 
 ## Mandatory Google Drive connection gate
 
-Before any GĐ1 production work:
+Before GĐ1 production work:
 
-1. Verify that Google Drive is connected by performing a minimal read.
+1. Verify that Google Drive is connected with a minimal read.
 2. Verify that Drive is writable before promising automatic packaging.
-3. When Drive is connected and writable, create the required folders automatically.
-4. If Drive is unavailable, disconnected, or read-only, stop packaging and ask the user to connect or restore Drive access.
-5. Never claim that a Drive folder or upload exists unless the connector confirms it.
+3. When writable, create the required project folders automatically.
+4. If Drive is disconnected/read-only, stop final packaging and ask the user to restore access.
+5. Never claim a folder or upload exists unless the connector confirms it.
 
-The Drive folder structure is the **final delivery workspace**, not the place where every rough visual experiment must be stored.
+The Drive structure is the **final delivery workspace**. Rough preview experiments do not have to be uploaded there unless the user asks.
 
 ---
 
 ## Mandatory project-type gate
 
-Before final rendering, classify the request as exactly one of:
+Classify the project as exactly one of:
 
 - `LANDING_PAGE`
 - `WEBSITE`
 
 If the brief clearly determines the type, classify it automatically.
 
-If genuinely ambiguous, stop and ask exactly:
+If genuinely ambiguous, ask:
 
 > Thiết kế này là **Landing Page một trang** hay **Website nhiều trang**?
 
-Do not treat a multi-page website as one landing page. Do not invent unnecessary subpages for a landing page.
+Rules:
+
+- Never treat a multi-page website as one landing page.
+- Never invent unnecessary subpages for a landing page.
+- For a website, infer a concise sitemap before final full-page production.
+- Add Admin/CMS design screens only when the brief requires them.
+
+---
+
+# GĐ1.0 — MANDATORY DESIGN RESEARCH & KNOWLEDGE GATE
+
+## Purpose
+
+Before rendering any visual preview, ChatGPT must research and reason about the correct design language for the specific client, industry, audience, brand, and website type.
+
+The goal is to reduce generic AI output such as the same Hero + three cards + CTA pattern for every project.
+
+**Research comes before visual generation.**
+
+## Mandatory research inputs
+
+Inspect all available inputs first:
+
+- client brief;
+- business/industry;
+- audience and conversion goal;
+- logo and brand assets;
+- brand colors;
+- supplied copy/content;
+- product/service imagery;
+- reference websites/screenshots;
+- existing website if supplied;
+- required routes/features;
+- cultural/brand constraints;
+- WEB/MOBILE expectations.
+
+Do not assume the client has `.ai`, Figma, PSD, or a complete asset library.
+
+## Design Reference Pack
+
+Use strong public repositories and design knowledge as **references**, not mandatory dependencies.
+
+### Primary GĐ1 references
+
+- `superdesigndev/superdesign-skill` — AI-oriented design workflow and visual exploration patterns.
+- `alexpate/awesome-design-systems` — broad design-system references to avoid tunnel vision.
+- `radix-ui/primitives` — interaction/component anatomy and state thinking.
+- `shadcn-ui/ui` — practical component composition and modern UI structure.
+- `fontsource/fontsource` — typography/font discovery and web-font awareness.
+- `lucide-icons/lucide` — consistent icon-language reference when appropriate.
+- `w3c/aria-practices` — interaction/accessibility patterns that should influence UI decisions early.
+- `dequelabs/axe-core` — accessibility QA awareness; reference only during design.
+
+These repositories are **knowledge sources**. GĐ1 must not install all of them or copy their visual style blindly.
+
+`REFERENCE != DEPENDENCY`
+
+## Research-selection rule
+
+Do not use the exact same references with the exact same weight for every project.
+
+Choose research according to the project domain and brief.
+
+Examples:
+
+```text
+LUXURY / HERITAGE / CULTURAL
+→ editorial composition
+→ typography quality
+→ whitespace and hierarchy
+→ premium image treatment
+→ restrained ornament / material feel
+
+REAL ESTATE
+→ listing hierarchy
+→ property search/filter patterns
+→ project/detail storytelling
+→ map/location presentation
+→ trust and conversion CTA
+
+SAAS / TECHNOLOGY
+→ product storytelling
+→ modular component systems
+→ information hierarchy
+→ dashboard/app patterns when relevant
+→ strong CTA and product proof
+
+E-COMMERCE
+→ category architecture
+→ product cards
+→ product-detail hierarchy
+→ trust, price and CTA clarity
+→ cart/checkout patterns when required
+
+SERVICE / SPA / HOSPITALITY
+→ emotional imagery
+→ service hierarchy
+→ social proof
+→ booking/contact conversion
+→ mobile-first conversion flow
+```
+
+These are examples, not fixed templates.
+
+## Research behavior
+
+Before preview rendering, ChatGPT must determine:
+
+- desired brand mood;
+- visual hierarchy;
+- likely layout system;
+- typography direction;
+- imagery treatment;
+- component language;
+- spacing rhythm;
+- key trust/conversion elements;
+- important WEB/MOBILE differences;
+- patterns to avoid because they conflict with the brief.
+
+If the user supplied a reference site, study the reference for principles and intent without blindly cloning copyrighted design details.
+
+If current external research tools are available and the project would benefit, inspect relevant maintained sources. If external research is unavailable, do not fabricate having inspected a repository; continue from the built-in knowledge/reference pack and record the limitation internally.
+
+## Anti-generic rule
+
+Before accepting a proposed art direction, test it against these questions:
+
+```text
+Could this design be swapped onto an unrelated company with only the logo changed?
+Does it look like a generic AI landing-page template?
+Are the directions merely color variations of one layout?
+Does the typography actually support the brand character?
+Does the information hierarchy reflect this client's business?
+Does the mobile concept look intentionally designed rather than shrunk desktop?
+```
+
+If the answer exposes generic output, revise the direction before showing it to the user.
+
+## Internal research summary
+
+Before rendering previews, form a concise internal `DESIGN_RESEARCH_SUMMARY`:
+
+```yaml
+project_domain:
+audience:
+conversion_goal:
+brand_mood:
+visual_principles: []
+typography_direction:
+imagery_direction:
+component_language:
+mobile_strategy:
+references_consulted: []
+patterns_to_avoid: []
+```
+
+This is working context, not a required client-facing deliverable unless the user asks for it.
+
+## GĐ1.0 exit gate
+
+Do not render demo previews until:
+
+```text
+[ ] brief and supplied assets inspected
+[ ] project domain/audience understood
+[ ] relevant design references selected
+[ ] typography direction considered
+[ ] visual principles defined
+[ ] WEB/MOBILE implications considered
+[ ] generic-template risk checked
+[ ] DESIGN_RESEARCH_SUMMARY formed
+```
+
+State:
+
+```text
+DESIGN → DESIGN_RESEARCH_READY
+```
 
 ---
 
@@ -71,91 +270,84 @@ Do not treat a multi-page website as one landing page. Do not invent unnecessary
 
 ## Purpose
 
-Before spending time rendering the full long WEB/MOBILE package, ChatGPT must let the user see and choose the visual direction first.
-
-The user may want one safe direction or several alternative directions to compare internally or show to the client.
+Let the user see and choose the visual direction **before** spending time on complete long WEB/MOBILE renders.
 
 ## Mandatory question
 
-Unless the user already explicitly supplied the number in the current request, ChatGPT MUST ask:
+Unless the user already supplied the number in the current request, ask:
 
 > **Bạn muốn mình render trước bao nhiêu phương án giao diện demo để chọn? 1, 2, 3 hay số khác?**
 
-Do not silently default to exactly one design.
+Do not silently default to one design.
 
-If the user already said, for example, “cho tôi 3 phương án”, do not ask the same question again; use `demo_direction_count: 3`.
+If the user already requested a number, do not ask again.
 
-## What counts as a distinct demo direction
+## Distinct-direction rule
 
-Each requested direction must be meaningfully different in art direction, not just a trivial recolor.
+Each direction must be meaningfully different, not a trivial recolor.
 
-Possible differences may include:
+Differences may include:
 
-- composition and visual hierarchy;
+- composition and hierarchy;
 - typography pairing;
-- Hero structure;
+- Hero concept;
 - image treatment;
+- navigation style;
 - spacing rhythm;
-- navigation treatment;
 - card/component language;
-- ornament/effect style;
-- density and content presentation;
-- brand mood such as minimal, luxury, editorial, heritage, technology, playful, premium, etc.
+- ornament/effect language;
+- density/content presentation;
+- overall brand mood.
 
-Do not pretend that three nearly identical color variants are three design directions.
+Three almost-identical layouts with different colors are **not** three valid directions.
 
 ## Preview rendering contract
 
-For each requested direction, create a **visual preview** before creating final full-page files.
+For each direction, render a clear preview large enough to judge the design language.
 
-The preview must be large and clear enough for the user to judge the design direction.
-
-For a `LANDING_PAGE`, each direction should normally preview enough of the page to establish the system, such as:
+For `LANDING_PAGE`, normally show enough to establish the system:
 
 ```text
 HEADER
 ↓
 HERO
 ↓
-1–2 representative content sections
+1–2 REPRESENTATIVE SECTIONS
 ```
 
-For a `WEBSITE`, each direction should normally preview the primary/home page art direction and enough shared components to judge how the rest of the site will look.
+For `WEBSITE`, normally preview the homepage/primary route plus enough shared elements to understand how the whole site will look.
 
-Where mobile treatment materially affects the concept, include a mobile preview as well.
+Where mobile materially changes the concept, include a mobile preview.
 
-Preview images are **selection artifacts**, not final GĐ1 delivery assets. Therefore they do not replace the required long full-page files and should not be mistaken for the final Drive package.
+Preview images are **selection artifacts**, not final GĐ1 delivery assets. They do not replace the required long full-page final PNGs.
 
-## Mandatory presentation to the user
+## Presentation contract
 
-Label previews clearly:
+Label clearly:
 
 ```text
-PHƯƠNG ÁN 01 — <short direction name>
-PHƯƠNG ÁN 02 — <short direction name>
-PHƯƠNG ÁN 03 — <short direction name>
+PHƯƠNG ÁN 01 — <direction name>
+PHƯƠNG ÁN 02 — <direction name>
+PHƯƠNG ÁN 03 — <direction name>
 ...
 ```
 
-For each direction, provide only a short explanation of the design logic and major tradeoff. Let the image do the main work.
+Give only a short rationale/tradeoff for each. Let the visuals do the work.
 
-Then ask the user to choose:
+The user may:
 
-- one direction to develop;
-- multiple directions to develop further;
-- or request a hybrid of specific aspects from several directions.
-
-Example:
-
-> Chọn PA01, PA02, PA03; hoặc nói “lấy bố cục PA01 + font PA02 + Hero PA03”.
+- select one direction;
+- select several directions for further development;
+- request another exploration round;
+- request a hybrid such as `layout PA01 + font PA02 + Hero PA03`.
 
 ## Selection lock
 
-Do NOT begin the expensive final full-page rendering step until the user has selected or approved at least one direction.
-
-Allowed states:
+Do NOT begin complete full-page production until at least one direction is selected/approved.
 
 ```text
+DESIGN_RESEARCH_READY
+↓
 DEMO_DIRECTIONS_REQUESTED
 ↓
 DEMO_PREVIEWS_RENDERED
@@ -165,42 +357,37 @@ USER_DIRECTION_SELECTED
 FULL_DEMO_PRODUCTION
 ```
 
-If the user requests another exploration round, create a new preview round instead of pretending the old direction was approved.
+If another exploration round is requested, render another preview round rather than treating the old direction as approved.
 
-## Multiple directions for client presentation
+## Multiple complete client directions
 
-If the user wants several selected directions developed into complete demos for the client, this is allowed.
+If the user wants multiple selected directions developed completely for the client, preserve the canonical Drive folders and distinguish variants by filename.
 
-Do not change the required root Drive folder names. Keep the canonical folders and distinguish variants by filename.
-
-Example for a landing page with two complete client demo directions:
+Example:
 
 ```text
 TEN-DU-AN/
-│
 ├── bản WEB/
 │   ├── PA01_WEB_TenDuAn.png
 │   └── PA02_WEB_TenDuAn.png
-│
 ├── bản MOBILE/
 │   ├── PA01_MOBILE_TenDuAn.png
 │   └── PA02_MOBILE_TenDuAn.png
-│
 └── Document fonts/
     └── ...
 ```
 
-If only one direction is selected, use the normal canonical names without a `PAxx_` prefix.
+If one direction is selected, use canonical filenames without `PAxx_` prefix.
 
-After the client chooses the winning direction, that selected direction becomes the visual acceptance candidate and subsequent phases must not silently mix assets/styles from rejected directions.
+Rejected directions must not silently leak into GĐ2/GĐ3/implementation.
 
 ---
 
-## GĐ1-A — LANDING_PAGE output contract
+# GĐ1-A — LANDING_PAGE OUTPUT CONTRACT
 
-A landing page is one long route from Header to Footer.
+A landing page is one continuous route from Header to Footer.
 
-For one selected direction, create exactly this client-facing Drive structure:
+For one selected direction, the final client-facing Drive structure is exactly:
 
 ```text
 TEN-DU-AN/
@@ -217,9 +404,7 @@ TEN-DU-AN/
     └── ...
 ```
 
-### Mandatory landing render format
-
-`WEB_TenDuAn.png` must be one continuous vertical full-page image:
+`WEB_TenDuAn.png` must be one continuous full-page image:
 
 ```text
 HEADER
@@ -233,40 +418,40 @@ CTA / FORM WHEN PRESENT
 FOOTER
 ```
 
-`MOBILE_TenDuAn.png` must also be one continuous vertical full-page image from Header to Footer using the real mobile composition.
+`MOBILE_TenDuAn.png` must also run continuously from Header to Footer using a genuine mobile composition.
 
-### Forbidden landing outputs
+### Forbidden final landing outputs
 
-Never use any of the following as the final GĐ1 output:
+Never use as final GĐ1 output:
 
-- a presentation board;
-- a collage;
-- multiple mini screenshots placed on one canvas;
-- a desktop/mobile mockup board;
-- a poster summarizing sections;
-- only the first viewport;
-- a cropped Hero instead of the full page;
-- several disconnected screen fragments;
-- a short, compressed, “vón cục” image that does not represent the entire page length.
+- presentation board;
+- collage;
+- mini screenshots on one canvas;
+- desktop/mobile mockup sheet;
+- section-summary poster;
+- first viewport only;
+- cropped Hero only;
+- disconnected fragments;
+- short/compressed “vón cục” representation of a long page.
 
-The final reference behavior is a naturally long website screenshot, not a portfolio presentation sheet.
+Final output must look like a naturally long website design/screenshot.
 
 ---
 
-## GĐ1-B — WEBSITE output contract
+# GĐ1-B — WEBSITE OUTPUT CONTRACT
 
 A website contains multiple routes/pages.
 
-Before final full-page rendering:
+Before final rendering:
 
-1. Infer a concise sitemap/page map from the client brief.
-2. Identify all required primary user-facing pages.
-3. Include detail pages when the product requires them, such as product detail, property detail, article detail, project detail, checkout, or contact.
-4. Add Admin/CMS screens only when the brief explicitly requires them.
-5. Keep one coherent visual system across all pages.
-6. Apply the direction approved in GĐ1.1 consistently across the whole sitemap.
+1. Infer the sitemap from the brief.
+2. Identify required user-facing routes.
+3. Include required detail routes such as property/product/project/article detail.
+4. Include checkout/account/contact routes only when required.
+5. Add Admin/CMS screens only when explicitly required.
+6. Apply the selected art direction consistently across the sitemap.
 
-Create this client-facing Drive structure:
+Final Drive structure:
 
 ```text
 TEN-DU-AN/
@@ -294,9 +479,7 @@ TEN-DU-AN/
     └── ...
 ```
 
-### Mandatory website render format
-
-Every route must be exported as its own separate continuous full-page PNG.
+Every route must be its **own separate continuous full-page PNG**.
 
 Example:
 
@@ -313,209 +496,150 @@ Example:
 
 Mobile must contain corresponding separate full-page route renders.
 
-Every page image must run from that page’s Header/navigation area through all page content to its Footer or natural page ending.
-
-### Forbidden website outputs
-
-Never combine all final website pages into one promotional board such as:
-
-```text
-[Homepage desktop] [Detail desktop] [Listing desktop]
-[Mobile screen 1]  [Mobile screen 2] [Admin dashboard]
-```
-
-That style may be useful as an optional portfolio presentation, but it is not the GĐ1 production output.
-
-Never replace per-route files with one image named `TatCaGiaoDien.png`.
+Never combine all final website routes into one promotional board or one `TatCaGiaoDien.png` file.
 
 ---
 
-## Mandatory full-page and resolution contract
+# GĐ1 FINAL RESOLUTION CONTRACT
 
-All **final GĐ1 PNGs uploaded to Drive** must be:
+All final GĐ1 PNGs uploaded to Drive must be:
 
 - full-page vertical renders;
 - high-resolution;
 - readable at 100% zoom;
-- free of blur, broken text, pixelation, compression artifacts, and accidental scaling damage;
-- exported from the final structured composition, not enlarged from a low-resolution preview.
+- free of visible blur/pixelation;
+- free of broken text and compression damage;
+- exported from the final composition, never enlarged from a low-resolution preview.
 
-### WEB resolution
+## WEB
 
-Every final WEB design PNG must be at least:
+Minimum:
 
 ```text
 width: 1920 px
 height: natural full-page height
 ```
 
-Examples:
+The natural page height may be 6000, 8500, 12000px or more. Never squash the page into a short canvas.
 
-```text
-1920 × 6000
-1920 × 8500
-1920 × 12000
-```
+## MOBILE
 
-The height must follow the actual page. Never squash a long page to fit a short canvas.
-
-### MOBILE resolution
-
-Every final MOBILE design PNG must be at least:
+Minimum:
 
 ```text
 width: 1080 px
 height: natural full-page height
 ```
 
-Examples:
+Mobile must be an intentional mobile composition, not desktop merely resized to 1080px.
 
-```text
-1080 × 8000
-1080 × 12000
-1080 × 16000
-```
+## Hard failures
 
-The mobile image must be a true mobile composition, not a desktop image resized to 1080px.
-
-### Resolution hard failures
-
-GĐ1 fails if any final delivered image is:
+GĐ1 fails when a final image is:
 
 - preview-sized;
-- blurry;
-- visibly pixelated;
-- stretched from a smaller source;
+- blurry/pixelated;
+- upscaled from a smaller preview;
 - aggressively compressed;
-- cropped before the page ends;
-- a first-screen-only screenshot;
+- cropped before page end;
+- first-screen-only;
 - a collage/presentation board;
-- unreadable when opened normally in Drive.
+- unreadable in Drive.
 
-“Full HD” in this skill means at least **1920px-wide WEB** and **1080px-wide MOBILE**, while preserving the entire natural page height.
-
-Important distinction:
-
-- GĐ1.1 preview renders exist only to choose art direction.
-- Final Drive renders must always satisfy this full-page high-resolution contract.
+In this skill, “Full HD” means at least **1920px-wide WEB** and **1080px-wide MOBILE**, preserving natural page height.
 
 ---
 
-## Mandatory `Document fonts/` contract
+# GĐ1 DOCUMENT FONTS CONTRACT
 
-`Document fonts/` must always exist in every final GĐ1 package.
+`Document fonts/` is mandatory for every final GĐ1 package.
 
-It must not be silently omitted.
+It must never be silently omitted.
 
-Place the actual font files used by the selected design into this folder when:
+Include actual font files used by the selected design when:
 
-- the files are available;
+- files are available;
 - redistribution is permitted;
 - the environment can upload them.
 
-Supported examples include:
+Typical supported formats:
 
 - `.ttf`
 - `.otf`
 - `.woff`
 - `.woff2`
 
-Do not add random unused fonts.
+Rules:
 
-Do not substitute a different font after design approval.
-
-Do not redistribute proprietary/system fonts without permission.
-
-When an approved font cannot legally or technically be uploaded, keep `Document fonts/` and add a clear manifest/note containing:
-
-- exact font family;
-- exact style/weight;
-- source or acquisition requirement;
-- affected design roles;
-- reason the binary was not included.
-
-A missing folder is never acceptable. An empty unexplained folder is not considered complete.
-
-If multiple complete demo directions use different font families, the font manifest must map each font to the relevant `PAxx` direction so rejected fonts are not accidentally carried into production later.
+- Do not add random unused fonts.
+- Do not replace an approved font with “close enough”.
+- Do not redistribute proprietary/system fonts without permission.
+- If a required font binary cannot legally/technically be uploaded, retain `Document fonts/` and add a manifest containing exact family, style/weight, source/acquisition requirement, affected roles, and reason binary is absent.
+- An unexplained empty fonts folder is incomplete.
+- If multiple PA directions use different fonts, map each font to the correct PA direction.
 
 ---
 
-## GĐ1 design responsibilities
+# GĐ1 RESPONSIBILITIES
 
 ChatGPT must:
 
-1. understand the brief and audience;
+1. understand brief, audience and conversion goal;
 2. classify `LANDING_PAGE` or `WEBSITE`;
-3. ask how many demo directions the user wants unless already specified;
-4. render the requested preview directions;
-5. present the preview directions clearly for selection;
-6. wait for the user to choose/approve direction(s);
-7. infer the correct information architecture;
-8. define and lock the selected art direction;
-9. create all required final WEB compositions;
-10. create all corresponding final MOBILE compositions;
-11. use the final approved font choices consistently;
-12. preserve Vietnamese text and accents correctly;
-13. render continuous full-page PNGs;
-14. visually inspect every final output before upload;
-15. create the exact Drive folders;
-16. upload every final file to the correct folder;
-17. verify the uploads by listing the resulting Drive folders.
+3. complete GĐ1.0 design research;
+4. select relevant references instead of blindly reusing one style;
+5. ask how many demo directions are wanted unless already specified;
+6. render that number of meaningful previews;
+7. present previews clearly;
+8. wait for direction selection/approval;
+9. infer sitemap/information architecture when applicable;
+10. lock the selected art direction;
+11. create all required final WEB compositions;
+12. create corresponding MOBILE compositions;
+13. use approved typography consistently;
+14. preserve Vietnamese text/accents correctly;
+15. render continuous full-page final PNGs;
+16. inspect final outputs before upload;
+17. create the exact Drive folders;
+18. upload files to the correct folders;
+19. verify final uploads by listing Drive folders.
 
 ---
 
-## GĐ1 quality inspection
+# GĐ1 QUALITY / EXIT GATE
 
-Before final upload, inspect for:
-
-- the user was never given a demo-direction choice;
-- requested preview count was not produced;
-- “different” previews are merely trivial recolors;
-- a rejected direction leaked into the selected final design;
-- garbled or misspelled text;
-- broken Vietnamese accents;
-- incorrect fonts;
-- clipped sections;
-- duplicated imagery;
-- unfinished placeholders;
-- weak contrast;
-- inconsistent desktop/mobile content;
-- missing pages from the sitemap;
-- missing font files or font manifest;
-- image width below the required minimum;
-- accidental collage or presentation-board composition.
-
----
-
-## GĐ1 exit gate
-
-Do not enter GĐ2 until all applicable checks pass:
+Do not enter GĐ2 until applicable checks pass:
 
 ```text
 [ ] Drive connection verified
-[ ] Project classified as LANDING_PAGE or WEBSITE
+[ ] LANDING_PAGE or WEBSITE determined
+[ ] GĐ1.0 research completed
+[ ] Relevant references selected
+[ ] Generic-template risk checked
 [ ] Demo-direction count explicitly known
-[ ] Requested demo previews rendered
-[ ] User selected/approved at least one direction
-[ ] Selected direction locked for final production
-[ ] Exact final Drive folder structure created
-[ ] All required WEB page PNGs exist
-[ ] All required MOBILE page PNGs exist
-[ ] Every final PNG is full-page and vertically continuous
-[ ] Every final WEB PNG is at least 1920px wide
-[ ] Every final MOBILE PNG is at least 1080px wide
-[ ] Every final image is sharp and readable
-[ ] No collage/presentation-board used as final output
+[ ] Requested previews rendered
+[ ] Directions are meaningfully different
+[ ] User selected/approved direction(s)
+[ ] Selected direction locked
+[ ] Exact final Drive structure created
+[ ] Required WEB final PNGs exist
+[ ] Required MOBILE final PNGs exist
+[ ] Every final PNG is continuous full-page
+[ ] Every WEB PNG is >= 1920px wide
+[ ] Every MOBILE PNG is >= 1080px wide
+[ ] Final images are sharp/readable
+[ ] No collage/presentation board used as final output
 [ ] Document fonts/ exists
-[ ] Correct font files or an explicit font manifest exist
-[ ] Drive upload verified by listing folders
-[ ] User/client approved the design direction
+[ ] Correct font files or explicit font manifest exist
+[ ] Drive upload verified
+[ ] User/client approved final design direction
 ```
 
 State transition:
 
 ```text
 DESIGN
+→ DESIGN_RESEARCH_READY
 → DEMO_PREVIEWS_RENDERED
 → DESIGN_DIRECTION_SELECTED
 → FULL_DEMO_READY
@@ -532,13 +656,13 @@ DESIGN
 
 ## Goal
 
-Create an AI-readable structured master that preserves the approved design and gives the implementation agent more reliable information than screenshots alone.
+Create an AI-readable structured Master representing the approved design more reliably than screenshots alone.
 
 ## Mandatory choice gate
 
-If the user has not selected a strategy, stop and ask:
+If the user has not selected a strategy, ask:
 
-> Bạn muốn Giai đoạn 2 đi theo hướng nào: **A — Figma Master, B — SVG Master, hay C — Cả hai để benchmark độ ổn định?**
+> Giai đoạn 2 muốn theo hướng nào: **A — Figma Master, B — SVG Master, hay C — cả hai để benchmark?**
 
 Allowed modes:
 
@@ -548,24 +672,13 @@ Allowed modes:
 
 Do not silently choose.
 
-## Strategy A — Figma Master
+## Figma Master
 
-Use Figma only when the environment can reliably create, edit, and read the source.
+Use only when the environment can reliably create/edit/read the required native source. Preserve route frames, typography, geometry, colors/tokens, image placement, components, variants and responsive constraints where meaningful.
 
-Organize:
+## SVG Master
 
-- all WEB route frames;
-- all MOBILE route frames;
-- reusable components;
-- variants/states;
-- typography;
-- colors/tokens;
-- images and vectors;
-- Auto Layout/constraints where meaningful.
-
-## Strategy B — SVG Master
-
-Create structured masters for all approved routes:
+Example:
 
 ```text
 MASTER/
@@ -579,29 +692,17 @@ MASTER/
 └── design-spec.json
 ```
 
-For a landing page, WEB and MOBILE may each contain one master file.
+Preserve canvas size, geometry, typography, colors, opacity, gradients, masks, image placement, grouping and layer order.
 
-Preserve canvas size, geometry, typography, colors, opacity, gradients, masks, image placement, grouping, and layer order.
+## Both benchmark
 
-## Strategy C — Both benchmark
+Create both from the same approved visual and compare fidelity, implementation speed, correction loops, responsive interpretation, asset/font preservation and Codex/Claude comprehension.
 
-Create both representations from the same approved design and compare:
+Do not declare a permanent winner from one project.
 
-- visual fidelity;
-- implementation speed;
-- correction loops;
-- responsive interpretation;
-- asset/font preservation;
-- Codex/Claude comprehension;
-- long-term stability.
+## GĐ2 gate
 
-Do not declare a permanent winner after one project.
-
-## GĐ2 consistency gate
-
-The Master and the approved full-page PNGs must describe the same routes and visual design.
-
-Render the Master back to canonical WEB/MOBILE sizes and compare before handoff.
+Master and approved PNGs must describe the same routes/design.
 
 ```text
 DESIGN_APPROVED → MASTER_READY
@@ -613,34 +714,33 @@ DESIGN_APPROVED → MASTER_READY
 
 ## Owner
 
-**ChatGPT — mandatory owner for UI analysis, asset decomposition, typography mapping, and production visual resources.**
+**ChatGPT — mandatory owner of visual analysis, production assets, text mapping, font mapping and UI decomposition.**
 
 ## Goal
 
-Understand every approved WEB/MOBILE page and the GĐ2 Master deeply enough to create a production-ready UI system.
+Understand every approved WEB/MOBILE page and Master deeply enough that the implementation agent does not have to guess the visual system.
 
-> Lock visual truth first. Then decompose production assets from that truth. Never guess assets before source analysis is complete.
+> Lock visual truth first. Decompose production assets from that truth second.
 
 ## Responsibilities
 
-Identify and map:
+Identify/map:
 
-- all routes and sections;
-- visual layers;
+- routes and sections;
 - backgrounds;
 - foreground/product images;
 - transparent assets;
 - vectors;
-- logos and wordmarks;
-- icons and ornaments;
-- gradients, masks, alpha, shadows, glows, and effects;
+- logos/wordmarks;
+- icons/ornaments;
+- masks/alpha/gradients/shadows/glows;
 - every visible text string;
 - CTA labels;
-- exact font roles;
-- reusable components;
+- exact typography roles;
+- reusable UI components;
 - desktop/mobile differences;
 - design tokens;
-- responsive behavior;
+- responsive intent;
 - interaction intent.
 
 ## Source-first rules
@@ -648,30 +748,28 @@ Identify and map:
 When AI/Figma/SVG/PSD or another source exists:
 
 1. inspect it before recreating anything;
-2. extract original embedded/vector/alpha/mask resources when possible;
+2. extract original embedded/vector/alpha/mask resources where possible;
 3. do not fake extractable assets by cropping screenshots;
 4. do not redraw existing vectors by eye;
-5. do not replace approved fonts with similar fonts;
-6. inspect the source effect stack before inventing CSS approximations.
+5. do not replace approved fonts;
+6. inspect source effects before inventing CSS approximations.
 
-When no structured source exists, decomposition from approved PNGs is permitted, but uncertainty must be recorded.
+When no structured source exists, decomposition from approved PNGs is allowed, but uncertainty must be recorded.
 
-## Required typography map
+## Typography map
 
-For every visible text role record:
+For each visible text role record:
 
 - exact copy;
-- route and section;
+- route/section;
 - semantic role;
-- font family;
-- style/weight;
-- desktop size;
-- mobile size;
+- font family/style/weight;
+- desktop/mobile sizes;
 - line height;
 - letter spacing;
 - color;
 - alignment;
-- significant line breaks.
+- important line breaks.
 
 ## Preferred UI Asset Pack
 
@@ -695,11 +793,7 @@ UI_ASSET_PACK/
     └── RESPONSIVE.md
 ```
 
-Prefer SVG for vectors, WebP/AVIF for raster imagery after visual QA, alpha-capable formats for transparency, and legal web font formats where licensing permits.
-
-## GĐ3 exit gate
-
-The implementation agent must not need to guess primary asset identity, visible copy, font roles, routes, or desktop/mobile composition.
+Prefer SVG for vectors and legal web-font formats where licensing permits. Raster optimization happens only after fidelity is verified.
 
 ```text
 MASTER_READY → UI_ASSET_PACK_READY
@@ -715,11 +809,11 @@ MASTER_READY → UI_ASSET_PACK_READY
 
 ## Mandatory executor gate
 
-If no executor is selected, stop and ask:
+If executor is undecided, ask:
 
 > Giai đoạn build giao cho **Codex hay Claude**?
 
-Allowed values:
+Allowed:
 
 - `CODEX`
 - `CLAUDE`
@@ -729,26 +823,20 @@ Allowed values:
 - approved full-page WEB/MOBILE PNGs;
 - GĐ2 Master;
 - GĐ3 UI Asset Pack;
-- route and section maps;
+- route/section maps;
 - typography/content maps;
 - responsive contract;
 - repository constraints.
 
 ## Goal
 
-Build the static frontend with maximum visual parity before complex UX or backend work.
+Build the static frontend with maximum visual parity before complex UX/backend work.
 
-The executor must use supplied assets and approved fonts, preserve live text where appropriate, respect route structure, and treat WEB/MOBILE as potentially independent compositions.
-
-Never hide visual errors behind arbitrary CSS filters or blends unless they are source-derived.
+The executor must use supplied assets/fonts, preserve live text where appropriate, respect routes, and treat WEB/MOBILE as potentially independent compositions.
 
 Never self-certify “100% pixel-perfect”.
 
-## Static gate
-
-Render every required route at its approved reference viewport and compare against the approved PNG.
-
-Do not enter GĐ5 while material visual mismatch remains.
+Render every required route at the approved target viewport and compare before PASS.
 
 ```text
 UI_ASSET_PACK_READY → STATIC_UI_PASS
@@ -760,9 +848,9 @@ UI_ASSET_PACK_READY → STATIC_UI_PASS
 
 ## Owner
 
-**The selected Codex or Claude executor unless the user changes it.**
+**Selected Codex or Claude executor unless the user changes it.**
 
-Add only required:
+Only after static visual PASS, add project-required:
 
 - hover/focus/active states;
 - sticky navigation;
@@ -772,12 +860,12 @@ Add only required:
 - tabs/accordion;
 - form states;
 - scroll behavior;
-- animation/motion;
+- motion/animation;
 - responsive interaction changes;
 - keyboard support;
 - reduced-motion handling.
 
-Interaction work must not break approved visual composition. Re-run route-level visual QA after meaningful UX changes.
+Interaction work must not break the approved visual composition. Re-run visual QA after meaningful UX changes.
 
 ```text
 STATIC_UI_PASS → UX_PASS
@@ -791,26 +879,24 @@ STATIC_UI_PASS → UX_PASS
 
 **Codex or Claude**
 
-Add only capabilities required by the project:
+Add only what the project actually requires:
 
 - CMS;
 - API;
 - database;
-- forms and submissions;
+- forms/submissions;
 - email;
 - uploads;
-- content/news/product data;
+- content/product/news data;
 - search;
-- authentication and roles;
+- authentication/roles;
 - payments;
 - integrations;
 - dashboards.
 
-A landing page may require little or no backend.
+A simple landing page may need little or no backend.
 
 `REFERENCE != DEPENDENCY`
-
-Do not install systems merely because the skill knows them.
 
 ```text
 UX_PASS → FUNCTIONAL_PASS
@@ -822,48 +908,42 @@ UX_PASS → FUNCTIONAL_PASS
 
 ## Roles
 
-- **ChatGPT:** design authority, review, comparison, defect identification, acceptance.
+- **ChatGPT:** design authority, visual review, defect identification and acceptance.
 - **Codex/Claude:** implementation and fixes.
 
 ## QA dimensions
 
 ### Visual
-
-Compare every approved route for layout, typography, image identity/crop, spacing, colors, borders/radii, effects, and key states. Prefer screenshot overlays and visual diff over subjective statements.
+Compare approved routes for layout, typography, image identity/crop, spacing, colors, borders/radii, effects and key states. Prefer screenshot overlay/diff over subjective judgment.
 
 ### Responsive
-
-Test desktop, tablet when relevant, mobile, and narrow-mobile safety.
+Test desktop, tablet where relevant, mobile and narrow-mobile safety.
 
 ### Interaction
-
-Verify navigation, keyboard behavior, forms, loading/error/success states, modals, drawers, sliders, focus behavior, and reduced motion.
+Verify navigation, keyboard behavior, forms, loading/error/success states, modals, drawers, sliders, focus and reduced motion.
 
 ### Accessibility
-
-Use semantic HTML, keyboard support, visible focus, accessible labels/names, and automated checks where useful.
+Check semantic HTML, keyboard support, visible focus, accessible labels/names and automated checks where useful.
 
 ### Performance
-
-Check image/font loading, bundle weight, layout shifts, interaction responsiveness, caching, and project-appropriate performance indicators.
+Check image/font loading, bundle weight, layout shifts, interaction responsiveness and caching.
 
 ### Backend/security
-
-When applicable, validate authorization, server validation, input handling, secrets, API errors, database constraints/migrations, and abuse/rate considerations.
+Where applicable, validate authorization, server validation, input handling, secrets, API errors, database constraints/migrations and abuse/rate considerations.
 
 ```text
 FUNCTIONAL_PASS → QA_PASS → PRODUCTION_READY
 ```
 
-Do not claim mathematical identity where browser/OS/font rasterization can cause unavoidable differences.
+Never claim mathematical visual identity where browser/OS/font rasterization can create unavoidable differences.
 
 ---
 
-# Source-of-truth hierarchy
+# SOURCE-OF-TRUTH HIERARCHY
 
 1. approved structured Master/source;
 2. approved full-page WEB/MOBILE PNGs;
-3. original assets and fonts;
+3. original assets/fonts;
 4. browser implementation;
 5. derived/helper assets.
 
@@ -871,27 +951,30 @@ Rejected GĐ1 demo directions are not implementation sources of truth.
 
 An original AI/Figma/SVG source may outrank screenshots until approval locks a new Master.
 
-Never treat the current browser implementation as truth merely because it already exists.
+Never treat current browser implementation as truth simply because it already exists.
 
 ---
 
-# Anti-dead-end rules
+# ANTI-DEAD-END RULES
 
 ## NEVER
 
-- skip the GĐ1 demo-direction choice and silently force one arbitrary visual direction;
-- present trivial recolors as meaningfully different demo directions;
-- start final full-page production before at least one preview direction is selected;
-- mix rejected visual directions into an approved direction without explicit instruction;
+- skip GĐ1.0 research and render a generic design immediately;
+- pretend a repository was inspected when it was not;
+- copy one design system blindly across unrelated industries;
+- skip the GĐ1 demo-direction choice and silently force one visual direction;
+- present trivial recolors as different directions;
+- start final full-page production before selection;
+- mix rejected directions into approved work without instruction;
 - code before identifying visual truth;
-- decompose assets before understanding the source composition;
+- decompose assets before understanding source composition;
 - guess an existing source asset;
 - crop screenshots to fake extractable assets;
 - redraw existing vectors by eye;
-- replace an approved font with “close enough”;
+- replace approved fonts with “close enough”;
 - create presentation boards instead of required final full-page renders;
 - omit `Document fonts/`;
-- upload low-resolution or broken final images;
+- upload low-resolution/broken final images;
 - combine multiple routes into one final board;
 - let multiple agents independently fix the same area;
 - claim pixel-perfect without comparison;
@@ -902,15 +985,16 @@ Never treat the current browser implementation as truth merely because it alread
 
 - verify Drive;
 - classify Landing Page or Website;
-- explicitly know the desired demo-direction count;
-- render previews before expensive final full-page production;
-- get user selection/approval of the design direction;
-- create the exact final Drive structure;
-- render final full-page continuous images;
-- meet minimum resolution;
-- include fonts or an explicit font manifest;
+- research design direction before rendering previews;
+- choose references according to domain/brief;
+- explicitly know demo-direction count;
+- render previews before full-page production;
+- get user selection/approval;
+- create exact final Drive structure;
+- render continuous full-page final images;
+- meet resolution minimums;
+- include fonts or explicit font manifest;
 - verify uploads;
-- define source of truth;
 - preserve desktop/mobile intent;
 - obtain client design approval;
 - lock a Master;
@@ -921,11 +1005,22 @@ Never treat the current browser implementation as truth merely because it alread
 
 ---
 
-# Reference / knowledge pack
+# REFERENCE / KNOWLEDGE PACK
 
-Use as references, not mandatory dependencies.
+Use references, not mandatory dependencies.
 
-## UI / accessibility / component architecture
+## GĐ1 Design Research
+
+- `superdesigndev/superdesign-skill`
+- `alexpate/awesome-design-systems`
+- `radix-ui/primitives`
+- `shadcn-ui/ui`
+- `fontsource/fontsource`
+- `lucide-icons/lucide`
+- `w3c/aria-practices`
+- `dequelabs/axe-core`
+
+## UI / Accessibility / Component Architecture
 
 - `shadcn-ui/ui`
 - `radix-ui/primitives`
@@ -942,7 +1037,7 @@ Use as references, not mandatory dependencies.
 - `colinhacks/zod`
 - `lucide-icons/lucide`
 
-## Backend / CMS / auth
+## Backend / CMS / Auth
 
 - `supabase/supabase`
 - `prisma/prisma`
@@ -950,7 +1045,7 @@ Use as references, not mandatory dependencies.
 - `trpc/trpc`
 - `better-auth/better-auth`
 
-## Browser / visual / production QA
+## Browser / Visual / Production QA
 
 - `microsoft/playwright`
 - `mapbox/pixelmatch`
@@ -961,49 +1056,50 @@ Evaluate stronger maintained alternatives over time.
 
 ---
 
-# Continuous Learning & Skill Evolution Policy
+# CONTINUOUS LEARNING & SKILL EVOLUTION POLICY
 
 `webbyLucifer` always operates in a continuous-learning state.
 
-Every project and conversation may reveal evidence-based improvements.
+Every project/conversation may reveal evidence-based improvements.
 
 Observe:
 
 - what worked;
 - what caused unnecessary iteration;
 - where intent was misunderstood;
-- where handoff failed;
-- which demo-direction process helped the user/client decide faster;
+- where design research improved/worsened the result;
+- which reference sources were useful;
+- which demo-direction process helped decisions;
 - which Master format worked better;
 - which extraction/rendering methods were reliable;
 - which font/mask/effect methods failed;
 - which prompts improved implementation;
 - which QA checks found real defects;
-- which connectors removed manual work.
+- which connectors reduced manual work.
 
-At meaningful milestones, form a `LESSONS_LEARNED` summary containing successes, failures, root causes, better alternatives, reusable rules, rules to remove, tools worth evaluating, QA additions, and proposed skill changes.
+At meaningful milestones form a `LESSONS_LEARNED` summary with successes, failures, root causes, better alternatives, reusable rules, rules to remove, tools/repositories worth evaluating, QA additions and proposed skill changes.
 
 ## Public-repository privacy
 
 Never publish:
 
 - private URLs;
-- credentials or secrets;
+- credentials/secrets;
 - personal information;
 - proprietary client assets;
 - private source code;
 - unreleased designs;
 - confidential business information;
-- font/assets without redistribution rights.
+- fonts/assets without redistribution rights.
 
-Generalize the lesson instead of leaking project data.
+Generalize lessons instead of leaking project data.
 
 ## Improvement deployment gate
 
 When a reusable improvement is found, explain briefly:
 
 - what was learned;
-- what section should change;
+- which section should change;
 - expected benefit;
 - possible regression.
 
@@ -1012,7 +1108,7 @@ Do not deploy automatically.
 Only after explicit user approval may the AI:
 
 1. inspect the canonical repo;
-2. make the smallest appropriate generalized change;
+2. make the smallest generalized change;
 3. verify no private client data is included;
 4. commit it;
 5. push it to the same canonical repository;
@@ -1028,7 +1124,7 @@ Do not create `-v2`, `-new`, or `-final-final` repositories unless explicitly re
 
 ---
 
-# Suggested project state
+# SUGGESTED PROJECT STATE
 
 ```yaml
 project_name: null
@@ -1042,6 +1138,9 @@ drive:
   uploads_verified: false
 
 design:
+  research_complete: false
+  research_summary: null
+  references_consulted: []
   demo_direction_count: null
   demo_preview_round: 0
   demo_previews_rendered: false
@@ -1082,39 +1181,55 @@ production_ready: false
 
 ---
 
-# Final operating summary
+# FINAL OPERATING SUMMARY
 
 ```text
 CLIENT BRIEF
     ↓
-GĐ1 — verify Drive
+GĐ1 — verify Google Drive
     ↓
-classify LANDING_PAGE or WEBSITE
+classify LANDING_PAGE / WEBSITE
     ↓
-ASK: user wants how many demo directions?
+GĐ1.0 — research domain, brand, typography, UI patterns and relevant repos
     ↓
-ChatGPT renders visual preview directions
+form DESIGN_RESEARCH_SUMMARY
+    ↓
+ask how many demo directions the user wants
+    ↓
+GĐ1.1 — render meaningful visual previews
     ↓
 user selects one / several / hybrid direction
     ↓
 lock selected direction
     ↓
-render every required final route as separate full-page WEB/MOBILE PNG
+render every required final route as separate long full-page WEB/MOBILE PNG
     ↓
-1920px WEB + 1080px MOBILE minimum, sharp and continuous
+WEB >= 1920px wide / MOBILE >= 1080px wide / sharp / natural page height
     ↓
 create exact Drive structure + mandatory Document fonts/
-    ↓ client approves
+    ↓
+client approves
+    ↓
 GĐ2 — user chooses Figma / SVG / Both
-    ↓ Master locked
-GĐ3 — ChatGPT decomposes UI assets, text, fonts, routes, and specs
-    ↓ UI Asset Pack ready
+    ↓
+Master locked
+    ↓
+GĐ3 — ChatGPT decomposes UI assets, text, fonts, routes and specs
+    ↓
+UI Asset Pack ready
+    ↓
 GĐ4 — user chooses Codex / Claude → static frontend
-    ↓ visual parity pass
+    ↓
+visual parity pass
+    ↓
 GĐ5 — UX/frontend enhancement
-    ↓ UX pass
+    ↓
+UX pass
+    ↓
 GĐ6 — backend/CMS/logic only as required
-    ↓ functional pass
+    ↓
+functional pass
+    ↓
 GĐ7 — ChatGPT QA + executor fixes
     ↓
 PRODUCTION READY
