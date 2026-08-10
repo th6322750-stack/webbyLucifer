@@ -2,7 +2,7 @@
 
 `webbyLucifer` is a public workflow/skill for taking a web project from client brief to **approved full UI -> complete production UI setup -> GitHub handoff -> Claude implementation -> ChatGPT visual QA -> production website**.
 
-The core skill lives in [`SKILL.md`](./SKILL.md).
+The authoritative operating rules live in [`SKILL.md`](./SKILL.md).
 
 ## Core architecture
 
@@ -12,7 +12,7 @@ CLAUDE  = IMPLEMENTATION AUTHORITY
 GITHUB  = VERSIONED EXCHANGE LAYER / SHARED PROJECT STATE
 ```
 
-The most important rule is simple:
+The highest-priority rule is:
 
 > **Claude must never be forced to guess an approved UI decision. ChatGPT must completely prepare the UI before implementation handoff.**
 
@@ -22,7 +22,102 @@ Implementation may begin only after the hard gate:
 UI_SETUP_COMPLETE
 ```
 
-## Workflow
+---
+
+# Skill package
+
+The repository is intentionally packaged as one canonical skill with operating rules, deeper references and copy-ready handoff templates.
+
+```text
+webbyLucifer/
+├── SKILL.md
+├── README.md
+│
+├── references/
+│   ├── KNOWLEDGE_PACK.md
+│   ├── GITHUB_HANDOFF_PROTOCOL.md
+│   └── SVG_PRODUCTION_PIPELINE.md
+│
+└── templates/
+    ├── CLAUDE_TASK.md
+    ├── HANDOFF.example.json
+    ├── PROJECT_STATE.example.yaml
+    ├── ASSET_MANIFEST.example.json
+    ├── COMPONENT_MAP.example.json
+    ├── PLACEMENT_MAP.example.json
+    ├── REQUEST.example.json
+    └── UI_SETUP_CHECKLIST.md
+```
+
+## File roles
+
+### `SKILL.md`
+
+Canonical workflow and hard rules. This is the first file an agent should read.
+
+It defines:
+
+- ChatGPT/Claude ownership boundaries;
+- GĐ1-GĐ7;
+- input normalization;
+- design research and demo selection;
+- full WEB/MOBILE design output;
+- Master/design-system setup;
+- production asset decomposition;
+- SVG/vector rules;
+- GitHub handoff;
+- `UI_SETUP_COMPLETE`;
+- Claude request loop;
+- QA/production rules;
+- continuous-learning/update policy.
+
+### `references/KNOWLEDGE_PACK.md`
+
+Reference-selection guide for design systems, SVG/vector tooling, frontend/backend tooling, accessibility, QA and agent handoff.
+
+This is not an installation manifest.
+
+```text
+REFERENCE != DEPENDENCY
+```
+
+### `references/GITHUB_HANDOFF_PROTOCOL.md`
+
+Defines the operational GitHub bridge between ChatGPT and Claude:
+
+```text
+CHATGPT UI PACKAGE
+→ GITHUB UI COMMIT
+→ CLAUDE IMPLEMENTATION
+→ GITHUB CODE COMMIT
+→ CHATGPT QA
+→ DEFECT CONTRACT
+→ CLAUDE FIX
+```
+
+### `references/SVG_PRODUCTION_PIPELINE.md`
+
+Detailed production-vector contract covering:
+
+- source authority;
+- vector/raster/UI classification;
+- canonical SVG;
+- `viewBox`/aspect-ratio intent;
+- collision-safe deterministic IDs;
+- script/external-reference inspection;
+- color/text/accessibility policy;
+- optional SVG-to-component generation;
+- placement mapping;
+- browser visual QA;
+- hard SVG failures that keep `UI_SETUP_COMPLETE = false`.
+
+### `templates/*`
+
+Starter files for real project repositories. Copy/adapt them into the project's `.webby/` handoff area rather than inventing a new contract every time.
+
+---
+
+# Workflow
 
 ```text
 GĐ1 — DESIGN / FULL-PAGE UI
@@ -59,7 +154,9 @@ GĐ7 — QA / PRODUCTION
 ChatGPT reviews visual truth; Claude fixes implementation
 ```
 
-## ChatGPT responsibilities
+---
+
+# ChatGPT responsibilities
 
 Before handoff, ChatGPT owns the complete visual system:
 
@@ -78,9 +175,17 @@ Before handoff, ChatGPT owns the complete visual system:
 - Claude implementation prompt/handoff;
 - visual QA.
 
-If any required approved visual decision is missing, `UI_SETUP_COMPLETE` must remain false.
+If any required approved visual decision is missing:
 
-## Claude responsibilities
+```text
+UI_SETUP_COMPLETE = false
+```
+
+ChatGPT must finish the setup rather than asking Claude to complete the design.
+
+---
+
+# Claude responsibilities
 
 Claude owns implementation after the UI handoff:
 
@@ -94,9 +199,15 @@ Claude owns implementation after the UI handoff:
 
 Claude is not allowed to silently invent or replace missing approved visual decisions.
 
-## GitHub as the bridge
+If an approved resource/decision is missing, Claude creates a project request and returns that UI responsibility to ChatGPT.
+
+---
+
+# GitHub as the bridge
 
 Each real project should normally use its own project repository.
+
+The public `webbyLucifer` repository contains generalized workflow knowledge. Client production assets/code belong in the private/appropriate project repository.
 
 GitHub acts as:
 
@@ -108,7 +219,7 @@ VERSIONED COMMUNICATION BUS
 + QA EXCHANGE
 ```
 
-A typical handoff package contains:
+A typical project handoff package contains:
 
 ```text
 .webby/
@@ -128,21 +239,102 @@ A typical handoff package contains:
 └── qa/
 ```
 
+Production resources remain separated from authoritative/source files:
+
+```text
+assets/
+├── source/
+│   ├── vectors/
+│   └── raster/
+└── production/
+    ├── svg/
+    ├── images/
+    ├── logos/
+    └── ornaments/
+```
+
 Claude pulls the exact UI state/commit, implements it, pushes code, then ChatGPT reviews browser output against the approved visual truth.
 
-If Claude encounters a missing approved UI resource, it should create a request in the project handoff area rather than inventing the UI itself.
+---
 
-## Drive vs GitHub
+# Quick start for a real project
+
+## 1. Load the skill
+
+Read:
+
+```text
+SKILL.md
+```
+
+Then use only the reference files relevant to the current phase.
+
+## 2. Start GĐ1
+
+ChatGPT normalizes the client input, verifies delivery access where required, researches the design language, renders requested demo directions and obtains visual approval.
+
+## 3. Complete GĐ2/GĐ3
+
+ChatGPT builds the complete Master/component system and production UI package.
+
+Use the repository templates as starting points for the project `.webby/` package.
+
+## 4. Run the hard gate
+
+Copy/adapt:
+
+```text
+templates/UI_SETUP_CHECKLIST.md
+```
+
+Do not hand off until all applicable required items pass.
+
+## 5. Publish to the project GitHub repository
+
+ChatGPT commits:
+
+- production assets;
+- maps/specs;
+- `PROJECT_STATE.yaml`;
+- `HANDOFF.json`;
+- `CLAUDE_TASK.md`.
+
+Record the deterministic UI commit/state.
+
+## 6. Claude implements
+
+Claude pulls the repo, reads the handoff contract, builds static visual parity first, then UX/frontend behavior and backend/CMS/logic.
+
+## 7. ChatGPT QA
+
+ChatGPT compares browser output against approved visual truth and returns defects through the GitHub QA contract until production acceptance.
+
+---
+
+# Drive vs GitHub
 
 Google Drive remains useful for client-facing full-resolution WEB/MOBILE design delivery and heavy original materials.
 
 GitHub is the operational bridge between ChatGPT and Claude for production assets, implementation specs, code state and QA exchange.
 
-## Source-first principle
+---
 
-Never guess production assets when an authoritative source exists. Do not crop screenshots to fake extractable assets, redraw existing vectors by eye, replace approved fonts with close alternatives, or convert normal UI sections into giant SVG screenshots.
+# Source-first principle
 
-## Canonical repository
+Never guess production assets when an authoritative source exists.
+
+Do not:
+
+- crop screenshots to fake extractable assets;
+- redraw existing vectors by eye;
+- replace approved fonts with close alternatives;
+- replace custom approved icons with convenient generic icons;
+- convert normal UI sections into giant SVG screenshots;
+- optimize visual resources before fidelity is verified.
+
+---
+
+# Canonical repository
 
 This repository is the canonical public source of truth for the skill:
 
@@ -150,8 +342,12 @@ This repository is the canonical public source of truth for the skill:
 th6322750-stack/webbyLucifer
 ```
 
-Do not create random `v2`, `new`, `final`, or `final-final` replacement repositories. Generalized improvements are committed here only after explicit user approval.
+Do not create random `v2`, `new`, `final`, or `final-final` replacement repositories.
 
-## Privacy
+Generalized improvements are committed here only after explicit user approval.
+
+---
+
+# Privacy
 
 Do not commit client secrets, private URLs, proprietary source code, unreleased designs, personal data, credentials, API keys or non-redistributable font/assets to this public skill repository.
