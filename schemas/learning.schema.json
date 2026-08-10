@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://webbylucifer.dev/schemas/learning.schema.json",
+  "title": "webbyLucifer Learning Store",
+  "type": "object",
+  "required": ["version", "lessons"],
+  "properties": {
+    "version": {"type": "integer", "minimum": 1},
+    "lessons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["lessonId", "scope", "category", "summary", "action", "status"],
+        "properties": {
+          "lessonId": {"type": "string", "minLength": 1},
+          "scope": {"enum": ["PROJECT", "GENERAL"]},
+          "category": {"type": "string", "minLength": 1},
+          "summary": {"type": "string", "minLength": 1},
+          "action": {"type": "string", "minLength": 1},
+          "evidence": {"type": "array", "items": {"type": "string"}},
+          "appliesTo": {"type": "array", "items": {"type": "string"}},
+          "tags": {"type": "array", "items": {"type": "string"}},
+          "status": {"enum": ["ACTIVE", "SUPERSEDED", "RETIRED"]}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}
