@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "uiCommit": "<ui-package-commit>",
+  "placements": [
+    {
+      "asset": "hero-gold-wave",
+      "file": "assets/production/svg/hero-gold-wave.svg",
+      "route": "/",
+      "section": "hero",
+      "component": "Hero",
+      "role": "decorative-background",
+      "desktop": {
+        "position": "absolute",
+        "anchor": "bottom-right",
+        "width": "48%",
+        "zIndex": 2,
+        "overflow": "visible"
+      },
+      "mobile": {
+        "position": "absolute",
+        "anchor": "bottom-center",
+        "width": "92%",
+        "zIndex": 2,
+        "overflow": "hidden"
+      },
+      "behavior": {
+        "pointerEvents": "none",
+        "accessibility": "DECORATIVE"
+      },
+      "mustNot": [
+        "redraw with CSS",
+        "change approved colors",
+        "move to another section"
+      ]
+    }
+  ]
+}
