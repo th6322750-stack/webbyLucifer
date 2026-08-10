@@ -1,0 +1,82 @@
+project_name: null
+project_repository: null
+project_type: UNDECIDED # LANDING_PAGE | WEBSITE
+phase: DESIGN
+
+ownership:
+  visual_authority: CHATGPT
+  implementation_authority: CLAUDE
+  exchange_layer: GITHUB
+
+input:
+  manifest_ready: false
+  hard_blockers: []
+  soft_gaps: []
+  assumptions: []
+
+drive:
+  connected: unknown
+  writable: unknown
+  project_folder: null
+  uploads_verified: false
+
+design:
+  research_complete: false
+  demo_direction_count: null
+  demo_previews_rendered: false
+  selected_directions: []
+  direction_locked: false
+  sitemap: []
+  required_web_pages: []
+  required_mobile_pages: []
+  admin_required: false
+  web_approved: false
+  mobile_approved: false
+  full_page_verified: false
+  resolution_verified: false
+  fonts_packaged: false
+
+master:
+  mode: UNDECIDED # FIGMA_MASTER | SVG_MASTER | BOTH_BENCHMARK
+  ready: false
+
+ui_setup:
+  component_system_ready: false
+  component_states_ready: false
+  production_assets_ready: false
+  svg_qa_pass: false
+  typography_ready: false
+  tokens_ready: false
+  route_map_ready: false
+  section_map_ready: false
+  component_map_ready: false
+  placement_map_ready: false
+  responsive_ready: false
+  interactions_ready: false
+  claude_task_ready: false
+  handoff_ready: false
+  github_commit_verified: false
+  hard_ui_blockers: []
+  ui_setup_complete: false
+
+handoff:
+  producer: CHATGPT
+  executor: CLAUDE
+  ui_commit: null
+  consumed_ui_commit: null
+  status: NOT_READY
+
+implementation:
+  static_ui_pass: false
+  ux_pass: false
+  functional_pass: false
+
+qa:
+  visual_pass: false
+  responsive_pass: false
+  accessibility_pass: false
+  performance_pass: false
+  backend_pass: false
+  open_defects: 0
+
+production_ready: false
