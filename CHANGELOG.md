@@ -1,5 +1,30 @@
 # Changelog
 
+## 2.1.0 — 2026-08-11
+
+### Added
+
+- actor/phase-aware runtime router to avoid loading the entire legacy workflow by default;
+- Claude Minimal Handoff protocol and `.webby/claude-pack/` contract;
+- token-efficiency rule: design knowledge is compressed into implementation instructions instead of transferred as rationale;
+- optional `contractDigest`, `handoffCommit`, Claude-pack identity and audience metadata;
+- project learning loop for evidence-backed UI, implementation and QA lessons;
+- learning JSON schema;
+- stronger semantic validation for contract identity, component/asset/placement references, Claude-pack presence and duplicate learning IDs.
+
+### Changed
+
+- `WORKFLOW_BASELINE_V1.md` is now legacy/compatibility authority instead of mandatory runtime context;
+- Claude is explicitly excluded from full design knowledge, SVG-generation instructions, rejected UI history and unrelated QA/history by default;
+- ChatGPT remains responsible for all material UI decisions before implementation;
+- Webby now has an explicit `ROUTE + COMPRESS + VERIFY` role;
+- handoff identity no longer assumes a Git commit can contain its own final SHA;
+- protocol version bumped to `2.1.0`.
+
+### Goal
+
+Reduce Claude context/token usage and UI drift while preserving deterministic implementation and a reusable learning loop.
+
 ## 2.0.0 — 2026-08-10
 
 ### Added
