@@ -35,6 +35,52 @@ def sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
+def validate_visual_handoff(root: Path, handoff: dict, errors: list[str]) -> None:
+    visual = handoff.get("visualHandoff")
+    if not visual:
+        return
+
+    routes_rel = visual.get("routesFile")
+    if not routes_rel:
+        if visual.get("mode") == "VISUAL_FIRST" and handoff.get("status") == "UI_SETUP_COMPLETE":
+            errors.append("VISUAL_FIRST UI_SETUP_COMPLETE handoff requires visualHandoff.routesFile")
+        return
+
+    routes_path = root / routes_rel
+    try:
+        route_data = load_json(routes_path)
+    except ValueError as exc:
+        errors.append(str(exc))
+        return
+
+    route_revision = route_data.get("uiRevision")
+    if route_revision is not None and route_revision != handoff.get("uiRevision"):
+        errors.append("uiRevision mismatch between HANDOFF and visual handoff routes file")
+
+    route_commit = route_data.get("uiCommit")
+    if route_commit is not None and route_commit != handoff.get("uiCommit"):
+        errors.append("uiCommit mismatch between HANDOFF and visual handoff routes file")
+
+    routes = route_data.get("routes")
+    if not isinstance(routes, dict) or not routes:
+        errors.append("visual handoff routes file must contain a non-empty routes object")
+        return
+
+    base = routes_path.parent
+    for route, viewports in routes.items():
+        if not isinstance(viewports, dict) or not viewports:
+            errors.append(f"visual route has no viewport renders: {route}")
+            continue
+        for viewport, render_rel in viewports.items():
+            if not isinstance(render_rel, str) or not render_rel.strip():
+                errors.append(f"visual route render path is invalid: {route} [{viewport}]")
+                continue
+            render_path = Path(render_rel)
+            target = render_path if render_path.is_absolute() else base / render_path
+            if not target.exists():
+                errors.append(f"approved visual render does not exist: {route} [{viewport}] -> {render_rel}")
+
+
 def validate_project(root: Path) -> list[str]:
     errors: list[str] = []
     webby = root / ".webby"
@@ -59,6 +105,8 @@ def validate_project(root: Path) -> list[str]:
     for rel in handoff.get("requiredInputs", []):
         if not (root / rel).exists():
             errors.append(f"required input does not exist: {rel}")
+
+    validate_visual_handoff(root, handoff, errors)
 
     try:
         lock = load_json(lock_path)
