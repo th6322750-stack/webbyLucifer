@@ -1,5 +1,48 @@
 # Changelog
 
+## 2.2.0 — 2026-08-11
+
+### Added
+
+- mandatory **GĐ0 — Intake / Discovery / Personalization** before GĐ1;
+- adaptive discovery loop that inspects existing user/project evidence before asking questions;
+- hard rule preventing agents from asking users to repeat already-known information;
+- `INTAKE_COMPLETE` gate before design;
+- `KNOWN / ASSUMED / SOFT_GAP / HARD_GAP / NOT_APPLICABLE` intake classification;
+- `references/INTAKE_DISCOVERY_PROTOCOL.md`;
+- `.webby/PROJECT_INTAKE.json` project state convention;
+- `schemas/project-intake.schema.json`;
+- `templates/PROJECT_INTAKE.example.json`;
+- optional intake metadata in `HANDOFF.json` schema;
+- v2.2+ validator checks for missing/incomplete intake, remaining `HARD_GAP`, missing core audience/goal/scope data and missing personalization signals.
+
+### Changed
+
+- canonical workflow is now `GĐ0 → GĐ1 → GĐ2 → GĐ3 → GĐ4 → GĐ5 → GĐ6 → GĐ7`;
+- the old baseline `GĐ1.P PROJECT INTAKE / EVIDENCE LOCK` responsibility is absorbed into GĐ0 to avoid duplicate intake;
+- `SKILL.md` was condensed into a lower-token orchestration entrypoint while retaining hard rules and phase-specific protocol references;
+- GĐ1 may not begin while an unresolved material `HARD_GAP` can change design direction, personalization, conversion logic or scope;
+- GĐ0 prioritizes the smallest useful set of high-information questions instead of a fixed generic questionnaire.
+
+### Preserved
+
+- GĐ1→GĐ7 responsibilities and ownership;
+- ChatGPT as full visual/UI authority;
+- Claude as implementation authority;
+- GitHub as versioned exchange/state layer;
+- Visual-First Handoff from v2.1;
+- approved render as visible UI truth;
+- minimal invisible/ambiguous behavior contract;
+- route-scoped/context-on-demand token rules;
+- source-first production asset rules;
+- WEB/MOBILE final UI requirements;
+- SVG production pipeline;
+- deterministic UI revision and `WEBBY_LOCK.json`;
+- stale-handoff protection;
+- request lifecycle;
+- implementation receipts;
+- approved-render ↔ browser-screenshot visual QA loop.
+
 ## 2.1.0 — 2026-08-11
 
 ### Added
@@ -54,9 +97,9 @@
 
 ### Changed
 
-- `SKILL.md` is now a v2 orchestration entrypoint;
+- `SKILL.md` became a v2 orchestration entrypoint;
 - the full v1 GĐ1→GĐ7 workflow is preserved unchanged as `references/WORKFLOW_BASELINE_V1.md` and incorporated by reference;
-- `UI_SETUP_COMPLETE` is strengthened from a human checklist to a machine-verifiable handoff gate when tooling is available.
+- `UI_SETUP_COMPLETE` was strengthened from a human checklist to a machine-verifiable handoff gate when tooling is available.
 
 ### Preserved
 
