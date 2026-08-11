@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "status": "INTAKE_COMPLETE",
+  "project": {
+    "name": "Example Project",
+    "businessOrOffer": "Example service",
+    "projectType": "WEBSITE"
+  },
+  "goal": {
+    "primary": "Present the service clearly",
+    "conversion": "Generate qualified inquiries"
+  },
+  "audience": {
+    "primary": "People actively comparing providers",
+    "needs": ["clarity", "trust", "fast contact"],
+    "trustSignals": ["real work", "clear process"]
+  },
+  "brand": {},
+  "content": {},
+  "assets": [],
+  "references": [],
+  "scope": {
+    "routes": ["/"],
+    "features": ["contact CTA"],
+    "responsive": ["desktop", "mobile"]
+  },
+  "technical": {},
+  "mustHave": [],
+  "mustNotHave": [],
+  "personalizationSignals": ["Audience prioritizes speed and trust"],
+  "assumptions": [],
+  "gaps": [
+    {
+      "field": "exampleSoftGap",
+      "status": "SOFT_GAP",
+      "note": "May be resolved during production without changing design direction"
+    }
+  ]
+}
