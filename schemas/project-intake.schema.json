@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://webbylucifer.dev/schemas/project-intake.schema.json",
+  "title": "webbyLucifer Project Intake",
+  "type": "object",
+  "required": ["schemaVersion", "status", "project", "goal", "audience", "scope", "gaps"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "status": {"enum": ["IN_PROGRESS", "INTAKE_COMPLETE"]},
+    "updatedAt": {"type": "string"},
+    "project": {
+      "type": "object",
+      "properties": {
+        "name": {"type": ["string", "null"]},
+        "businessOrOffer": {"type": ["string", "null"]},
+        "projectType": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    },
+    "goal": {
+      "type": "object",
+      "properties": {
+        "primary": {"type": ["string", "null"]},
+        "conversion": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    },
+    "audience": {
+      "type": "object",
+      "properties": {
+        "primary": {"type": ["string", "null"]},
+        "needs": {"type": "array", "items": {"type": "string"}},
+        "trustSignals": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": true
+    },
+    "brand": {"type": "object", "additionalProperties": true},
+    "content": {"type": "object", "additionalProperties": true},
+    "assets": {"type": "array", "items": {"type": "object", "additionalProperties": true}},
+    "references": {"type": "array", "items": {"type": "object", "additionalProperties": true}},
+    "scope": {
+      "type": "object",
+      "properties": {
+        "routes": {"type": "array", "items": {"type": "string"}},
+        "features": {"type": "array", "items": {"type": "string"}},
+        "responsive": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": true
+    },
+    "technical": {"type": "object", "additionalProperties": true},
+    "mustHave": {"type": "array", "items": {"type": "string"}},
+    "mustNotHave": {"type": "array", "items": {"type": "string"}},
+    "personalizationSignals": {"type": "array", "items": {"type": "string"}},
+    "assumptions": {"type": "array", "items": {"type": "string"}},
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field", "status"],
+        "properties": {
+          "field": {"type": "string", "minLength": 1},
+          "status": {"enum": ["KNOWN", "ASSUMED", "SOFT_GAP", "HARD_GAP", "NOT_APPLICABLE"]},
+          "note": {"type": ["string", "null"]}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}
