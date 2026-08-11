@@ -1,6 +1,6 @@
-# webbyLucifer v2.1
+# webbyLucifer v2.2
 
-`webbyLucifer` is a public multi-agent Design→Code workflow for taking a web project from client brief to **approved full UI → visual-first production handoff → Claude implementation → ChatGPT visual comparison → production website**.
+`webbyLucifer` is a public multi-agent web workflow for taking a project from **raw/incomplete user input → personalized intake → approved full UI → visual-first implementation handoff → Claude implementation → ChatGPT visual QA → production website**.
 
 ```text
 CHATGPT = FULL UI AUTHORITY
@@ -8,58 +8,112 @@ CLAUDE  = IMPLEMENTATION AUTHORITY
 GITHUB  = VERSIONED EXCHANGE LAYER / SHARED PROJECT STATE
 ```
 
-The canonical entrypoint is [`SKILL.md`](./SKILL.md).
+Canonical entrypoint: [`SKILL.md`](./SKILL.md).
 
-## What changed in v2.1
+## What changed in v2.2
 
-The GĐ1→GĐ7 workflow and all v2 safety/verification infrastructure are preserved. v2.1 optimizes the UI→implementation bridge with:
+v2.2 adds a mandatory phase before design:
 
-- **Visual-First Handoff** — approved full-page renders carry visible UI truth;
-- **Minimal Contract** — contracts focus on behavior, state, responsive rules, data and ambiguity rather than repeating obvious visible layout;
-- route/viewport render mapping through `.webby/visual-handoff/routes.json`;
-- route-scoped and component-scoped context loading to reduce unnecessary Claude token usage;
-- visual reconstruction before implementation;
-- implementation targets for normal code stacks and optional WordPress + Elementor;
-- browser screenshot → approved render visual QA loop;
-- validator checks for visual handoff mapping and missing approved renders.
+```text
+GĐ0 — INTAKE / DISCOVERY / PERSONALIZATION
+```
 
-Central rule:
+GĐ0 is an adaptive discovery loop, not a fixed questionnaire.
+
+Before asking anything, ChatGPT inspects all information the user already supplied: messages, links, screenshots, files, logo/brand assets, existing website/repository context, products/services, audience clues, content, references, features and technical constraints.
+
+Then it asks only the missing questions that can materially improve or constrain the project.
+
+Central GĐ0 rule:
+
+```text
+READ EXISTING INPUT FIRST
+ASK ONLY WHAT IS MISSING
+DO NOT RE-ASK KNOWN INFORMATION
+DO NOT START GĐ1 WITH A MATERIAL HARD GAP
+```
+
+The normalized state can be stored as:
+
+```text
+.webby/PROJECT_INTAKE.json
+```
+
+using `schemas/project-intake.schema.json`.
+
+## Core workflow
+
+```text
+RAW / PARTIAL USER INPUT
+↓
+GĐ0 — INTAKE / DISCOVERY / PERSONALIZATION     ChatGPT
+↓
+INTAKE_COMPLETE
+↓
+GĐ1 — DESIGN / FULL-PAGE UI                    ChatGPT
+GĐ2 — FULL UI MASTER / DESIGN SYSTEM           ChatGPT
+↓
+USER APPROVAL
+↓
+APPROVED VISUAL TRUTH
+↓
+GĐ3 — VISUAL-FIRST PRODUCTION HANDOFF          ChatGPT
+↓
+APPROVED RENDERS + MINIMAL CONTRACT
+↓
+SCHEMA + LOCK + VALIDATION
+↓
+UI_SETUP_COMPLETE
+↓
+GĐ4 — VISUAL RECONSTRUCTION / IMPLEMENTATION   Claude
+GĐ5 — UX / FRONTEND ENHANCEMENT                Claude
+GĐ6 — BACKEND / CMS / LOGIC                    Claude
+↓
+REAL WEBSITE SCREENSHOT
+↓
+GĐ7 — CHATGPT VISUAL QA ↔ EXECUTOR FIX
+↓
+PRODUCTION_READY
+```
+
+## GĐ0 completion gate
+
+`INTAKE_COMPLETE = true` only when the project has enough evidence to design specifically for that user/project rather than produce a generic template.
+
+Typical required understanding:
+
+- what is being designed;
+- who it is for;
+- primary goal / conversion goal;
+- what makes the project distinct;
+- authoritative content/assets/references;
+- pages/routes/features in scope;
+- important must-have and must-not-have constraints;
+- enough personalization signals to guide design;
+- no unresolved `HARD_GAP` that can materially change design or scope.
+
+Missing information is classified as:
+
+```text
+KNOWN
+ASSUMED
+SOFT_GAP
+HARD_GAP
+NOT_APPLICABLE
+```
+
+A `SOFT_GAP` does not automatically block design. A material `HARD_GAP` does.
+
+## Visual-first handoff remains active
+
+v2.2 keeps the v2.1 principle:
 
 ```text
 IMAGE    = VISIBLE FORM
 CONTRACT = INVISIBLE / AMBIGUOUS BEHAVIOR
 ```
 
-## Core workflow
-
-```text
-GĐ1 — DESIGN / FULL-PAGE UI                    ChatGPT
-GĐ2 — FULL UI MASTER / DESIGN SYSTEM           ChatGPT
-                 ↓
-          USER APPROVAL
-                 ↓
-        APPROVED VISUAL TRUTH
-                 ↓
-GĐ3 — VISUAL-FIRST PRODUCTION HANDOFF          ChatGPT
-                 ↓
- APPROVED RENDERS + MINIMAL CONTRACT
-                 ↓
-       SCHEMA + LOCK + VALIDATION
-                 ↓
-          UI_SETUP_COMPLETE
-                 ↓
-GĐ4 — VISUAL RECONSTRUCTION / IMPLEMENTATION   Claude
-                 ↓
-        REAL WEBSITE SCREENSHOT
-                 ↓
-        CHATGPT VISUAL COMPARISON
-                 ↓
-          DEFECTS ↔ CLAUDE FIX
-                 ↓
-GĐ5 — UX / FRONTEND ENHANCEMENT                Claude
-GĐ6 — BACKEND / CMS / LOGIC                    Claude
-GĐ7 — FINAL QA / PRODUCTION                    ChatGPT QA ↔ Claude fixes
-```
+Approved WEB/MOBILE renders carry visible UI truth. Contracts focus on responsive behavior, interactions, state, data/CMS/API binding, accessibility, routing and other information that images cannot safely communicate.
 
 ## Package
 
@@ -70,6 +124,7 @@ webbyLucifer/
 ├── CHANGELOG.md
 ├── references/
 │   ├── WORKFLOW_BASELINE_V1.md
+│   ├── INTAKE_DISCOVERY_PROTOCOL.md
 │   ├── VISUAL_HANDOFF_PROTOCOL.md
 │   ├── GITHUB_HANDOFF_PROTOCOL.md
 │   ├── AGENT_OWNERSHIP_PROTOCOL.md
@@ -78,6 +133,7 @@ webbyLucifer/
 │   ├── KNOWLEDGE_PACK.md
 │   └── SVG_PRODUCTION_PIPELINE.md
 ├── schemas/
+│   ├── project-intake.schema.json
 │   ├── handoff.schema.json
 │   ├── visual-handoff.schema.json
 │   ├── webby-lock.schema.json
@@ -88,6 +144,7 @@ webbyLucifer/
 │   ├── implementation-receipt.schema.json
 │   └── qa-defects.schema.json
 ├── templates/
+│   ├── PROJECT_INTAKE.example.json
 │   ├── WEBBY_LOCK.example.json
 │   ├── IMPLEMENTATION_RECEIPT.example.json
 │   ├── QA_DEFECTS.example.json
@@ -96,20 +153,17 @@ webbyLucifer/
     └── webby-validate.py
 ```
 
-## Visual-first handoff
-
-A typical project can now publish:
+## Typical project `.webby/`
 
 ```text
 .webby/
+├── PROJECT_INTAKE.json
+├── PROJECT_STATE.yaml
 ├── HANDOFF.json
 ├── WEBBY_LOCK.json
 ├── visual-handoff/
 │   ├── routes.json
-│   ├── home-desktop.png
-│   ├── home-mobile.png
-│   ├── product-desktop.png
-│   └── product-mobile.png
+│   └── approved WEB/MOBILE renders...
 ├── responsive.json
 ├── interactions.json
 ├── asset-manifest.json
@@ -121,71 +175,30 @@ A typical project can now publish:
     └── qa-report.json
 ```
 
-The package does **not** require token-heavy text that restates every visible element. Optional component/placement contracts remain available when exact structure or geometry is materially needed.
+## Validator
 
-## Hard handoff gate
-
-Claude does not begin implementation simply because a prompt says the UI is ready. The project must satisfy applicable visual setup rules and publish a deterministic active UI state.
-
-```text
-UI_SETUP_COMPLETE =
-approved visual scope
-+ required approved route renders
-+ minimal non-visible behavior contract
-+ deterministic handoff
-+ lock
-+ no hard UI blocker
-+ non-stale state
-+ validation when available
-```
-
-## Implementation targets
-
-### CODE — default
-
-```text
-Approved Render
-→ Visual Reconstruction
-→ React / Next.js / Vue / HTML/CSS / selected stack
-```
-
-### ELEMENTOR — only when required
-
-```text
-Approved Render
-→ Visual Reconstruction
-→ Elementor-compatible JSON/template
-→ WordPress import
-```
-
-Elementor is only an implementation target. It does not replace webbyLucifer's authority, lock, revision, request, receipt or QA rules.
-
-## Visual QA
-
-```text
-Approved Render = expected visual state
-Browser Screenshot = implementation evidence
-```
-
-ChatGPT compares the real website at the matching viewport, publishes actionable defects, Claude fixes them, and ChatGPT re-checks before closure.
-
-## Validation
-
-Run the dependency-light semantic validator against a real project repository:
+Run:
 
 ```bash
 python scripts/webby-validate.py /path/to/project
 ```
 
-The v2.1 validator also checks a declared Visual-First handoff's `routesFile`, route mappings, referenced render files, and UI revision/commit metadata when present.
+For v2.2+ projects declaring `UI_SETUP_COMPLETE`, the validator can reject handoffs when:
 
-JSON Schemas under `schemas/` provide stronger machine contracts for schema-aware tooling.
+- `PROJECT_INTAKE.json` is missing;
+- intake is not `INTAKE_COMPLETE`;
+- `HARD_GAP` items remain;
+- core project/audience/goal/scope intake data is absent;
+- no personalization signal is recorded;
+- existing Visual-First handoff/lock/render rules fail.
 
 ## Compatibility
 
-v2.1 is an optimization of the handoff/implementation bridge, not a redesign of the workflow. Existing GĐ1–GĐ7 responsibilities, source-first rules, full WEB/MOBILE design requirements, SVG pipeline, revision/lock protection, request loop, implementation receipts and visual QA remain active.
+v2.2 adds GĐ0 before the existing workflow. GĐ1→GĐ7 ownership and responsibilities remain preserved.
 
-The full v1 workflow is preserved unchanged in `references/WORKFLOW_BASELINE_V1.md` and incorporated by the current skill.
+The older `GĐ1.P PROJECT INTAKE / EVIDENCE LOCK` from `references/WORKFLOW_BASELINE_V1.md` is absorbed into GĐ0 in v2.2; agents must not run duplicate intake.
+
+Source-first assets, WEB/MOBILE final UI, SVG production, Visual-First Handoff, revision/lock protection, request lifecycle, implementation receipts and visual QA remain active.
 
 ## Canonical repository
 
@@ -193,4 +206,4 @@ The full v1 workflow is preserved unchanged in `references/WORKFLOW_BASELINE_V1.
 th6322750-stack/webbyLucifer
 ```
 
-Generalized improvements belong in this repository only after explicit user approval. Client secrets, proprietary code, unreleased client designs, credentials, personal data and non-redistributable assets must never be published here.
+Generalized improvements belong in this repository only after explicit user approval. Do not publish client secrets, proprietary code, unreleased client designs, credentials, personal data or non-redistributable assets here.
