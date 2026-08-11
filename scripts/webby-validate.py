@@ -6,7 +6,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import sys
 from pathlib import Path
 
 REQUIRED_HANDOFF_KEYS = {
@@ -33,6 +32,72 @@ def sha256_file(path: Path) -> str:
         for chunk in iter(lambda: f.read(1024 * 1024), b""):
             h.update(chunk)
     return h.hexdigest()
+
+
+def version_tuple(value) -> tuple[int, int, int]:
+    try:
+        parts = str(value).split(".")[:3]
+        nums = [int(part) for part in parts]
+        while len(nums) < 3:
+            nums.append(0)
+        return tuple(nums)
+    except (TypeError, ValueError):
+        return (0, 0, 0)
+
+
+def validate_intake(root: Path, handoff: dict, lock: dict, errors: list[str]) -> None:
+    intake_cfg = handoff.get("intake") or {}
+    intake_rel = intake_cfg.get("file", ".webby/PROJECT_INTAKE.json")
+    intake_path = root / intake_rel
+
+    v22_or_newer = version_tuple(lock.get("skillVersion")) >= (2, 2, 0)
+    ready = handoff.get("status") == "UI_SETUP_COMPLETE"
+    required = v22_or_newer and ready
+
+    if not intake_path.exists():
+        if required:
+            errors.append(f"v2.2+ UI_SETUP_COMPLETE requires project intake file: {intake_rel}")
+        return
+
+    try:
+        intake = load_json(intake_path)
+    except ValueError as exc:
+        errors.append(str(exc))
+        return
+
+    declared_status = intake_cfg.get("status")
+    actual_status = intake.get("status")
+    if declared_status and declared_status != actual_status:
+        errors.append("intake status mismatch between HANDOFF and PROJECT_INTAKE")
+
+    hard_gaps = [
+        gap.get("field", "<unknown>")
+        for gap in intake.get("gaps", [])
+        if isinstance(gap, dict) and gap.get("status") == "HARD_GAP"
+    ]
+
+    if ready and actual_status != "INTAKE_COMPLETE":
+        errors.append("UI_SETUP_COMPLETE requires PROJECT_INTAKE status INTAKE_COMPLETE")
+    if ready and hard_gaps:
+        errors.append(f"INTAKE_COMPLETE cannot contain HARD_GAP items: {hard_gaps}")
+
+    if required:
+        project = intake.get("project") or {}
+        goal = intake.get("goal") or {}
+        audience = intake.get("audience") or {}
+        scope = intake.get("scope") or {}
+        personalization = intake.get("personalizationSignals") or []
+
+        if not project.get("businessOrOffer"):
+            errors.append("v2.2+ intake requires project.businessOrOffer")
+        if not (goal.get("primary") or goal.get("conversion")):
+            errors.append("v2.2+ intake requires a primary or conversion goal")
+        if not audience.get("primary"):
+            errors.append("v2.2+ intake requires audience.primary")
+        if not (scope.get("routes") or scope.get("features")):
+            errors.append("v2.2+ intake requires route or feature scope")
+        if not personalization:
+            errors.append("v2.2+ intake requires at least one personalization signal")
 
 
 def validate_visual_handoff(root: Path, handoff: dict, errors: list[str]) -> None:
@@ -124,6 +189,8 @@ def validate_project(root: Path) -> list[str]:
         errors.append("uiRevision mismatch between HANDOFF and WEBBY_LOCK")
     if handoff.get("uiCommit") != lock.get("uiCommit"):
         errors.append("uiCommit mismatch between HANDOFF and WEBBY_LOCK")
+
+    validate_intake(root, handoff, lock, errors)
 
     for entry in lock.get("files", []):
         rel = entry.get("path")
