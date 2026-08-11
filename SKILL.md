@@ -1,103 +1,283 @@
-# webbyLucifer — `change_web` v2.1
+# webbyLucifer — `change_web` v2.2
 
-> **Mission:** turn a client brief into approved full UI prepared by ChatGPT, publish implementation-ready approved visual truth plus only the contracts needed for invisible/ambiguous behavior through GitHub, let Claude implement without visual invention, then verify the real website against the approved visual truth.
+> **Mission:** turn incomplete client/user input into a complete personalized brief, then let ChatGPT own the approved visual truth, publish a visual-first implementation handoff through GitHub, let Claude implement without visual invention, and verify the real website against the approved design.
 >
 > **Core architecture:** **ChatGPT = FULL UI AUTHORITY. Claude = IMPLEMENTATION AUTHORITY. GitHub = VERSIONED EXCHANGE LAYER / SHARED PROJECT STATE.**
 >
-> **v2.1 principle:** **VISUAL FIRST — CONTRACT SECOND. Images carry visible form; contracts carry behavior, state, responsive rules, data and ambiguity.**
+> **v2.2 operating principles:** **DISCOVER BEFORE DESIGN. VISUAL FIRST — CONTRACT SECOND.**
 
-## 0. Compatibility and load order
+---
 
-webbyLucifer v2.1 keeps the complete GĐ1→GĐ7 workflow from v1 and all machine-verifiable safeguards introduced in v2. The previous canonical design/workflow rules remain preserved unchanged in:
+# 0. Compatibility and load order
+
+webbyLucifer v2.2 preserves all GĐ1→GĐ7 responsibilities from the v1 baseline and all v2/v2.1 machine-verifiable handoff safeguards. v2.2 adds one mandatory phase before design:
+
+```text
+GĐ0 — INTAKE / DISCOVERY / PERSONALIZATION — ChatGPT
+```
+
+Canonical detailed rules:
 
 ```text
 references/WORKFLOW_BASELINE_V1.md
-```
-
-An agent using this skill MUST read this file first, then read the v1 baseline, then only the phase-specific references needed for the current task.
-
-For GĐ3/GĐ4 visual transfer, also read:
-
-```text
+references/INTAKE_DISCOVERY_PROTOCOL.md
 references/VISUAL_HANDOFF_PROTOCOL.md
-```
-
-For final visual verification, read:
-
-```text
+references/GITHUB_HANDOFF_PROTOCOL.md
+references/AGENT_OWNERSHIP_PROTOCOL.md
 references/QA_PROTOCOL.md
 ```
 
-Precedence when rules conflict:
+Load only the references needed for the active phase.
+
+Required load behavior:
 
 ```text
-SKILL.md v2.1 hard rules
-> phase-specific v2.1 protocol
-> phase-specific v2 protocol
+START / NEW PROJECT
+→ SKILL.md
+→ INTAKE_DISCOVERY_PROTOCOL.md
+→ only then GĐ1-specific rules
+
+GĐ3 / GĐ4
+→ VISUAL_HANDOFF_PROTOCOL.md
+→ relevant GitHub/ownership rules
+
+GĐ7
+→ QA_PROTOCOL.md
+```
+
+Precedence:
+
+```text
+SKILL.md v2.2 hard rules
+> phase-specific v2.2 protocol
+> phase-specific v2.1/v2 protocol
 > WORKFLOW_BASELINE_V1.md
 > examples/templates
 ```
 
-The seven stages remain unchanged:
-
-```text
-GĐ1 — DESIGN / FULL-PAGE UI — ChatGPT
-GĐ2 — FULL UI MASTER / DESIGN SYSTEM — ChatGPT
-GĐ3 — FULL PRODUCTION UI SETUP / GITHUB HANDOFF — ChatGPT
-GĐ4 — STATIC FRONTEND IMPLEMENTATION — Claude by default
-GĐ5 — UX / FRONTEND ENHANCEMENT — selected implementation executor
-GĐ6 — BACKEND / CMS / LOGIC — selected implementation executor
-GĐ7 — QA / PRODUCTION — ChatGPT reviews; executor fixes
-```
-
-All design, source-first asset, Drive, Master, SVG, responsive, production packaging, request-loop and QA rules in the v1 baseline continue to apply unless this file explicitly strengthens them.
+When the baseline refers to `GĐ1.P PROJECT INTAKE / EVIDENCE LOCK`, v2.2 interprets that work as GĐ0. Do not perform the same intake twice.
 
 ---
 
-# 1. V2.1 operating principle
-
-v2 made the handoff machine-verifiable. v2.1 keeps that infrastructure and optimizes how visible UI truth reaches the executor.
+# 1. Canonical workflow
 
 ```text
-RULES
-+ APPROVED VISUAL TRUTH
-+ MINIMAL CONTRACT
-+ SCHEMAS
-+ STATE
-+ LOCK
-+ OWNERSHIP
-+ VALIDATION
-+ RECEIPTS
-+ QA CONTRACT
+GĐ0 — INTAKE / DISCOVERY / PERSONALIZATION      ChatGPT
+GĐ1 — DESIGN / FULL-PAGE UI                     ChatGPT
+GĐ2 — FULL UI MASTER / DESIGN SYSTEM            ChatGPT
+GĐ3 — VISUAL-FIRST PRODUCTION UI HANDOFF        ChatGPT
+GĐ4 — STATIC FRONTEND / VISUAL RECONSTRUCTION   Claude by default
+GĐ5 — UX / FRONTEND ENHANCEMENT                 selected executor
+GĐ6 — BACKEND / CMS / LOGIC                     selected executor
+GĐ7 — QA / PRODUCTION                           ChatGPT reviews; executor fixes
 ```
 
-The highest-priority rule remains:
+Hard flow:
 
-> **Claude must never be forced to guess an approved UI decision. ChatGPT must completely prepare the UI before implementation handoff.**
+```text
+USER INPUT
+↓
+GĐ0 DISCOVERY LOOP
+↓
+INTAKE_COMPLETE
+↓
+GĐ1 DESIGN
+↓
+GĐ2 MASTER / DESIGN SYSTEM
+↓
+USER APPROVAL
+↓
+APPROVED VISUAL TRUTH
+↓
+GĐ3 VISUAL-FIRST HANDOFF
+↓
+UI_SETUP_COMPLETE
+↓
+GĐ4 IMPLEMENTATION
+↓
+GĐ5 UX
+↓
+GĐ6 BACKEND/CMS/LOGIC
+↓
+GĐ7 VISUAL QA / PRODUCTION
+↓
+PRODUCTION_READY
+```
 
-v2 machine-verification rule remains:
+---
 
-> **A declaration is not enough. Critical handoff facts must be machine-verifiable whenever the project environment allows it.**
+# 2. GĐ0 — mandatory intake/discovery gate
 
-v2.1 adds:
+Read `references/INTAKE_DISCOVERY_PROTOCOL.md`.
 
-> **Do not spend tokens describing visible UI that an executor can reliably derive from an approved full-page render. Use contracts for information the render cannot safely communicate.**
+Before asking questions, ChatGPT MUST inspect all currently available project evidence: user messages, URLs, screenshots, files, logos, references, existing site/repo context, content, assets, audience clues, required features and technical constraints.
 
-Hard shorthand:
+Hard rule:
+
+> **Never ask the user to repeat information that is already sufficiently known from supplied context.**
+
+GĐ0 is an adaptive discovery loop, not a fixed questionnaire:
+
+```text
+INSPECT EXISTING INPUT
+↓
+NORMALIZE KNOWN FACTS
+↓
+IDENTIFY MATERIAL GAPS
+↓
+ASK TARGETED HIGH-VALUE QUESTIONS
+↓
+MERGE ANSWERS
+↓
+RE-EVALUATE GAPS
+↓
+REPEAT ONLY IF NEEDED
+↓
+INTAKE_COMPLETE
+```
+
+When the project repository is available, normalize GĐ0 state into:
+
+```text
+.webby/PROJECT_INTAKE.json
+```
+
+which SHOULD conform to:
+
+```text
+schemas/project-intake.schema.json
+```
+
+Important information is classified as:
+
+```text
+KNOWN
+ASSUMED
+SOFT_GAP
+HARD_GAP
+NOT_APPLICABLE
+```
+
+GĐ0 must collect enough evidence to answer, when applicable:
+
+```text
+WHAT are we designing?
+WHO is it for?
+WHY should that audience care?
+WHAT should visitors/users do next?
+WHAT makes this project distinct?
+WHAT content/assets/references are authoritative?
+WHAT pages/features are in scope?
+WHAT constraints must the design respect?
+```
+
+The purpose is personalized completeness, not maximum questioning.
+
+Do not ask low-value questions that do not materially affect design or implementation.
+
+Do not block on a `SOFT_GAP` that can be handled safely later.
+
+Do not silently invent a `HARD_GAP` answer.
+
+---
+
+# 3. INTAKE_COMPLETE hard gate
+
+Set:
+
+```text
+INTAKE_COMPLETE = true
+```
+
+only when:
+
+```text
+[ ] all available project inputs were inspected
+[ ] known answers were reused instead of re-asked
+[ ] project/business/offer is sufficiently understood
+[ ] target audience is known or an explicit safe assumption exists
+[ ] primary goal / conversion goal is known
+[ ] scope/routes/features are known enough to begin design
+[ ] brand/assets/reference status is understood
+[ ] important must-have / must-not-have constraints are captured
+[ ] enough personalization signals exist to avoid generic design
+[ ] assumptions and SOFT_GAP items are recorded
+[ ] no unresolved HARD_GAP remains
+```
+
+If any unresolved `HARD_GAP` can materially change design direction, personalization, conversion logic or scope:
+
+```text
+INTAKE_COMPLETE = false
+GĐ1 MUST NOT START
+```
+
+When complete, ChatGPT SHOULD summarize the normalized brief concisely and transition into GĐ1 without restarting discovery.
+
+If materially new user information arrives later, update intake state and any affected downstream revision instead of ignoring the change.
+
+---
+
+# 4. GĐ1 / GĐ2 — ChatGPT owns design truth
+
+All existing full UI, design research, source-first asset, WEB/MOBILE, Master/design system, SVG, responsive and approval rules in `references/WORKFLOW_BASELINE_V1.md` remain active.
+
+Highest-priority ownership rule:
+
+```text
+CHATGPT OWNS VISUAL TRUTH
+CLAUDE OWNS IMPLEMENTATION TRUTH
+```
+
+Claude MUST NOT independently:
+
+- invent missing UI;
+- choose replacement visual identity;
+- replace approved fonts/icons/assets for convenience;
+- change approved colors, spacing, typography, imagery or layout;
+- reinterpret desktop/mobile composition without authority;
+- silently simplify an approved section;
+- treat the current browser implementation as visual truth.
+
+Missing material UI must return through the request lifecycle rather than being designed by Claude.
+
+---
+
+# 5. v2.2 visual-first principle
+
+v2.2 preserves the v2.1 rule:
 
 ```text
 IMAGE = VISIBLE FORM
 CONTRACT = INVISIBLE / AMBIGUOUS BEHAVIOR
 ```
 
+Do not spend tokens describing visible UI that an executor can reliably derive from an approved full-page render.
+
+Use contracts for information a render cannot safely communicate, such as:
+
+- breakpoints and responsive transitions not represented by supplied renders;
+- hover/focus/active behavior;
+- animation/motion;
+- routes and navigation targets;
+- loading/empty/error/authenticated/selected states;
+- API/CMS/data binding;
+- accessibility behavior;
+- conditional visibility;
+- functional constraints / `mustNot` rules;
+- exact geometry only when material to fidelity.
+
+Token efficiency MUST NOT be used as justification to skip required authority or behavior information.
+
 ---
 
-# 2. GitHub contract layers
+# 6. GitHub project state
 
-Each project repository SHOULD contain:
+A project repository SHOULD use `.webby/` as the machine-readable exchange layer:
 
 ```text
 .webby/
+├── PROJECT_INTAKE.json
 ├── PROJECT_STATE.yaml
 ├── HANDOFF.json
 ├── WEBBY_LOCK.json
@@ -123,46 +303,19 @@ Each project repository SHOULD contain:
     └── qa-report.json
 ```
 
-Not every optional contract must be verbose or present when the same information is already authoritative and unambiguous elsewhere. Required inputs are project-specific and declared by the active handoff.
+Not every optional contract must be verbose or present when the information is authoritative and unambiguous elsewhere. Active required inputs are declared by the handoff.
 
-Production resources remain separated from authoritative/source files exactly as defined by the baseline workflow.
-
-## Machine contract
-
-The canonical schemas live under:
-
-```text
-schemas/
-```
-
-When a schema exists for a project file, agents SHOULD conform to that schema and validators SHOULD reject structurally invalid handoffs.
-
-`visual-handoff/routes.json`, when used, SHOULD conform to:
-
-```text
-schemas/visual-handoff.schema.json
-```
+Canonical schemas live under `schemas/`.
 
 ---
 
-# 3. Approved visual truth and authority
+# 7. GĐ3 — Visual-First Handoff
 
-After user approval, ChatGPT SHOULD publish implementation-relevant full-page renders for required routes and required viewports.
+Read `references/VISUAL_HANDOFF_PROTOCOL.md`.
 
-Example:
+After user approval, ChatGPT SHOULD publish implementation-relevant full-page renders for required routes/viewports.
 
-```text
-.webby/visual-handoff/
-├── routes.json
-├── home-desktop.png
-├── home-mobile.png
-├── product-desktop.png
-└── product-mobile.png
-```
-
-These approved renders become the primary visual reference for visible layout and presentation.
-
-Recommended authority order when applicable:
+Recommended visual authority order when applicable:
 
 ```text
 1. approved original/source asset
@@ -172,7 +325,7 @@ Recommended authority order when applicable:
 5. browser implementation
 ```
 
-This ordering does not mean an image overrides an authoritative original logo/SVG/native asset. Source-first asset rules remain mandatory.
+Source-first asset rules remain mandatory; an approved render does not replace an authoritative original logo/SVG/native asset.
 
 Hard rule:
 
@@ -181,15 +334,7 @@ BROWSER != APPROVED VISUAL TRUTH
 → FIX BROWSER IMPLEMENTATION
 ```
 
-Do not modify approved design merely because another implementation is easier.
-
----
-
-# 4. Visual-First Handoff — GĐ3
-
-Read `references/VISUAL_HANDOFF_PROTOCOL.md`.
-
-GĐ3 SHOULD package:
+GĐ3 packages:
 
 ```text
 APPROVED RENDERS
@@ -199,45 +344,32 @@ APPROVED RENDERS
 + HANDOFF / LOCK / REVISION STATE
 ```
 
-The contract SHOULD focus on things a static approved render cannot safely define, including:
-
-- breakpoints and responsive transitions not represented by supplied renders;
-- hover/focus/active behavior;
-- animation/motion;
-- navigation targets;
-- loading/empty/error/authenticated/selected states;
-- data/API/CMS binding;
-- accessibility behavior;
-- conditional visibility;
-- functional constraints and `mustNot` rules;
-- exact geometry only when material to fidelity.
-
-Do not duplicate obvious visible layout into long prose merely to make the handoff look detailed.
-
-Component maps and placement maps remain available when deterministic structure or geometry is materially useful. v2.1 reduces redundant description; it does not ban precision.
+`visual-handoff/routes.json`, when used, SHOULD conform to `schemas/visual-handoff.schema.json`.
 
 ---
 
-# 5. UI_SETUP_COMPLETE v2.1 hard gate
+# 8. UI_SETUP_COMPLETE hard gate
 
-The baseline checklist and v2 checks still apply. v2.1 additionally requires, when approved renders are part of the active scope:
+The baseline gate and v2/v2.1 safeguards remain active.
+
+For new v2.2 project flows, applicable checks include:
 
 ```text
-[ ] HANDOFF.json identifies a deterministic UI revision/commit
-[ ] WEBBY_LOCK.json exists
-[ ] required handoff files referenced by HANDOFF exist
-[ ] lock entries resolve to existing files
+[ ] INTAKE_COMPLETE is true before GĐ1-derived visual work is considered authoritative
+[ ] PROJECT_INTAKE has no unresolved HARD_GAP affecting active scope
+[ ] HANDOFF identifies deterministic UI revision/commit
+[ ] WEBBY_LOCK exists
+[ ] required handoff files exist
+[ ] lock entries resolve
 [ ] production assets referenced by manifests exist
 [ ] required route/viewport approved renders exist
-[ ] visual-handoff route mappings resolve to existing files
-[ ] active renders belong to the current UI revision/commit when revision metadata is used
-[ ] no stale approved render is referenced by the active handoff
-[ ] non-visible behavior required for implementation is explicitly contracted
+[ ] visual-handoff mappings resolve
+[ ] active visual package is not stale
+[ ] required non-visible behavior is contracted
 [ ] no unresolved HARD UI BLOCKER remains
-[ ] no OPEN blocking request makes the handoff incomplete
-[ ] agent ownership boundaries are declared
-[ ] handoff is not stale
-[ ] validation passes or an explicit validator-unavailable reason is recorded
+[ ] no OPEN blocking request conflicts with readiness
+[ ] ownership boundaries are declared
+[ ] validation passes or validator-unavailable reason is recorded
 ```
 
 Only then:
@@ -246,13 +378,9 @@ Only then:
 UI_SETUP_COMPLETE = true
 ```
 
-If validation is available and fails, `UI_SETUP_COMPLETE` MUST remain false.
-
-If a required render is missing and implementation would require visual invention, the affected scope is not ready.
-
 ---
 
-# 6. Deterministic UI revision and stale-handoff prevention
+# 9. Revision, lock and ownership
 
 A handoff SHOULD identify:
 
@@ -264,52 +392,28 @@ parentUiCommit
 createdAt
 ```
 
-`WEBBY_LOCK.json` SHOULD identify the exact contract and approved visual state the executor is expected to consume.
+`WEBBY_LOCK.json` identifies the exact contract and approved visual state the executor consumes.
 
-Claude records the consumed UI commit/revision before implementation.
-
-Before continuing implementation after pulling new repository state, compare:
-
-```text
-consumed UI revision/commit
-vs
-current active UI revision/commit
-```
-
-If the active UI package or its approved renders changed materially:
+If active UI or approved renders change materially after implementation begins:
 
 ```text
 STALE_HANDOFF
 ```
 
-Claude MUST NOT silently continue against an obsolete visual package. Pull and consume the new handoff or create a request when migration is ambiguous.
+Claude MUST consume the new handoff/revision or create a request when migration is ambiguous.
 
----
-
-# 7. Agent ownership / write boundaries
-
-Read `references/AGENT_OWNERSHIP_PROTOCOL.md`.
-
-Default model:
+Typical ChatGPT-owned content:
 
 ```text
-CHATGPT OWNS VISUAL TRUTH
-CLAUDE OWNS IMPLEMENTATION TRUTH
-```
-
-Typical ChatGPT-owned paths/content:
-
-```text
-.webby visual specs/maps
-.webby visual-handoff approved renders/mappings
-.webby HANDOFF/LOCK state
-assets/source visual authority
-assets/production visual resources
+PROJECT_INTAKE / visual specs / maps
+visual-handoff approved renders/mappings
+HANDOFF / WEBBY_LOCK
+source + production visual assets
 design/master outputs
-.webby/qa visual acceptance/defects
+visual QA defects/acceptance
 ```
 
-Typical Claude-owned paths/content:
+Typical executor-owned content:
 
 ```text
 src/**
@@ -321,81 +425,23 @@ implementation configuration
 .webby/implementation/**
 ```
 
-Claude must treat ChatGPT-owned approved visual truth and contract files as read-only unless the user explicitly changes authority.
-
-ChatGPT must not casually rewrite implementation code merely because it is performing visual QA; it should publish defects for the implementation executor.
+Read `references/AGENT_OWNERSHIP_PROTOCOL.md` for detailed write boundaries.
 
 ---
 
-# 8. Asset integrity
+# 10. Context/token policy
 
-Every important production asset SHOULD have a stable asset ID and, when tooling permits, integrity metadata such as:
+Executors SHOULD load only the active scope plus required shared dependencies.
 
-```text
-sha256
-mime
-byteSize
-width/height or SVG viewBox
-source authority
-reconstruction status
-license/redistribution status when relevant
-usedBy
-```
-
-If an approved production asset changes unexpectedly, validation SHOULD flag the change before implementation or QA consumes it.
-
-The source-first and canonical-SVG rules from the baseline remain mandatory.
-
----
-
-# 9. Precision without redundant tokens
-
-Component maps SHOULD use stable IDs rather than relying only on human-readable names when a component contract is required.
-
-Useful fields may include:
+Preferred policy:
 
 ```text
-componentId
-implementationTarget when known
-parentComponentId
-slots/children
-states
-variants
-dataContract when applicable
-requiredAssets
-interactionIds
-responsive composition
-mustNot
+ROUTE-SCOPED CONTEXT
+COMPONENT-SCOPED CONTEXT
+ON-DEMAND CONTRACT LOADING
 ```
 
-Placement maps SHOULD describe enough geometry for the executor to implement without visual invention when the render alone is insufficient or exact geometry is material.
-
-Useful fields may include:
-
-```text
-placementId
-assetId/componentId
-containerId
-referenceViewport
-coordinateSpace
-anchor/offset
-width/maxWidth/minWidth
-aspectRatio
-objectFit/objectPosition/focalPoint
-zIndex/layer relationship
-breakpoint behavior
-mustNot
-```
-
-Exact geometry is required only where material to approved visual fidelity. Do not manufacture meaningless precision and do not restate obvious render information simply to increase contract size.
-
----
-
-# 10. Route-scoped context loading
-
-Executors SHOULD load only the active implementation scope plus required shared dependencies.
-
-For a `/product` route, prefer:
+Example for `/product`:
 
 ```text
 product approved render(s)
@@ -405,23 +451,15 @@ product approved render(s)
 + shared tokens/components actually used
 ```
 
-Preferred context policy:
-
-```text
-ROUTE-SCOPED CONTEXT
-COMPONENT-SCOPED CONTEXT
-ON-DEMAND CONTRACT LOADING
-```
-
 Do not dump the entire `.webby/` package into model context by default.
 
-Token efficiency MUST NOT be used as justification to skip a required authority source, state, asset or behavior contract.
+Likewise, GĐ0 SHOULD ask the smallest useful set of questions rather than dumping a giant intake form on the user.
 
 ---
 
-# 11. GĐ4 Visual Reconstruction
+# 11. GĐ4 — Visual Reconstruction
 
-Before implementing an approved route, Claude/executor SHOULD inspect the approved render(s) and reconstruct the visible system directly from visual truth:
+Before implementation, Claude/executor SHOULD reconstruct visible UI directly from approved visual truth:
 
 ```text
 APPROVED RENDER
@@ -439,64 +477,33 @@ MINIMAL CONTRACT MERGE
 IMPLEMENTATION
 ```
 
-Claude SHOULD derive visible evidence such as:
-
-- section hierarchy;
-- containers and grids;
-- typography hierarchy;
-- spacing relationships;
-- cards and controls;
-- imagery treatment;
-- borders, radii and shadows;
-- alignment and layering;
-- visible differences between supplied desktop/mobile renders.
-
-Hard rule:
+Hard rules:
 
 ```text
 VISIBLE APPROVED UI MUST BE DERIVED FROM APPROVED VISUAL TRUTH WHEN AVAILABLE.
+VISIBLE IN APPROVED RENDER != MISSING UI.
+MISSING MATERIAL UI != CLAUDE DESIGNS IT.
 ```
 
-Claude MUST NOT say a visible decision is undefined merely because it is absent from text when it is clear in an approved render.
+If a material UI decision is unclear in both render and contract, use the request lifecycle.
 
-If a material UI decision is unclear in both render and contract, use the request lifecycle. Do not invent it.
+Implementation targets remain flexible:
+
+```text
+MODE A — CODE
+React / Next.js / Vue / HTML/CSS / selected stack
+
+MODE B — ELEMENTOR
+only when project explicitly targets WordPress + Elementor
+```
+
+Elementor is an implementation target, not the default architecture.
 
 ---
 
-# 12. Implementation targets
+# 12. Request lifecycle
 
-Visual reconstruction is implementation-target agnostic.
-
-## MODE A — CODE
-
-Default for coded projects:
-
-```text
-Approved Render
-→ Visual Reconstruction
-→ React / Next.js / Vue / HTML/CSS / selected stack
-→ Website
-```
-
-## MODE B — ELEMENTOR
-
-Only when the project explicitly targets WordPress + Elementor:
-
-```text
-Approved Render
-→ Visual Reconstruction
-→ Elementor-compatible JSON/template
-→ WordPress import
-→ Website
-```
-
-Elementor is an implementation target, not the default architecture. It does not bypass handoff, visual authority, source assets, revision locking, requests, receipts or QA.
-
----
-
-# 13. Claude request lifecycle
-
-The baseline request loop remains. v2 standardizes lifecycle where practical:
+Recommended lifecycle:
 
 ```text
 OPEN
@@ -506,23 +513,13 @@ OPEN
 → CLOSED
 ```
 
-A resolved request SHOULD record the resolution commit/revision and affected files. Claude consumes the resolved UI state before closing the request.
+A resolved request SHOULD record the affected revision/commit/files.
 
-Hard rule remains:
-
-```text
-MISSING APPROVED UI != CLAUDE DESIGNS IT
-```
-
-v2.1 clarification:
-
-```text
-VISIBLE IN APPROVED RENDER != MISSING UI
-```
+Claude consumes the resolved state before closing the request.
 
 ---
 
-# 14. Implementation receipt
+# 13. Implementation receipt
 
 After an implementation milestone, Claude SHOULD publish:
 
@@ -530,7 +527,7 @@ After an implementation milestone, Claude SHOULD publish:
 .webby/implementation/IMPLEMENTATION_RECEIPT.json
 ```
 
-The receipt identifies at minimum:
+At minimum it identifies:
 
 ```text
 consumedUiCommit / consumedUiRevision
@@ -541,15 +538,13 @@ open requests/blockers
 preview/deployment reference when available
 ```
 
-This receipt is the executor-to-ChatGPT delivery contract. It does not replace Git history; it makes the consumed UI state and implementation scope explicit.
-
 ---
 
-# 15. Visual QA contract
+# 14. GĐ7 — Visual QA
 
 Read `references/QA_PROTOCOL.md`.
 
-For routes with approved visual truth, the normal loop is:
+Normal loop:
 
 ```text
 IMPLEMENTATION
@@ -567,70 +562,52 @@ EXECUTOR FIXES
 RE-CAPTURE / RE-QA
 ```
 
-Machine-readable QA defects SHOULD use stable defect IDs and identify:
-
-```text
-defectId
-implementationCommit
-route
-viewport
-section/componentId
-severity
-observed
-expected
-authoritative render/spec/evidence
-status
-acceptance criteria when useful
-```
-
-Claude fixes defects against those IDs. ChatGPT re-tests and closes defects only after acceptance.
-
 Approved render = expected visual state.
 
 Browser screenshot = implementation evidence.
 
-Browser implementation remains lower visual authority than approved source assets, approved Master and approved renders/specs.
+Claude fixes defects; ChatGPT closes visual defects only after re-review/acceptance.
 
 ---
 
-# 16. Validation
+# 15. Validation
 
-The canonical repository provides:
-
-```text
-scripts/webby-validate.py
-```
-
-The validator is intentionally dependency-light. It performs structural and cross-reference checks that can be run without external packages. JSON Schemas remain the canonical structural contracts for fuller schema-aware tooling.
-
-Recommended project use:
+Canonical validator:
 
 ```bash
 python scripts/webby-validate.py /path/to/project
 ```
 
-A validator cannot prove artistic quality or full pixel parity. It verifies the handoff contract; visual acceptance remains ChatGPT's responsibility.
+The validator verifies machine-readable handoff structure and cross-references. It cannot prove artistic quality or pixel parity; visual acceptance remains ChatGPT's responsibility.
 
 ---
 
-# 17. Versioned evolution
+# 16. Versioned evolution
 
 Current protocol version:
 
 ```text
-2.1.0
+2.2.0
 ```
 
-Generalized skill changes still require explicit user approval before being committed to the canonical repository.
+Generalized skill changes require explicit user approval before being committed to this canonical repository.
 
-Do not create random replacement repositories such as `webbyLucifer-v2`, `final`, or `new`. Version this same canonical repository.
+Do not create random replacement repositories such as `webbyLucifer-v2`, `final` or `new`. Version this same canonical repository.
 
 ---
 
-# 18. Final v2.1 model
+# 17. Final v2.2 model
 
 ```text
-CLIENT BRIEF
+RAW / PARTIAL USER INPUT
+↓
+GĐ0 INSPECT EVERYTHING ALREADY PROVIDED
+↓
+ADAPTIVE QUESTIONS FOR MATERIAL GAPS ONLY
+↓
+PERSONALIZED PROJECT BRIEF
+↓
+INTAKE_COMPLETE
 ↓
 GĐ1 DESIGN / FULL-PAGE UI
 ↓
@@ -640,7 +617,7 @@ USER APPROVAL
 ↓
 APPROVED VISUAL TRUTH — WEB / MOBILE
 ↓
-GĐ3 VISUAL-FIRST PRODUCTION HANDOFF
+GĐ3 VISUAL-FIRST HANDOFF
 ↓
 APPROVED RENDERS + MINIMAL CONTRACT
 ↓
@@ -648,35 +625,33 @@ SCHEMAS + LOCK + VALIDATION + OWNERSHIP
 ↓
 UI_SETUP_COMPLETE
 ↓
-CLAUDE VERIFIES ACTIVE UI STATE
-↓
-GĐ4 VISUAL RECONSTRUCTION → CODE / ELEMENTOR TARGET
+GĐ4 VISUAL RECONSTRUCTION → CODE / ELEMENTOR
 ↓
 IMPLEMENTATION RECEIPT
 ↓
-RUN WEBSITE + MATCHING SCREENSHOT
-↓
-CHATGPT VISUAL COMPARISON
-↓
-DEFECT CONTRACT ↔ CLAUDE FIX ↔ RE-QA
-↓
 GĐ5 UX
 ↓
-GĐ6 BACKEND/CMS/LOGIC
+GĐ6 BACKEND / CMS / LOGIC
 ↓
-GĐ7 FINAL QA / PRODUCTION
+RUN WEBSITE + MATCHING SCREENSHOTS
+↓
+GĐ7 CHATGPT VISUAL QA
+↓
+DEFECTS ↔ EXECUTOR FIX ↔ RE-QA
 ↓
 PRODUCTION_READY
 ```
 
-Central v2.1 rules:
+Central rules:
 
-> **Ảnh/approved render truyền tải phần giao diện nhìn thấy. Contract truyền tải hành vi, trạng thái, responsive, dữ liệu và những gì ảnh không thể hiện rõ.**
+> **Đọc hết dữ kiện người dùng đã đưa trước khi hỏi. Chỉ hỏi phần còn thiếu và có ảnh hưởng thật sự.**
 
-> **Không tiêu token để mô tả lại những gì executor có thể nhìn trực tiếp từ approved visual truth.**
+> **Không bắt đầu GĐ1 khi còn HARD_GAP có thể làm thay đổi hướng thiết kế hoặc mức cá nhân hoá.**
+
+> **Ảnh/approved render truyền tải phần giao diện nhìn thấy. Contract truyền tải hành vi, trạng thái, responsive, dữ liệu và phần ảnh không thể hiện rõ.**
 
 > **Claude triển khai UI; Claude không thiết kế UI.**
 
 > **Approved render là expected visual state; browser screenshot là implementation evidence.**
 
-For all detailed GĐ1–GĐ7 visual and implementation rules not repeated here, `references/WORKFLOW_BASELINE_V1.md` remains incorporated into this skill by reference.
+For detailed GĐ1→GĐ7 visual and implementation rules not repeated here, `references/WORKFLOW_BASELINE_V1.md` remains incorporated by reference.
