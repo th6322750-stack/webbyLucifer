@@ -16,6 +16,14 @@
     "createdAt": {"type": "string"},
     "requiredInputs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
     "lockFile": {"type": "string", "default": ".webby/WEBBY_LOCK.json"},
+    "intake": {
+      "type": "object",
+      "properties": {
+        "status": {"enum": ["IN_PROGRESS", "INTAKE_COMPLETE"]},
+        "file": {"type": "string", "minLength": 1, "default": ".webby/PROJECT_INTAKE.json"}
+      },
+      "additionalProperties": true
+    },
     "visualHandoff": {
       "type": "object",
       "properties": {
