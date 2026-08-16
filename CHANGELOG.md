@@ -1,5 +1,30 @@
 # Changelog
 
+## 3.1.0 — 2026-08-17
+
+### Added
+
+- mandatory `TASK ROUTER` with three modes: `NEW_REDESIGN`, `EXISTING_POLISH`, `BUG_FIX`;
+- fast path for small existing visual polish so minor CSS/component work does not replay the full asset-first pipeline;
+- targeted bug-fix path that avoids redesign/re-audit scope expansion;
+- motion ownership split: **ChatGPT owns FEEL**, **Claude owns MECHANISM**;
+- explicit global-behavior-surface rule covering site-wide wheel/touch/key interception, browser-scroll replacement, app-wide event capture and similar mechanism changes even when no new dependency is added;
+- session-scoped Drive proof: Drive readiness must be re-verified with a real download in the current work session;
+- asset transport modes `DRIVE / GIT / HYBRID`;
+- `workSessionId` / `verifiedForSessionId` handoff model for non-permanent Drive readiness;
+- icon inventory gate: `ICON` remains a UI role, and every visible approved icon must have a real mapped asset before full-pipeline readiness;
+- explicit rule that Drive is storage/delivery, not default runtime serving architecture; manifest `destinationPath` or declared runtime source is authoritative;
+- `CRITICAL_FINDING` exception with two branches: stop a currently harmful action, or report an existing unrelated critical bug while continuing safe independent work;
+- `references/V3_1_AMENDMENTS.md`.
+
+### Changed
+
+- `IMPLEMENTATION_READY_UI` full asset/intake gates apply to `NEW_REDESIGN`; fast-path tasks use lightweight readiness instead of Asset Count/4K/Drive bureaucracy when no new asset pipeline is involved;
+- screenshots are explicitly optional for `EXISTING_POLISH`, not a default prerequisite;
+- Claude may choose the technical motion implementation without design approval when feel/observable behavior stay unchanged and no material global behavior surface is introduced;
+- Drive access is no longer modeled as a permanent project boolean;
+- v3.1 validator distinguishes full-pipeline vs fast-path handoffs and validates current-session Drive proof plus icon inventory mappings.
+
 ## 3.0.0 — 2026-08-17
 
 ### Added

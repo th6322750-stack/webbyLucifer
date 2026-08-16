@@ -1,14 +1,17 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://webbylucifer.dev/schemas/handoff.schema.json",
-  "title": "webbyLucifer HANDOFF v3",
+  "title": "webbyLucifer HANDOFF v3.1",
   "type": "object",
-  "required": ["schemaVersion", "handoffId", "producer", "executor", "status", "uiRevision", "uiCommit", "requiredInputs"],
+  "required": ["schemaVersion", "handoffId", "producer", "executor", "status", "taskMode", "uiRevision", "uiCommit", "requiredInputs"],
   "properties": {
     "schemaVersion": {"const": 3},
+    "protocolVersion": {"type": "string"},
     "handoffId": {"type": "string", "minLength": 1},
+    "workSessionId": {"type": ["string", "null"]},
     "producer": {"const": "CHATGPT"},
     "executor": {"type": "string", "minLength": 1},
+    "taskMode": {"enum": ["NEW_REDESIGN", "EXISTING_POLISH", "BUG_FIX"]},
     "status": {"enum": ["NOT_READY", "VISUAL_DIRECTION_APPROVED", "IMPLEMENTATION_READY_UI", "SUPERSEDED"]},
     "uiRevision": {"type": "integer", "minimum": 1},
     "uiCommit": {"type": "string", "minLength": 1},
@@ -36,9 +39,10 @@
       "type": "object",
       "properties": {
         "file": {"type": "string", "minLength": 1},
-        "storeType": {"enum": ["GOOGLE_DRIVE", "USER_APPROVED_ALTERNATIVE"]},
+        "transportMode": {"enum": ["DRIVE", "GIT", "HYBRID"]},
         "driveFolderRef": {"type": ["string", "null"]},
-        "claudeAccessVerified": {"type": "boolean"}
+        "verifiedForSessionId": {"type": ["string", "null"]},
+        "sessionVerifiedAt": {"type": ["string", "null"]}
       },
       "additionalProperties": true
     },
@@ -50,15 +54,27 @@
         "assetsComplete": {"type": "boolean"},
         "highResMastersPass": {"type": "boolean"},
         "deliveryComplete": {"type": "boolean"},
-        "driveAccessible": {"type": "boolean"},
+        "transportReadyForSession": {"type": "boolean"},
         "mappingComplete": {"type": "boolean"},
+        "iconInventoryComplete": {"type": "boolean"},
         "layoutModeLocked": {"type": "boolean"},
         "typographyLocked": {"type": "boolean"},
         "semanticGeometryLocked": {"type": "boolean"},
         "responsiveLocked": {"type": "boolean"},
         "statesLockedOrNA": {"type": "boolean"},
-        "motionLockedOrNA": {"type": "boolean"},
+        "motionFeelLockedOrNA": {"type": "boolean"},
         "noBlockingSpecOrAssetGap": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "fastPathReady": {
+      "type": "object",
+      "properties": {
+        "baselineKnown": {"type": "boolean"},
+        "targetScoped": {"type": "boolean"},
+        "newAssetsReadyOrNA": {"type": "boolean"},
+        "motionMechanismScopeSafeOrReported": {"type": "boolean"},
+        "noBlockingSpecGap": {"type": "boolean"}
       },
       "additionalProperties": true
     },
@@ -85,13 +101,35 @@
     },
     "hardRules": {"type": "array", "items": {"type": "string"}},
     "visualAuthority": {"const": "CHATGPT"},
+    "motionFeelAuthority": {"const": "CHATGPT"},
+    "motionMechanismAuthority": {"type": "string"},
     "finalAcceptanceAuthority": {"const": "USER"},
     "implementationAuthority": {"type": "string"}
   },
   "allOf": [
     {
-      "if": {"properties": {"status": {"const": "IMPLEMENTATION_READY_UI"}}},
-      "then": {"required": ["implementationReady", "assetPlan", "assetManifest", "finalAcceptanceAuthority"]}
+      "if": {
+        "properties": {
+          "status": {"const": "IMPLEMENTATION_READY_UI"},
+          "taskMode": {"const": "NEW_REDESIGN"}
+        },
+        "required": ["status", "taskMode"]
+      },
+      "then": {
+        "required": ["implementationReady", "assetPlan", "assetManifest", "finalAcceptanceAuthority", "workSessionId"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {"const": "IMPLEMENTATION_READY_UI"},
+          "taskMode": {"enum": ["EXISTING_POLISH", "BUG_FIX"]}
+        },
+        "required": ["status", "taskMode"]
+      },
+      "then": {
+        "required": ["fastPathReady", "finalAcceptanceAuthority"]
+      }
     }
   ],
   "additionalProperties": true

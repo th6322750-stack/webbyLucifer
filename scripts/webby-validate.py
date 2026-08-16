@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Dependency-light semantic validator for webbyLucifer project handoffs.
 
-v3 validates implementation readiness without requiring heavy Google Drive assets to
-be copied into Git. It keeps compatibility with legacy v2 handoffs where practical.
+v3.1 distinguishes full-pipeline NEW_REDESIGN work from fast-path EXISTING_POLISH
+and BUG_FIX tasks. It also treats Drive access as session-scoped and validates
+required icon inventory against actual role=ICON assets.
 """
 
 from __future__ import annotations
@@ -20,26 +21,35 @@ REQUIRED_HANDOFF_KEYS = {
 REQUIRED_LOCK_KEYS = {
     "schemaVersion", "skillVersion", "handoffId", "uiRevision", "uiCommit", "files",
 }
-V3_READY_FLAGS = {
+FULL_READY_FLAGS = {
     "userVisualApproved",
     "assetCountReported",
     "assetsComplete",
     "highResMastersPass",
     "deliveryComplete",
-    "driveAccessible",
+    "transportReadyForSession",
     "mappingComplete",
+    "iconInventoryComplete",
     "layoutModeLocked",
     "typographyLocked",
     "semanticGeometryLocked",
     "responsiveLocked",
     "statesLockedOrNA",
-    "motionLockedOrNA",
+    "motionFeelLockedOrNA",
     "noBlockingSpecOrAssetGap",
+}
+FAST_READY_FLAGS = {
+    "baselineKnown",
+    "targetScoped",
+    "newAssetsReadyOrNA",
+    "motionMechanismScopeSafeOrReported",
+    "noBlockingSpecGap",
 }
 V3_ASSET_CLASSES = {
     "BRAND", "AUTHENTIC", "DEMO", "EDITORIAL", "DECORATIVE", "PLACEHOLDER", "DATA_VISUAL"
 }
 V3_MASTER_QUALITY = {"FHD_CLASS", "4K_CLASS", "VECTOR"}
+TASK_MODES = {"NEW_REDESIGN", "EXISTING_POLISH", "BUG_FIX"}
 
 
 def load_json(path: Path):
@@ -83,16 +93,24 @@ def ready_state(handoff: dict, lock: dict) -> tuple[bool, bool]:
     return v3, status == ("IMPLEMENTATION_READY_UI" if v3 else "UI_SETUP_COMPLETE")
 
 
-def validate_intake(root: Path, handoff: dict, lock: dict, errors: list[str]) -> None:
+def task_mode(handoff: dict, lock: dict) -> str:
+    v31 = version_tuple(lock.get("skillVersion")) >= (3, 1, 0) or handoff.get("protocolVersion") == "3.1.0"
+    mode = handoff.get("taskMode")
+    if v31:
+        return mode or ""
+    return mode or "NEW_REDESIGN"
+
+
+def validate_intake(root: Path, handoff: dict, lock: dict, errors: list[str], strict: bool) -> None:
     v3, ready = ready_state(handoff, lock)
     intake_cfg = handoff.get("intake") or {}
     intake_rel = intake_cfg.get("file", ".webby/PROJECT_INTAKE.json")
     intake_path = root / intake_rel
-    required = ready and (v3 or version_tuple(lock.get("skillVersion")) >= (2, 2, 0))
+    required = strict and ready and (v3 or version_tuple(lock.get("skillVersion")) >= (2, 2, 0))
 
     if not intake_path.exists():
         if required:
-            errors.append(f"ready handoff requires project intake file: {intake_rel}")
+            errors.append(f"full-pipeline ready handoff requires project intake file: {intake_rel}")
         return
 
     try:
@@ -111,9 +129,9 @@ def validate_intake(root: Path, handoff: dict, lock: dict, errors: list[str]) ->
         for gap in intake.get("gaps", [])
         if isinstance(gap, dict) and gap.get("status") == "HARD_GAP"
     ]
-    if ready and actual_status != "INTAKE_COMPLETE":
-        errors.append("ready handoff requires PROJECT_INTAKE status INTAKE_COMPLETE")
-    if ready and hard_gaps:
+    if strict and ready and actual_status != "INTAKE_COMPLETE":
+        errors.append("full-pipeline ready handoff requires PROJECT_INTAKE status INTAKE_COMPLETE")
+    if strict and ready and hard_gaps:
         errors.append(f"INTAKE_COMPLETE cannot contain HARD_GAP items: {hard_gaps}")
 
     if required:
@@ -132,14 +150,12 @@ def validate_intake(root: Path, handoff: dict, lock: dict, errors: list[str]) ->
             errors.append("intake requires route or feature scope")
         if not personalization:
             errors.append("intake requires at least one personalization signal")
-
-    if v3 and ready:
         layout = intake.get("layout") or {}
         if not layout.get("mode"):
-            errors.append("v3 ready intake requires layout.mode")
+            errors.append("full-pipeline ready intake requires layout.mode")
         environment = intake.get("environment")
         if not isinstance(environment, dict):
-            errors.append("v3 ready intake requires environment readiness state")
+            errors.append("full-pipeline ready intake requires environment readiness state")
 
 
 def validate_asset_plan(root: Path, handoff: dict, errors: list[str]) -> None:
@@ -147,16 +163,15 @@ def validate_asset_plan(root: Path, handoff: dict, errors: list[str]) -> None:
     rel = cfg.get("file", ".webby/ASSET_COUNT_PLAN.json")
     path = root / rel
     if not path.exists():
-        errors.append(f"v3 IMPLEMENTATION_READY_UI requires asset count plan: {rel}")
+        errors.append(f"NEW_REDESIGN IMPLEMENTATION_READY_UI requires asset count plan: {rel}")
         return
     try:
         plan = load_json(path)
     except ValueError as exc:
         errors.append(str(exc))
         return
-
     if plan.get("status") not in {"REPORTED", "APPROVED"}:
-        errors.append("asset count plan must be REPORTED or APPROVED before implementation")
+        errors.append("asset count plan must be REPORTED or APPROVED before full-pipeline implementation")
     if plan.get("reportedToUser") is not True:
         errors.append("asset count plan must be reported to the user before production/implementation")
     totals = plan.get("totals") or {}
@@ -164,12 +179,32 @@ def validate_asset_plan(root: Path, handoff: dict, errors: list[str]) -> None:
         errors.append("asset count plan totals.all must be a non-negative integer")
 
 
-def validate_asset_manifest_v3(root: Path, handoff: dict, errors: list[str]) -> None:
+def validate_full_ready_flags(handoff: dict, errors: list[str]) -> None:
+    flags = handoff.get("implementationReady") or {}
+    missing = sorted(FULL_READY_FLAGS - set(flags))
+    if missing:
+        errors.append(f"implementationReady missing flags: {missing}")
+    false_flags = sorted(key for key in FULL_READY_FLAGS if flags.get(key) is not True)
+    if false_flags:
+        errors.append(f"NEW_REDESIGN IMPLEMENTATION_READY_UI requires true readiness flags: {false_flags}")
+
+
+def validate_fast_ready_flags(handoff: dict, errors: list[str]) -> None:
+    flags = handoff.get("fastPathReady") or {}
+    missing = sorted(FAST_READY_FLAGS - set(flags))
+    if missing:
+        errors.append(f"fastPathReady missing flags: {missing}")
+    false_flags = sorted(key for key in FAST_READY_FLAGS if flags.get(key) is not True)
+    if false_flags:
+        errors.append(f"fast-path ready handoff requires true readiness flags: {false_flags}")
+
+
+def validate_asset_manifest_v31(root: Path, handoff: dict, errors: list[str]) -> None:
     cfg = handoff.get("assetManifest") or {}
     rel = cfg.get("file", ".webby/asset-manifest.json")
     path = root / rel
     if not path.exists():
-        errors.append(f"v3 IMPLEMENTATION_READY_UI requires asset manifest: {rel}")
+        errors.append(f"NEW_REDESIGN IMPLEMENTATION_READY_UI requires asset manifest: {rel}")
         return
     try:
         manifest = load_json(path)
@@ -178,16 +213,32 @@ def validate_asset_manifest_v3(root: Path, handoff: dict, errors: list[str]) -> 
         return
 
     if manifest.get("version") != 3:
-        errors.append("v3 ready handoff requires asset-manifest version 3")
+        errors.append("v3.1 ready handoff requires asset-manifest version 3")
+    if manifest.get("protocolVersion") not in {None, "3.1.0"}:
+        errors.append("asset-manifest protocolVersion must be 3.1.0 when declared")
+
     store = manifest.get("assetStore") or {}
-    if store.get("type") not in {"GOOGLE_DRIVE", "USER_APPROVED_ALTERNATIVE"}:
-        errors.append("asset manifest must declare GOOGLE_DRIVE or a user-approved alternative store")
-    if not store.get("folderRef"):
-        errors.append("asset manifest assetStore.folderRef is required")
-    if store.get("claudeAccessVerified") is not True:
-        errors.append("asset store access must be verified for Claude before implementation")
+    transport = store.get("transportMode")
+    if transport not in {"DRIVE", "GIT", "HYBRID"}:
+        errors.append("asset manifest assetStore.transportMode must be DRIVE, GIT or HYBRID")
+
+    session_id = handoff.get("workSessionId")
+    if transport in {"DRIVE", "HYBRID"}:
+        if not session_id:
+            errors.append("DRIVE/HYBRID handoff requires workSessionId")
+        if store.get("accessProofStatus") != "VERIFIED_THIS_SESSION":
+            errors.append("DRIVE/HYBRID access must be proven in the current work session")
+        if store.get("verifiedForSessionId") != session_id:
+            errors.append("Drive access proof verifiedForSessionId must match HANDOFF workSessionId")
+        if not store.get("sessionVerifiedAt"):
+            errors.append("DRIVE/HYBRID access proof requires sessionVerifiedAt")
+        if not store.get("folderRef"):
+            errors.append("DRIVE/HYBRID asset store requires folderRef")
+    elif transport == "GIT" and store.get("accessProofStatus") not in {"NOT_REQUIRED", None}:
+        errors.append("GIT transport should mark Drive access proof NOT_REQUIRED")
 
     seen = set()
+    role_by_id = {}
     for asset in manifest.get("assets", []):
         aid = asset.get("id")
         if not aid:
@@ -196,6 +247,7 @@ def validate_asset_manifest_v3(root: Path, handoff: dict, errors: list[str]) -> 
         if aid in seen:
             errors.append(f"duplicate asset id: {aid}")
         seen.add(aid)
+        role_by_id[aid] = asset.get("role")
 
         cls = asset.get("classification")
         if cls not in V3_ASSET_CLASSES:
@@ -211,9 +263,9 @@ def validate_asset_manifest_v3(root: Path, handoff: dict, errors: list[str]) -> 
         if master.get("nativeOrAuthoritativeHighRes") is not True:
             errors.append(f"asset {aid} master is not confirmed authoritative/high-resolution")
         if master.get("derivedFromLowRes") is True:
-            errors.append(f"asset {aid} master is marked derivedFromLowRes; cannot be authoritative v3 high-res master")
-        if store.get("type") == "GOOGLE_DRIVE" and not master.get("driveFileRef"):
-            errors.append(f"asset {aid} master missing Drive reference")
+            errors.append(f"asset {aid} master is derivedFromLowRes and cannot be authoritative high-res")
+        if transport in {"DRIVE", "HYBRID"} and not master.get("driveFileRef"):
+            errors.append(f"asset {aid} master missing Drive reference for {transport} transport")
 
         allowed = set(asset.get("allowedUsage") or [])
         delivery = asset.get("delivery") or []
@@ -227,12 +279,30 @@ def validate_asset_manifest_v3(root: Path, handoff: dict, errors: list[str]) -> 
                 errors.append(f"asset {aid} delivery usage not in allowedUsage: {usage}")
             if not item.get("destinationPath"):
                 errors.append(f"asset {aid} delivery missing destinationPath for usage {usage}")
-            if store.get("type") == "GOOGLE_DRIVE" and not item.get("driveFileRef"):
-                errors.append(f"asset {aid} delivery missing Drive reference for usage {usage}")
+            if item.get("runtimeSourceType") not in {"PROJECT_PATH", "REMOTE_DECLARED"}:
+                errors.append(f"asset {aid} delivery missing/invalid runtimeSourceType for usage {usage}")
+            if item.get("runtimeSourceType") == "REMOTE_DECLARED" and not item.get("runtimeSource"):
+                errors.append(f"asset {aid} remote delivery requires runtimeSource for usage {usage}")
+            if transport == "DRIVE" and not item.get("driveFileRef"):
+                errors.append(f"asset {aid} delivery missing Drive reference for DRIVE transport usage {usage}")
             size = item.get("byteSize")
             limit = item.get("maxWeight")
             if isinstance(size, int) and isinstance(limit, int) and size > limit:
                 errors.append(f"asset {aid} delivery exceeds maxWeight for usage {usage}: {size} > {limit}")
+
+    required_icons = [
+        entry.get("id")
+        for entry in manifest.get("iconInventory", [])
+        if isinstance(entry, dict) and entry.get("required") is True
+    ]
+    for icon_id in required_icons:
+        if not icon_id:
+            errors.append("required icon inventory entry missing id")
+            continue
+        if icon_id not in seen:
+            errors.append(f"required icon inventory asset missing: {icon_id}")
+        elif role_by_id.get(icon_id) != "ICON":
+            errors.append(f"required icon inventory asset must use role=ICON: {icon_id}")
 
 
 def validate_legacy_asset_manifest(root: Path, errors: list[str]) -> None:
@@ -256,16 +326,6 @@ def validate_legacy_asset_manifest(root: Path, errors: list[str]) -> None:
         prod = asset.get("production")
         if prod and not is_external_ref(prod) and not (root / prod).exists():
             errors.append(f"production asset does not exist: {prod}")
-
-
-def validate_implementation_ready_flags(handoff: dict, errors: list[str]) -> None:
-    flags = handoff.get("implementationReady") or {}
-    missing = sorted(V3_READY_FLAGS - set(flags))
-    if missing:
-        errors.append(f"implementationReady missing flags: {missing}")
-    false_flags = sorted(key for key in V3_READY_FLAGS if flags.get(key) is not True)
-    if false_flags:
-        errors.append(f"IMPLEMENTATION_READY_UI requires true readiness flags: {false_flags}")
 
 
 def validate_visual_handoff(root: Path, handoff: dict, errors: list[str]) -> None:
@@ -330,6 +390,11 @@ def validate_project(root: Path) -> list[str]:
         errors.append(f"WEBBY_LOCK missing keys: {sorted(missing)}")
 
     v3, ready = ready_state(handoff, lock)
+    mode = task_mode(handoff, lock)
+    v31 = version_tuple(lock.get("skillVersion")) >= (3, 1, 0) or handoff.get("protocolVersion") == "3.1.0"
+
+    if v31 and mode not in TASK_MODES:
+        errors.append("v3.1 handoff taskMode must be NEW_REDESIGN, EXISTING_POLISH or BUG_FIX")
 
     if handoff.get("producer") != "CHATGPT" and ready:
         errors.append("ready handoff producer must be CHATGPT")
@@ -349,7 +414,8 @@ def validate_project(root: Path) -> list[str]:
     if handoff.get("uiCommit") != lock.get("uiCommit"):
         errors.append("uiCommit mismatch between HANDOFF and WEBBY_LOCK")
 
-    validate_intake(root, handoff, lock, errors)
+    full_pipeline = mode == "NEW_REDESIGN"
+    validate_intake(root, handoff, lock, errors, strict=full_pipeline)
     validate_visual_handoff(root, handoff, errors)
 
     if v3 and ready:
@@ -357,9 +423,14 @@ def validate_project(root: Path) -> list[str]:
             errors.append("v3 ready handoff status must be IMPLEMENTATION_READY_UI")
         if handoff.get("finalAcceptanceAuthority") != "USER":
             errors.append("v3 handoff must declare USER as finalAcceptanceAuthority")
-        validate_implementation_ready_flags(handoff, errors)
-        validate_asset_plan(root, handoff, errors)
-        validate_asset_manifest_v3(root, handoff, errors)
+        if full_pipeline:
+            validate_full_ready_flags(handoff, errors)
+            validate_asset_plan(root, handoff, errors)
+            validate_asset_manifest_v31(root, handoff, errors)
+        elif mode in {"EXISTING_POLISH", "BUG_FIX"}:
+            validate_fast_ready_flags(handoff, errors)
+        else:
+            errors.append("ready v3.1 handoff has no valid taskMode")
     else:
         validate_legacy_asset_manifest(root, errors)
 
@@ -379,22 +450,6 @@ def validate_project(root: Path) -> list[str]:
             actual = sha256_file(target)
             if actual.lower() != expected.lower():
                 errors.append(f"sha256 mismatch: {rel}")
-
-    component_map_path = webby / "component-map.json"
-    if component_map_path.exists():
-        try:
-            data = load_json(component_map_path)
-            seen = set()
-            for comp in data.get("components", []):
-                cid = comp.get("componentId") or comp.get("name")
-                if not cid:
-                    errors.append("component without componentId/name")
-                elif cid in seen:
-                    errors.append(f"duplicate component id: {cid}")
-                else:
-                    seen.add(cid)
-        except ValueError as exc:
-            errors.append(str(exc))
 
     request_dir = webby / "requests"
     if request_dir.exists():

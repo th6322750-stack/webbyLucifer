@@ -1,59 +1,116 @@
-# GitHub + Drive Handoff Protocol — webbyLucifer v3.0
+# GitHub + Drive Handoff Protocol — webbyLucifer v3.1
 
 ## Core model
 
 ```text
 USER    = FINAL ACCEPTANCE AUTHORITY
-CHATGPT = DESIGN/UI/ASSET AUTHORITY
-CLAUDE  = IMPLEMENTATION AUTHORITY
-GITHUB  = CODE + LIGHTWEIGHT VERSIONED CONTRACT/STATE
-DRIVE   = HEAVY ASSET PACK DELIVERY
+CHATGPT = DESIGN/UI/ASSET/MOTION-FEEL AUTHORITY
+CLAUDE  = IMPLEMENTATION/TECHNICAL-MECHANISM AUTHORITY
+GITHUB  = CODE + LIGHTWEIGHT CONTRACT/STATE + WEB DELIVERY WHEN GIT/HYBRID IS USED
+DRIVE   = HEAVY ASSET STORAGE/DELIVERY WHEN VERIFIED FOR CURRENT WORK SESSION
 VERCEL  = OPTIONAL PREVIEW/DEPLOYMENT
 ```
 
 ---
 
-## 1. GitHub is not the default heavy-asset dump
+## 1. Task-mode aware handoff
 
-GitHub should primarily contain:
+Handoff must declare:
+
+```text
+taskMode = NEW_REDESIGN | EXISTING_POLISH | BUG_FIX
+```
+
+- `NEW_REDESIGN` uses the full asset-first readiness package.
+- `EXISTING_POLISH` uses a small scoped contract and only the assets actually needed.
+- `BUG_FIX` uses a targeted defect contract.
+
+Do not force full Asset Count/Drive/4K readiness onto fast-path tasks that do not create a new asset/design package.
+
+---
+
+## 2. GitHub is not the default 4K master dump
+
+GitHub primarily stores:
 
 ```text
 source code
-small project configuration
+project configuration
 machine-readable handoff/lock state
 asset manifest / asset count plan
 short implementation contract
 implementation receipts
-bug/QA records when useful
+bug/QA records
+web delivery assets when GIT/HYBRID mode says they live in the project
 ```
 
-Large 4K masters and bulk asset packs default to one Google Drive project folder after asset production begins.
-
-Web delivery files may ultimately be copied into the implementation repository when the framework/deployment needs local static files; the canonical master/archive can remain in Drive.
+Heavy 4K masters can remain in Drive. Do not push them all to Git merely because Drive is temporarily unavailable.
 
 ---
 
-## 2. GĐ0 access check
-
-Before implementation handoff, establish:
+## 3. Transport modes
 
 ```text
-GitHub repository
-branch
-ChatGPT remote access
-Claude repo access
-Claude local unpushed drift status
-Google Drive folder access
-whether Vercel preview is required
+DRIVE
+= masters and delivery transported through Drive
+
+GIT
+= delivery/assets transported through Git/project paths; Drive proof not required
+
+HYBRID
+= heavy masters in Drive; web delivery in Git/project destination paths
 ```
 
-Do not assume `remote == Claude local`.
+`HYBRID` is often the practical default for a coded web app when large master archives should stay out of Git but local/static delivery files are needed by the framework.
 
 ---
 
-## 3. Recommended project `.webby/`
+## 4. Drive proof is session-scoped
 
-Keep the implementation exchange small:
+Never store Drive readiness as a permanent project truth.
+
+When `DRIVE` or `HYBRID` is used:
+
+```text
+HANDOFF.workSessionId
+→ Claude successfully downloads one real file in THIS work session
+→ manifest.assetStore.verifiedForSessionId = workSessionId
+→ record sessionVerifiedAt
+→ accessProofStatus = VERIFIED_THIS_SESSION
+```
+
+If auth/session later expires or a real download fails:
+
+```text
+DRIVE_SESSION_READY = false
+→ re-auth/re-verify before relying on Drive again
+```
+
+A proof from a previous session is stale.
+
+---
+
+## 5. Drive is not runtime serving architecture
+
+Hard rule:
+
+> **Drive is storage/delivery transport. `destinationPath` or an explicitly declared runtime source is authoritative for implementation/runtime.**
+
+Typical Next.js/local-static flow:
+
+```text
+Drive/Git delivery
+→ Claude obtains exact file
+→ save at manifest destinationPath
+→ e.g. public/assets/projects/a.webp
+→ application serves from project path
+```
+
+If the project uses a CDN/remote loader, declare it. Never infer Google Drive as the live image origin.
+
+---
+
+## 6. Recommended `.webby/`
 
 ```text
 .webby/
@@ -64,52 +121,16 @@ Keep the implementation exchange small:
 ├── CLAUDE_TASK.md
 ├── asset-manifest.json
 ├── visual-handoff/
-│   └── routes.json / light references when used
 ├── requests/
 ├── implementation/
-│   └── IMPLEMENTATION_RECEIPT.json
 └── qa/
-    └── defects.json
 ```
 
-Do not require the executor to load every optional map/token file if the active contract does not need it.
+Fast-path tasks may use a smaller applicable subset. Do not require the executor to load every optional contract.
 
 ---
 
-## 4. Drive package
-
-Recommended:
-
-```text
-PROJECT_NAME/
-├── 01_MASTER_ASSETS/
-├── 02_WEB_DELIVERY/
-├── 03_BRAND/
-├── 04_PROJECTS/
-├── 05_RENTALS/
-├── 06_EDITORIAL/
-├── 07_DATA_VISUAL/
-├── 08_PLACEHOLDERS/
-├── 09_MANIFEST/
-└── 10_FINAL_UI_REFERENCE/
-```
-
-Before `IMPLEMENTATION_READY_UI`, confirm:
-
-```text
-Drive folder exists
-Claude can access/download
-manifest points to exact files/IDs/paths
-all required visible assets exist
-```
-
-An image only visible in chat is not considered delivered.
-
----
-
-## 5. Handoff status
-
-Recommended v3 states:
+## 7. Handoff states
 
 ```text
 NOT_READY
@@ -118,82 +139,51 @@ IMPLEMENTATION_READY_UI
 SUPERSEDED
 ```
 
-`VISUAL_DIRECTION_APPROVED` means the user likes the visible design.
+For `NEW_REDESIGN`, `IMPLEMENTATION_READY_UI` means the full asset/spec/mapping/transport/state package is ready.
 
-`IMPLEMENTATION_READY_UI` means the package also has sufficient assets/mapping/spec/responsive/state/motion information for implementation without invention.
-
-Claude starts ordinary UI implementation only from `IMPLEMENTATION_READY_UI`.
+For `EXISTING_POLISH` / `BUG_FIX`, readiness means the current baseline, exact target and any required new assets/spec are sufficiently known for the scoped task; do not manufacture full-pipeline paperwork.
 
 ---
 
-## 6. Active UI identity and lock
+## 8. Full-pipeline asset handoff
 
-The handoff should identify:
+Before `NEW_REDESIGN` implementation:
 
 ```text
-handoffId
-uiRevision
-uiCommit
-parentUiCommit
-createdAt
-status
+asset count reported
+high-res masters pass policy
+web delivery exists
+ITEM/ALLOWED_USAGE mapping complete
+required icon inventory complete
+transport mode declared
+current-session Drive proof valid if DRIVE/HYBRID
+runtime destination/source declared
 ```
 
-`WEBBY_LOCK.json` may lock lightweight contract/manifest files in Git.
-
-Do not force massive Drive binaries into Git merely for lock purposes. Record Drive IDs/paths/checksums in the manifest when available.
+An image visible only in chat is not a delivered asset.
 
 ---
 
-## 7. Claude consume protocol
+## 9. Claude consume protocol
 
 ```text
-confirm branch/local state
-↓
-DRIFT CHECK
-↓
-read short CLAUDE_TASK
-↓
-read only required manifest/spec inputs
-↓
-confirm exact Drive assets are accessible
-↓
-SCOPE CHECK
-↓
-TOKEN CHECK
-↓
-read 1–3 relevant implementation files by default
-↓
-code
-↓
-minimum proportional checks
-↓
-short report / receipt
+read taskMode + short task contract
+→ DRIFT CHECK
+→ SCOPE CHECK
+→ TOKEN CHECK
+→ if Drive used, verify proof matches current workSessionId
+→ read only required manifest/spec
+→ read 1–3 relevant implementation files by default
+→ code
+→ proportional technical checks
+→ short report
 ```
 
-Do not use a 500-line implementation prompt as a substitute for a complete UI package.
+Do not use a giant prompt or repo-wide audit as a substitute for a complete contract.
 
 ---
 
-## 8. Drift handling
-
-`DRIFT` means Claude local code differs from the remote/current state that ChatGPT used when preparing the contract.
-
-If `CURRENT` no longer matches materially:
-
-```text
-BLOCKED_SPEC: remote/local drift invalidates CURRENT assumption
-```
-
-or report the exact technical scope conflict.
-
-Do not knowingly code from a stale assumption.
-
----
-
-## 9. Missing asset/spec handling
-
-Use:
+## 10. Missing asset/spec
 
 ```text
 NEED_ASSET
@@ -201,57 +191,57 @@ BLOCKED_SPEC
 TECHNICAL_CONSTRAINT
 ```
 
-Never search for a replacement image merely to unblock yourself.
+Never search/generate/substitute a visual asset merely to unblock implementation.
 
-When ChatGPT resolves a missing asset:
+---
+
+## 11. Motion mechanism boundary
+
+Technical motion mechanism belongs to Claude, but a mechanism that creates a new **global behavior surface** must be reported before broad application.
+
+Examples:
 
 ```text
-create/fix high-res master as applicable
-→ create delivery
-→ upload Drive
-→ update manifest
-→ notify executor of exact item/file/usage
+global wheel/touch/key interception
+preventDefault browser scrolling across routes
+app-wide event capture
+site-wide scroll engine/provider
+cross-route focus/navigation interception
 ```
 
+This is material even when no npm dependency is added.
+
 ---
 
-## 10. Implementation receipt
+## 12. Critical Finding exception
 
-Keep it concise. At a meaningful milestone, record when useful:
+A serious data-loss/security finding must be reported immediately even when outside the current UI scope.
 
 ```text
-consumedUiRevision / commit
-implementationCommit
-changed files/routes/components
-technical checks
-asset mapping status
-open blockers
-preview URL if available
+current action is harmful → stop only that action + report
+existing unrelated critical bug → report + continue safe independent task
 ```
 
-Long narrative implementation reports are not required for ordinary UI tasks.
+Do not turn the finding into an unauthorized broad audit/refactor.
 
 ---
 
-## 11. Vercel
+## 13. Vercel
 
-Vercel is optional.
-
-Use it when the user wants an online preview, production deployment or browser-based acceptance environment.
-
-Do not block asset planning, design or ordinary local implementation merely because Vercel is not connected, unless the task specifically depends on deployment behavior.
+Vercel is optional unless the task specifically needs online preview/deployment behavior. Lack of Vercel does not block ordinary design/asset planning/local implementation.
 
 ---
 
-## 12. Forbidden shortcuts
+## 14. Forbidden shortcuts
 
 ```text
-Claude substitutes missing assets
-Claude searches/generates visual resources independently
+small polish forced through full pipeline without need
+Drive readiness reused from a stale session
+Claude substitutes/searches/generates missing visual assets
+Claude fakes missing approved icons
 Claude measures raster to invent geometry
-Claude audits the whole repo for a small scoped UI task
-Claude assumes remote == local without checking when drift is plausible
-ChatGPT marks implementation-ready while Drive/manifest/asset mapping is incomplete
-heavy master assets are pushed into Git by default without need
-screenshot loops are used as a replacement for a complete spec
+Claude silently introduces site-wide scroll/event interception
+Drive treated as live runtime image source by assumption
+heavy 4K masters dumped into Git by default
+critical data-loss/security evidence hidden because it is “out of scope”
 ```

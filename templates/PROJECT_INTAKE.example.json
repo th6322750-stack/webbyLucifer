@@ -39,9 +39,9 @@
       "claudeLocalUnpushedDrift": "UNKNOWN_OR_NONE"
     },
     "drive": {
-      "connected": true,
+      "connectedLastKnown": true,
       "folderRef": "<project-drive-folder>",
-      "claudeDownloadVerified": true
+      "note": "This intake state is not proof of current-session access. When DRIVE/HYBRID is used, re-verify by downloading a real file for HANDOFF.workSessionId."
     },
     "vercel": {
       "requiredForCurrentPhase": false,

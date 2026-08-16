@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "skillVersion": "3.0.0",
+  "skillVersion": "3.1.0",
   "handoffId": "UI-2026-001",
   "uiRevision": 1,
   "uiCommit": "<ui-package-commit-or-state-id>",
@@ -12,5 +12,5 @@
     {"path": ".webby/asset-manifest.json", "sha256": null, "required": true},
     {"path": ".webby/CLAUDE_TASK.md", "sha256": null, "required": true}
   ],
-  "note": "Heavy Drive binaries are referenced by manifest IDs/checksums; they are not required to be committed into Git."
+  "note": "For NEW_REDESIGN these are typical required inputs. EXISTING_POLISH/BUG_FIX may use a smaller task-scoped lock. Heavy Drive binaries are referenced by manifest IDs/checksums; Drive readiness is re-proved per work session."
 }

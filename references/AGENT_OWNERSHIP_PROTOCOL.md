@@ -1,30 +1,22 @@
-# Agent Ownership Protocol — webbyLucifer v3.0
+# Agent Ownership Protocol — webbyLucifer v3.1
 
 ## Purpose
 
-Prevent user, ChatGPT and Claude from silently owning the same decision layer.
+Prevent user, ChatGPT and Claude from silently owning the same decision layer while separating **visual intent** from **technical mechanism**.
 
 ```text
 USER    = FINAL ACCEPTANCE AUTHORITY
-CHATGPT = DESIGN / UI / ASSET / STATE / MOTION AUTHORITY
-CLAUDE  = IMPLEMENTATION AUTHORITY
+CHATGPT = DESIGN / UI / ASSET / STATE / MOTION-FEEL AUTHORITY
+CLAUDE  = IMPLEMENTATION / TECHNICAL-MECHANISM AUTHORITY
 ```
 
-Ownership is about decision authority, not Git permissions.
+Ownership is decision authority, not Git permission.
 
 ---
 
 ## 1. User-owned decisions
 
-The user owns final approval of the real website and any explicit product/business preference, including when applicable:
-
-- whether the final interface is accepted;
-- whether a major layout should be full-width, boxed or mixed when the reference does not decide it;
-- business/content priority;
-- whether a visual direction change is approved;
-- whether a technical tradeoff that changes the approved experience is acceptable.
-
-ChatGPT may recommend; it must not silently overwrite an explicit user decision.
+The user owns final approval of the real website and explicit product/business preferences, including major full-width/boxed/mixed choices when references do not decide them, business/content priority and approval of material experience tradeoffs.
 
 ---
 
@@ -32,17 +24,15 @@ ChatGPT may recommend; it must not silently overwrite an explicit user decision.
 
 Claude read-only unless explicitly reassigned:
 
-- approved visual direction and page composition;
+- approved visual direction/page composition;
 - asset count/requirements;
-- asset classification and identity mapping;
+- asset classification, ROLE, ITEM mapping and icon inventory;
 - master/delivery asset authority;
-- Drive asset package and manifest;
-- typography/color/spacing/geometry intent;
-- full-width/boxed/mixed layout decision after user confirmation/evidence;
-- responsive design intent;
-- image crop/object-position/safe-area rules;
-- visual states and placeholders;
-- motion language;
+- typography/color/spacing/semantic geometry intent;
+- responsive visual intent;
+- crop/object-position/safe-area rules;
+- visual states/placeholders;
+- **motion FEEL**: trigger, duration, easing, distance, stagger, order, never-animate and reduced-motion intent;
 - approved raster references;
 - implementation contracts for visual scope;
 - design/asset defect resolution.
@@ -53,17 +43,19 @@ Claude MUST NOT change these simply because another implementation is easier.
 
 ## 3. Claude-owned decisions
 
-Within the approved contract, Claude owns implementation details that do not change the approved experience, for example:
+Within the approved observable experience, Claude owns technical implementation details such as:
 
 - framework-native component/code structure;
-- safe refactors needed to implement the contract;
-- data wiring and backend architecture within agreed requirements;
-- technical implementation of accessibility/semantics;
+- safe refactors required to implement the contract;
+- data/backend wiring within agreed requirements;
+- accessibility/semantics implementation;
 - targeted tests;
-- implementation-only configuration;
-- implementation receipts/commit history.
+- implementation configuration;
+- **motion MECHANISM**: CSS vs JS, observer/scroll strategy, requestAnimationFrame/interpolation, listeners, cleanup and technical fallbacks.
 
-If a technical decision would visibly change the approved design, responsive behavior, content state or motion, it is no longer implementation-only.
+Claude may change motion mechanism without asking only when visual feel and observable behavior remain unchanged and no material new global behavior surface is introduced.
+
+A material global behavior surface includes site-wide wheel/touch/key interception, preventing/replacing browser default scroll across routes, app-wide event capture, cross-route focus/navigation behavior or a global scroll/provider engine. This must be reported before broad application even if it adds zero npm dependencies.
 
 ---
 
@@ -73,60 +65,58 @@ Claude must not independently:
 
 ```text
 redesign approved UI
-choose a different full-width/boxed strategy
-search the web for replacement assets
-generate missing images
-substitute a “similar” asset
+choose another full-width/boxed strategy
+search/generate/substitute assets
 map identity-bearing images by array index
-invent a brand icon or redraw one for convenience
-invent loading/empty/missing states when not specified
-invent premium motion/animation
+fake a missing approved icon with CSS/Unicode/another library asset
+invent visual states
+invent motion FEEL
 measure raster screenshots to derive geometry
-rewrite the visual contract to match easier code
-silently broaden a small UI task into a repo-wide redesign/audit
+rewrite visual contract to match easier code
+silently broaden a small task into repo-wide redesign/audit
 ```
 
 ---
 
 ## 5. Missing information signals
 
-Use concise blocker categories:
-
 ```text
 NEED_ASSET
-= a required asset/file is missing from the authoritative pack
-
 BLOCKED_SPEC
-= the design/spec is missing, ambiguous or contradictory
-
 TECHNICAL_CONSTRAINT
-= the spec is clear, but current code/stack/assets/performance/runtime cannot satisfy it as written
 ```
 
-Claude should continue unaffected work when safe, but must not invent a replacement for the blocked item.
+Continue unaffected work when safe; never invent a replacement.
 
 ---
 
-## 6. Error ownership after user review
+## 6. Critical Finding exception
 
-When the user rejects the real implementation, classify before editing:
+Anti-scope-creep does not permit silence about credible serious data-loss/security findings.
 
 ```text
-DESIGN ERROR
-→ ChatGPT revises design/spec and obtains user approval as needed
+CURRENT ACTION causing/about to cause harm
+→ stop only that harmful action + report CRITICAL_FINDING immediately
 
-ASSET ERROR
-→ ChatGPT creates/fixes/productionizes the asset and updates Drive/manifest
-
-IMPLEMENTATION ERROR
-→ Claude fixes the code to the existing approved contract
+EXISTING unrelated critical bug discovered
+→ report immediately + continue current task when safe/independent
 ```
 
-This classification prevents every visual complaint from becoming another redesign/audit loop.
+A Critical Finding never grants permission for a broad unauthorized audit/refactor.
 
 ---
 
-## 7. Conflict state
+## 7. Error ownership after user review
+
+```text
+DESIGN ERROR         → ChatGPT revises design/spec
+ASSET ERROR          → ChatGPT fixes/creates asset package
+IMPLEMENTATION ERROR → Claude fixes code to existing contract
+```
+
+---
+
+## 8. Conflict state
 
 If both agents changed the same authoritative design/asset contract without explicit reassignment:
 
@@ -134,4 +124,4 @@ If both agents changed the same authoritative design/asset contract without expl
 OWNERSHIP_CONFLICT
 ```
 
-Do not pick the newest file automatically. Return to the user-approved intent and the authoritative owner.
+Return to user-approved intent and the authoritative owner rather than choosing the newest file automatically.

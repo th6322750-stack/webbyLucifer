@@ -1,105 +1,155 @@
-# IMPLEMENTATION_READY_UI Checklist — webbyLucifer v3.0
+# IMPLEMENTATION_READY_UI Checklist — webbyLucifer v3.1
 
-Legacy name: `UI_SETUP_COMPLETE`. For v3, the canonical readiness state is `IMPLEMENTATION_READY_UI`.
+This checklist is **task-mode aware**. Do not apply the full NEW_REDESIGN gate to a five-line existing polish or a targeted bug fix.
 
-If any applicable required item is not satisfied, Claude MUST NOT begin ordinary UI implementation.
+## 0. Task Router
+
+- [ ] `TASK_MODE` is classified as `NEW_REDESIGN`, `EXISTING_POLISH`, or `BUG_FIX`.
+- [ ] If classification materially changes cost/scope and is ambiguous, the user was asked once.
+
+---
+
+# A. NEW_REDESIGN — full pipeline readiness
+
+If any applicable item below fails, Claude MUST NOT begin full-pipeline UI implementation.
 
 ## User approval
 
-- [ ] The user has reviewed and approved the visible direction (`VISUAL_DIRECTION_APPROVED`).
-- [ ] Any material user choice not safely inferable from the reference is locked, including full-width/boxed/mixed behavior where relevant.
+- [ ] User approved visible direction (`VISUAL_DIRECTION_APPROVED`).
+- [ ] Material choices such as full-width/boxed/mixed are locked.
 
 ## Intake / environment
 
-- [ ] `PROJECT_INTAKE.json` is complete enough for the active scope.
-- [ ] Authoritative GitHub repo/branch is known when an existing repo is used.
-- [ ] Remote/local drift risk is known when Claude has local unpushed changes.
-- [ ] Google Drive asset delivery is available and Claude access/download has been verified.
-- [ ] Vercel/preview need is known; lack of Vercel is not a blocker unless deployment behavior is required.
+- [ ] `PROJECT_INTAKE.json` is complete for active scope.
+- [ ] Repo/branch is known when used.
+- [ ] Remote/local drift risk is known.
+- [ ] Current `workSessionId` is recorded.
+- [ ] Vercel/preview need is known; Vercel is not mandatory unless deployment behavior is required.
 
 ## Asset count plan
 
-- [ ] The UI was decomposed route-by-route/section-by-section.
-- [ ] `ASSET_COUNT_PLAN.json` exists when the scope needs asset production.
-- [ ] Total asset count was reported to the user before production.
-- [ ] Assets that must come from the user/client are identified.
-- [ ] Assets that ChatGPT must create/prepare are identified.
+- [ ] UI was decomposed route/section by route/section.
+- [ ] `ASSET_COUNT_PLAN.json` exists.
+- [ ] Total asset count was reported before production.
+- [ ] User-required vs ChatGPT-created/prepared assets are identified.
 
-## High-resolution source quality
+## High-resolution quality
 
-- [ ] Production-authoritative raster masters meet the approved FHD-class minimum.
-- [ ] 4K-class masters are used where required/preferred, especially hero/full-bleed imagery.
-- [ ] Low-resolution images were not merely enlarged and misrepresented as true high-resolution masters.
-- [ ] Low-resolution patchwork was not used to fake source quality.
-- [ ] Brand/logo/icon assets use authoritative/vector sources where appropriate.
+- [ ] Production-authoritative raster masters meet FHD-class minimum.
+- [ ] 4K-class is used where required/preferred, especially hero/full-bleed.
+- [ ] Low-res enlargement is not misrepresented as authoritative high-res.
+- [ ] Low-res patchwork is not used to fake quality.
+- [ ] Brand/logo/icon uses authoritative/vector source where appropriate.
 
-## Asset completeness and identity
+## Asset completeness / identity
 
-- [ ] Every visible production asset in the approved final reference exists in the frozen pack, or the reference intentionally shows a declared placeholder/data state.
+- [ ] Every visible production asset exists in the frozen pack or is an intentional declared placeholder/data state.
 - [ ] `asset-manifest.json` exists.
-- [ ] Every identity-bearing asset maps to the correct `ITEM`.
-- [ ] `AUTHENTIC` and `DATA_VISUAL` assets have the correct owner/item/data association.
-- [ ] `DEMO` assets cannot silently appear as authentic live data.
-- [ ] `ALLOWED_USAGE` is declared where misuse would be harmful.
-- [ ] Claude does not need to pick/search/generate/substitute a missing visual resource.
+- [ ] Identity-bearing assets map to correct `ITEM`.
+- [ ] `AUTHENTIC` / `DATA_VISUAL` owner/data mapping is correct.
+- [ ] `DEMO` cannot silently appear as authentic live data.
+- [ ] `ALLOWED_USAGE` exists where misuse matters.
+- [ ] Claude does not need to pick/search/generate/substitute a missing asset.
 
-## Master vs web delivery
+## Icon inventory
 
-- [ ] Master source and web delivery asset are distinguished where applicable.
+- [ ] Every visible required icon appears in `iconInventory`.
+- [ ] Every required inventory icon has an actual asset entry with `role = ICON`.
+- [ ] No approved icon requires Claude to fake it with CSS/Unicode/another library.
+
+## Asset transport — session scoped
+
+- [ ] Transport mode is `DRIVE`, `GIT`, or `HYBRID`.
+- [ ] If `DRIVE` or `HYBRID`, Claude successfully downloaded a real file in the **current work session**.
+- [ ] `verifiedForSessionId` matches the current `workSessionId`.
+- [ ] `sessionVerifiedAt` is recorded.
+- [ ] If current Drive session failed/expired, readiness was reset instead of reusing an old true flag.
+
+## Master vs delivery / runtime
+
+- [ ] Master source and web delivery are distinguished.
 - [ ] Required web delivery files exist.
-- [ ] Delivery dimensions/formats/weight constraints are recorded where material.
-- [ ] Destination paths for implementation are known.
-- [ ] Heavy masters are stored in the approved Drive project folder rather than dumped into Git by default.
+- [ ] Destination paths/runtime sources are known.
+- [ ] Drive is treated as storage/delivery, not default live runtime origin.
+- [ ] Heavy masters are not dumped into Git by default merely to bypass Drive.
 
-## Responsive image treatment
+## Responsive images
 
 - [ ] Usage-specific aspect ratios are declared.
-- [ ] `object-position` is declared per usage/breakpoint where needed.
-- [ ] Safe areas are declared for subject-sensitive crops where needed.
-- [ ] Separate mobile delivery files exist where one master cannot survive the required crop.
+- [ ] `object-position` is declared where needed.
+- [ ] Safe area is declared where needed.
+- [ ] Separate mobile delivery exists where one crop cannot survive.
 
-## Deterministic UI geometry
+## Deterministic geometry
 
-- [ ] The final UI composition was generated from declared values rather than being reverse-engineered from a raster.
+- [ ] Final composition is generated from declared values, not reverse-engineered raster measurements.
 - [ ] Container/full-width rules are locked.
-- [ ] Column counts/gaps/section paddings are locked where material.
-- [ ] Aspect ratios use semantic values unless an intentional exception is documented.
-- [ ] Typography size/weight/line-height hierarchy is locked.
-- [ ] Claude will not need to measure the raster to obtain implementation numbers.
+- [ ] Columns/gaps/paddings are locked where material.
+- [ ] Aspect ratios are semantic unless intentional exception is documented.
+- [ ] Typography hierarchy is locked.
+- [ ] Claude does not need to measure raster.
 
-## Responsive layout
+## Responsive / content / state
 
 - [ ] Real project breakpoints/constraints are known.
-- [ ] Critical breakpoint boundaries are covered by spec/reference where needed.
-- [ ] Wide/full-bleed behavior is defined when relevant.
-
-## Content and states
-
+- [ ] Critical boundary behavior is covered where needed.
 - [ ] Real/representative content is used where wrapping matters.
-- [ ] Content envelopes such as max lines/clamp/no-wrap are defined where data may vary.
-- [ ] Required layout-changing states are defined: missing image/partial/empty/few items/loading/etc. as applicable.
-- [ ] Claude does not need to invent a runtime state.
+- [ ] Content envelopes are defined where data varies.
+- [ ] Required layout-changing states are defined.
 
-## Motion / interaction
+## Motion
 
-- [ ] Motion is specified or explicitly `N/A`.
-- [ ] If motion exists, trigger/duration/easing/distance/stagger/orchestration/never-animate/reduced-motion are defined only to the level needed.
-- [ ] Required interactions are specified.
+- [ ] Motion FEEL is specified or N/A.
+- [ ] FEEL covers only necessary trigger/duration/easing/distance/stagger/order/reduced-motion rules.
+- [ ] Motion MECHANISM remains Claude's implementation choice.
+- [ ] Any mechanism requiring a material new global behavior surface has been reported before broad application.
 
-## Handoff state
+## Handoff
 
-- [ ] `HANDOFF.json` status is `IMPLEMENTATION_READY_UI`.
-- [ ] `WEBBY_LOCK.json` matches the active UI revision/commit when used.
-- [ ] The short `CLAUDE_TASK.md` exists for the active task/scope.
-- [ ] No unresolved `NEED_ASSET`, `BLOCKED_SPEC` or blocking request remains for the active scope.
-- [ ] Validator passes when validator execution is available, or the reason it cannot run is recorded.
+- [ ] `HANDOFF.json` taskMode = `NEW_REDESIGN`.
+- [ ] status = `IMPLEMENTATION_READY_UI`.
+- [ ] `WEBBY_LOCK.json` matches active UI state when used.
+- [ ] Short `CLAUDE_TASK.md` exists.
+- [ ] No blocking `NEED_ASSET` / `BLOCKED_SPEC` remains.
+- [ ] Validator passes when available, or unavailable reason is recorded.
 
-## Gate
+---
 
-Only when all applicable checks pass:
+# B. EXISTING_POLISH — fast path readiness
+
+Do **not** require Asset Count/4K/Drive full-pipeline gates when no new asset pipeline is involved.
+
+- [ ] Existing approved/current baseline is sufficiently known.
+- [ ] Exact target is scoped.
+- [ ] Local/shared impact is known.
+- [ ] New asset is either not required or already prepared/mapped.
+- [ ] If a new Drive asset is used, current-session Drive proof is valid.
+- [ ] Motion FEEL, if changed, is specified by ChatGPT.
+- [ ] Material global motion/scroll mechanism expansion is either absent or reported.
+- [ ] No blocking spec gap remains.
+- [ ] Short task contract is ready.
+
+Screenshot is optional; use only if current visual/runtime evidence is actually needed.
+
+---
+
+# C. BUG_FIX — targeted readiness
+
+- [ ] Bug/defect is named or reproducible enough to target.
+- [ ] Affected scope is known enough to begin.
+- [ ] No redesign is required unless explicitly reclassified.
+- [ ] Required asset/spec for the fix is available or the appropriate blocker is reported.
+- [ ] Targeted test strategy is clear enough for the defect risk.
+
+---
+
+# D. CRITICAL_FINDING exception
+
+At all task modes:
 
 ```text
-IMPLEMENTATION_READY_UI = true
+current action is dangerous → stop only that harmful action + report
+existing unrelated critical bug → report immediately + continue safe independent task
 ```
 
-Then Claude may implement from the exact locked package without redesigning, searching for assets or measuring raster pixels.
+A Critical Finding never grants permission for a broad unauthorized audit/refactor.

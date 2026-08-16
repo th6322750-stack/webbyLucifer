@@ -1,8 +1,11 @@
 {
   "schemaVersion": 3,
+  "protocolVersion": "3.1.0",
   "handoffId": "UI-2026-001",
+  "workSessionId": "session-2026-08-17-a",
   "producer": "CHATGPT",
   "executor": "CLAUDE",
+  "taskMode": "NEW_REDESIGN",
   "status": "IMPLEMENTATION_READY_UI",
   "uiRevision": 1,
   "uiCommit": "<ui-package-commit-or-state-id>",
@@ -18,9 +21,10 @@
   },
   "assetManifest": {
     "file": ".webby/asset-manifest.json",
-    "storeType": "GOOGLE_DRIVE",
+    "transportMode": "HYBRID",
     "driveFolderRef": "<drive-folder-id-or-url>",
-    "claudeAccessVerified": true
+    "verifiedForSessionId": "session-2026-08-17-a",
+    "sessionVerifiedAt": "<iso-8601>"
   },
   "implementationReady": {
     "userVisualApproved": true,
@@ -28,14 +32,15 @@
     "assetsComplete": true,
     "highResMastersPass": true,
     "deliveryComplete": true,
-    "driveAccessible": true,
+    "transportReadyForSession": true,
     "mappingComplete": true,
+    "iconInventoryComplete": true,
     "layoutModeLocked": true,
     "typographyLocked": true,
     "semanticGeometryLocked": true,
     "responsiveLocked": true,
     "statesLockedOrNA": true,
-    "motionLockedOrNA": true,
+    "motionFeelLockedOrNA": true,
     "noBlockingSpecOrAssetGap": true
   },
   "requiredInputs": [
@@ -63,12 +68,15 @@
     "Do not search/generate/substitute visual assets",
     "Do not map identity-bearing assets by array index",
     "Do not measure raster screenshots to invent implementation geometry",
-    "Do not invent missing states or motion",
-    "Use NEED_ASSET, BLOCKED_SPEC or TECHNICAL_CONSTRAINT instead of guessing",
-    "Do not audit the entire repository for an ordinary scoped UI task",
-    "Do not run screenshot matrices by default"
+    "Motion FEEL is ChatGPT-owned; technical MECHANISM is Claude-owned",
+    "Report material global behavior surface expansion before applying it broadly",
+    "Drive proof is valid only for the recorded workSessionId",
+    "Drive is delivery/storage, not default runtime serving architecture",
+    "Report CRITICAL_FINDING immediately without turning it into an unauthorized broad audit"
   ],
   "visualAuthority": "CHATGPT",
+  "motionFeelAuthority": "CHATGPT",
+  "motionMechanismAuthority": "CLAUDE",
   "finalAcceptanceAuthority": "USER",
   "implementationAuthority": "CLAUDE"
 }

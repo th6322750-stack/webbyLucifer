@@ -1,10 +1,13 @@
 {
   "version": 3,
+  "protocolVersion": "3.1.0",
   "uiRevision": 1,
   "assetStore": {
-    "type": "GOOGLE_DRIVE",
+    "transportMode": "HYBRID",
     "folderRef": "<drive-folder-id-or-url>",
-    "claudeAccessVerified": true
+    "accessProofStatus": "VERIFIED_THIS_SESSION",
+    "verifiedForSessionId": "session-2026-08-17-a",
+    "sessionVerifiedAt": "<iso-8601>"
   },
   "qualityPolicy": {
     "rasterMasterMinimum": "FHD_CLASS",
@@ -13,6 +16,12 @@
     "allowLowResUpscaleAsAuthority": false,
     "allowLowResPatchwork": false
   },
+  "iconInventory": [
+    {"id": "heart-outline", "required": true, "sourceInApprovedUI": "property-card:favourite-off"},
+    {"id": "heart-filled", "required": true, "sourceInApprovedUI": "property-card:favourite-on"},
+    {"id": "play", "required": true, "sourceInApprovedUI": "media-control:play"},
+    {"id": "pause", "required": true, "sourceInApprovedUI": "media-control:pause"}
+  ],
   "assets": [
     {
       "id": "project-sun-galaxy-cover",
@@ -35,9 +44,11 @@
       "delivery": [
         {
           "usage": "project-card",
-          "driveFileRef": "<drive-file-id-or-url>",
+          "driveFileRef": null,
           "fileName": "project-sun-galaxy-cover.webp",
           "destinationPath": "public/assets/projects/project-sun-galaxy-cover.webp",
+          "runtimeSourceType": "PROJECT_PATH",
+          "runtimeSource": "/assets/projects/project-sun-galaxy-cover.webp",
           "width": 1600,
           "height": 1200,
           "format": "WEBP",
@@ -53,86 +64,177 @@
         "project-card": {
           "ratio": "4/3",
           "fit": "cover",
-          "objectPosition": {
-            "mobile": "68% 50%",
-            "desktop": "64% 50%"
-          },
-          "safeArea": {
-            "x": 0.18,
-            "y": 0.12,
-            "width": 0.64,
-            "height": 0.76
-          }
-        },
-        "project-detail-hero": {
-          "ratio": "16/7",
-          "fit": "cover",
-          "objectPosition": {
-            "mobile": "72% 45%",
-            "desktop": "50% 40%"
-          }
+          "objectPosition": {"mobile": "68% 50%", "desktop": "64% 50%"},
+          "safeArea": {"x": 0.18, "y": 0.12, "width": 0.64, "height": 0.76}
         }
       },
       "priority": "above-fold",
       "livePolicy": "ALLOWED",
-      "mustNot": [
-        "use for another project item",
-        "map by array index",
-        "replace with a similar stock image",
-        "measure raster to invent a new crop ratio"
-      ]
+      "mustNot": ["use for another project item", "map by array index", "replace with similar stock"]
     },
     {
-      "id": "home-hero-demo",
-      "classification": "DEMO",
+      "id": "heart-outline",
+      "classification": "DECORATIVE",
       "item": null,
       "identityRequired": false,
-      "role": "HERO",
+      "role": "ICON",
       "authoritative": true,
       "master": {
-        "qualityClass": "4K_CLASS",
+        "qualityClass": "VECTOR",
         "driveFileRef": "<drive-file-id-or-url>",
-        "fileName": "home-hero-master.png",
-        "width": 3840,
-        "height": 1536,
-        "format": "PNG",
+        "fileName": "heart-outline.svg",
+        "width": null,
+        "height": null,
+        "format": "SVG",
         "sha256": null,
         "nativeOrAuthoritativeHighRes": true,
         "derivedFromLowRes": false
       },
       "delivery": [
         {
-          "usage": "home-hero",
-          "driveFileRef": "<drive-file-id-or-url>",
-          "fileName": "home-hero.webp",
-          "destinationPath": "public/assets/hero/home-hero.webp",
-          "width": 2560,
-          "height": 1024,
-          "format": "WEBP",
-          "byteSize": 390000,
-          "maxWeight": 450000,
-          "transparent": false,
-          "dominantColor": "#7A6E63",
+          "usage": "favourite-off",
+          "driveFileRef": null,
+          "fileName": "heart-outline.svg",
+          "destinationPath": "public/assets/icons/heart-outline.svg",
+          "runtimeSourceType": "PROJECT_PATH",
+          "runtimeSource": "/assets/icons/heart-outline.svg",
+          "width": null,
+          "height": null,
+          "format": "SVG",
+          "byteSize": 1200,
+          "maxWeight": 10000,
+          "transparent": true,
+          "dominantColor": null,
           "sha256": null
         }
       ],
-      "allowedUsage": ["home-hero"],
-      "presentationByUsage": {
-        "home-hero": {
-          "ratio": "5/2",
-          "fit": "cover",
-          "objectPosition": {
-            "mobile": "72% 50%",
-            "desktop": "50% 50%"
-          }
-        }
+      "allowedUsage": ["favourite-off"],
+      "presentationByUsage": {},
+      "priority": "high",
+      "livePolicy": "ALLOWED",
+      "mustNot": ["replace with Unicode/CSS approximation"]
+    },
+    {
+      "id": "heart-filled",
+      "classification": "DECORATIVE",
+      "item": null,
+      "identityRequired": false,
+      "role": "ICON",
+      "authoritative": true,
+      "master": {
+        "qualityClass": "VECTOR",
+        "driveFileRef": "<drive-file-id-or-url>",
+        "fileName": "heart-filled.svg",
+        "width": null,
+        "height": null,
+        "format": "SVG",
+        "sha256": null,
+        "nativeOrAuthoritativeHighRes": true,
+        "derivedFromLowRes": false
       },
-      "priority": "above-fold",
-      "livePolicy": "DEMO_ONLY",
-      "mustNot": [
-        "present as an authentic named property image",
-        "substitute without Design Authority approval"
-      ]
+      "delivery": [
+        {
+          "usage": "favourite-on",
+          "driveFileRef": null,
+          "fileName": "heart-filled.svg",
+          "destinationPath": "public/assets/icons/heart-filled.svg",
+          "runtimeSourceType": "PROJECT_PATH",
+          "runtimeSource": "/assets/icons/heart-filled.svg",
+          "width": null,
+          "height": null,
+          "format": "SVG",
+          "byteSize": 1400,
+          "maxWeight": 10000,
+          "transparent": true,
+          "dominantColor": null,
+          "sha256": null
+        }
+      ],
+      "allowedUsage": ["favourite-on"],
+      "presentationByUsage": {},
+      "priority": "high",
+      "livePolicy": "ALLOWED",
+      "mustNot": ["replace with CSS background approximation"]
+    },
+    {
+      "id": "play",
+      "classification": "DECORATIVE",
+      "item": null,
+      "identityRequired": false,
+      "role": "ICON",
+      "authoritative": true,
+      "master": {
+        "qualityClass": "VECTOR",
+        "driveFileRef": "<drive-file-id-or-url>",
+        "fileName": "play.svg",
+        "width": null,
+        "height": null,
+        "format": "SVG",
+        "sha256": null,
+        "nativeOrAuthoritativeHighRes": true,
+        "derivedFromLowRes": false
+      },
+      "delivery": [{
+        "usage": "media-play",
+        "driveFileRef": null,
+        "fileName": "play.svg",
+        "destinationPath": "public/assets/icons/play.svg",
+        "runtimeSourceType": "PROJECT_PATH",
+        "runtimeSource": "/assets/icons/play.svg",
+        "width": null,
+        "height": null,
+        "format": "SVG",
+        "byteSize": 900,
+        "maxWeight": 10000,
+        "transparent": true,
+        "dominantColor": null,
+        "sha256": null
+      }],
+      "allowedUsage": ["media-play"],
+      "presentationByUsage": {},
+      "priority": "high",
+      "livePolicy": "ALLOWED",
+      "mustNot": ["draw ad-hoc triangle in CSS unless contract explicitly allows"]
+    },
+    {
+      "id": "pause",
+      "classification": "DECORATIVE",
+      "item": null,
+      "identityRequired": false,
+      "role": "ICON",
+      "authoritative": true,
+      "master": {
+        "qualityClass": "VECTOR",
+        "driveFileRef": "<drive-file-id-or-url>",
+        "fileName": "pause.svg",
+        "width": null,
+        "height": null,
+        "format": "SVG",
+        "sha256": null,
+        "nativeOrAuthoritativeHighRes": true,
+        "derivedFromLowRes": false
+      },
+      "delivery": [{
+        "usage": "media-pause",
+        "driveFileRef": null,
+        "fileName": "pause.svg",
+        "destinationPath": "public/assets/icons/pause.svg",
+        "runtimeSourceType": "PROJECT_PATH",
+        "runtimeSource": "/assets/icons/pause.svg",
+        "width": null,
+        "height": null,
+        "format": "SVG",
+        "byteSize": 850,
+        "maxWeight": 10000,
+        "transparent": true,
+        "dominantColor": null,
+        "sha256": null
+      }],
+      "allowedUsage": ["media-pause"],
+      "presentationByUsage": {},
+      "priority": "high",
+      "livePolicy": "ALLOWED",
+      "mustNot": ["replace with text glyph"]
     }
   ]
 }

@@ -1,23 +1,58 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://webbylucifer.dev/schemas/asset-manifest.schema.json",
-  "title": "webbyLucifer Asset Manifest v3",
+  "title": "webbyLucifer Asset Manifest v3.1",
   "type": "object",
-  "required": ["version", "assetStore", "assets"],
+  "required": ["version", "protocolVersion", "assetStore", "iconInventory", "assets"],
   "properties": {
     "version": {"const": 3},
+    "protocolVersion": {"const": "3.1.0"},
     "uiRevision": {"type": ["integer", "null"], "minimum": 1},
     "assetStore": {
       "type": "object",
-      "required": ["type", "folderRef"],
+      "required": ["transportMode", "accessProofStatus"],
       "properties": {
-        "type": {"enum": ["GOOGLE_DRIVE", "USER_APPROVED_ALTERNATIVE"]},
-        "folderRef": {"type": "string", "minLength": 1},
-        "claudeAccessVerified": {"type": "boolean"}
+        "transportMode": {"enum": ["DRIVE", "GIT", "HYBRID"]},
+        "folderRef": {"type": ["string", "null"]},
+        "accessProofStatus": {"enum": ["VERIFIED_THIS_SESSION", "NOT_REQUIRED", "FAILED_THIS_SESSION"]},
+        "verifiedForSessionId": {"type": ["string", "null"]},
+        "sessionVerifiedAt": {"type": ["string", "null"]}
       },
+      "allOf": [
+        {
+          "if": {"properties": {"transportMode": {"enum": ["DRIVE", "HYBRID"]}}, "required": ["transportMode"]},
+          "then": {
+            "required": ["folderRef", "verifiedForSessionId", "sessionVerifiedAt"],
+            "properties": {
+              "folderRef": {"type": "string", "minLength": 1},
+              "accessProofStatus": {"const": "VERIFIED_THIS_SESSION"},
+              "verifiedForSessionId": {"type": "string", "minLength": 1},
+              "sessionVerifiedAt": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"transportMode": {"const": "GIT"}}, "required": ["transportMode"]},
+          "then": {"properties": {"accessProofStatus": {"const": "NOT_REQUIRED"}}}
+        }
+      ],
       "additionalProperties": true
     },
     "qualityPolicy": {"type": "object", "additionalProperties": true},
+    "iconInventory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "required"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "required": {"type": "boolean"},
+          "sourceInApprovedUI": {"type": ["string", "null"]},
+          "notes": {"type": ["string", "null"]}
+        },
+        "additionalProperties": true
+      }
+    },
     "assets": {
       "type": "array",
       "items": {
@@ -51,12 +86,14 @@
             "minItems": 1,
             "items": {
               "type": "object",
-              "required": ["usage", "fileName", "destinationPath", "format"],
+              "required": ["usage", "fileName", "destinationPath", "format", "runtimeSourceType"],
               "properties": {
                 "usage": {"type": "string", "minLength": 1},
                 "driveFileRef": {"type": ["string", "null"]},
                 "fileName": {"type": "string", "minLength": 1},
                 "destinationPath": {"type": "string", "minLength": 1},
+                "runtimeSourceType": {"enum": ["PROJECT_PATH", "REMOTE_DECLARED"]},
+                "runtimeSource": {"type": ["string", "null"]},
                 "width": {"type": ["integer", "null"], "minimum": 1},
                 "height": {"type": ["integer", "null"], "minimum": 1},
                 "format": {"type": "string", "minLength": 1},

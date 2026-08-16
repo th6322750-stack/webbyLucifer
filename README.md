@@ -1,128 +1,104 @@
-# webbyLucifer v3.0
+# webbyLucifer v3.1
 
-`webbyLucifer` is a multi-agent web workflow designed to minimize visual rework by making UI **asset-complete and implementation-ready before the implementation executor starts coding**.
+`webbyLucifer` is a multi-agent web workflow optimized for two goals at once:
+
+1. **large/new UI work must be asset-complete and implementation-ready before Claude codes**;
+2. **small polish/bug-fix work must not be forced through a heavyweight pipeline**.
 
 ```text
 USER    = FINAL ACCEPTANCE AUTHORITY
-CHATGPT = DESIGN / UI / ASSET / STATE / MOTION AUTHORITY
-CLAUDE  = IMPLEMENTATION AUTHORITY
-DRIVE   = HEAVY ASSET DELIVERY AUTHORITY
-GITHUB  = CODE + LIGHTWEIGHT VERSIONED CONTRACT/STATE
+CHATGPT = DESIGN / UI / ASSET / STATE / MOTION-FEEL AUTHORITY
+CLAUDE  = IMPLEMENTATION / TECHNICAL-MECHANISM AUTHORITY
+DRIVE   = HEAVY ASSET STORAGE/DELIVERY WHEN VERIFIED FOR CURRENT SESSION
+GITHUB  = CODE + LIGHTWEIGHT CONTRACT/STATE + DELIVERY WHEN GIT/HYBRID MODE IS USED
 VERCEL  = OPTIONAL PREVIEW / DEPLOYMENT
 ```
 
 Canonical entrypoint: [`SKILL.md`](./SKILL.md).
 
-## Why v3 exists
-
-Previous visual-first flows could still create expensive loops:
+## v3.1 task router
 
 ```text
-AI full-page render
-→ missing/ambiguous asset pack
-→ executor reverse-engineers pixels and chooses substitutes
-→ implementation looks different
-→ screenshot/fix/re-render loop
+TASK
+|
+|----- NEW_REDESIGN
+|      |----- full asset-first pipeline
+|
+|----- EXISTING_POLISH
+|      |----- fast scoped path
+|
+|----- BUG_FIX
+       |----- targeted defect path
 ```
 
-v3 changes the center of gravity:
+This prevents a five-line CSS polish task from paying the same process cost as a new website while preserving strict preparation for major design work.
 
-```text
-read/ask material inputs
-→ decompose UI
-→ count assets before producing them
-→ create/collect high-res masters
-→ productionize web delivery assets
-→ freeze one Drive pack + manifest
-→ build deterministic final UI from those exact assets and declared geometry
-→ user approves
-→ implementation-ready gate
-→ short Claude contract
-→ Claude codes without redesign/search/measurement
-→ user accepts real website
-```
-
-## Core v3 rules
-
-- Asset Count Plan happens before production.
-- Raster masters are Full-HD-class minimum when production-authoritative; 4K-class is preferred, especially hero/full-bleed imagery.
-- Do not use low-resolution patchwork or pretend a small enlarged file is a true high-resolution source.
-- Heavy masters/asset packs go to one Google Drive project folder by default; GitHub is not the default 4K asset dump.
-- Every visible final production asset must exist in the frozen pack or be an intentional declared placeholder/state.
-- Asset identity must map to real `ITEM`s when identity matters; no index-based image guessing.
-- Claude may not search/generate/substitute visual assets.
-- Deterministic values create the final UI reference; Claude may not measure raster pixels to create implementation numbers.
-- `VISUAL_DIRECTION_APPROVED` is not the same as `IMPLEMENTATION_READY_UI`.
-- Claude does no long planning/audit/research for ordinary scoped UI tasks.
-- Screenshot matrices are not a default implementation loop.
-- The user performs final visual acceptance.
-
-## Canonical v3 workflow
+## Full pipeline for NEW_REDESIGN
 
 ```text
 GĐ0  Intake + environment/resource readiness
 GĐ1  Visual direction/page structure
 GĐ2  UI decomposition + Asset Count Plan
 GĐ3  Asset classification + high-res production
-GĐ4  Productionize + asset QA + Drive freeze
-GĐ5  Deterministic UI composition + responsive/state/motion
+GĐ4  Productionize + asset QA + transport freeze
+GĐ5  Deterministic UI composition + responsive/state/motion feel
 GĐ6  User visual approval
 GĐ7  IMPLEMENTATION_READY_UI gate
 GĐ8  Short implementation contract
 GĐ9  Claude implementation
 GĐ10 Minimum proportional technical checks
-GĐ11 User acceptance of real website
+GĐ11 User acceptance
 GĐ12 Functional QA → bug IDs → targeted fixes → final handoff
 ```
 
-## New/updated v3 protocols
+## Key v3.1 amendments
+
+- `EXISTING_POLISH` and `BUG_FIX` fast paths avoid replaying the full pipeline.
+- Motion is split into **FEEL** (ChatGPT) and **MECHANISM** (Claude).
+- A mechanism change that intercepts global wheel/touch/key/default browser behavior is architecturally material even with zero new packages and must be reported before broad application.
+- Google Drive access must be proved again in each work session when Drive is used.
+- Asset transport modes are `DRIVE`, `GIT`, or `HYBRID`; HYBRID commonly means heavy masters in Drive and web delivery in Git/project paths.
+- `ICON` is a UI **role**, not a new classification axis. Visible approved icons must exist in the icon inventory before full-pipeline readiness.
+- Drive is a delivery/storage channel, not the default runtime image source. `destinationPath` or the declared runtime source controls where the implementation serves assets.
+- Serious data-loss/security findings bypass the normal anti-scope-creep silence rule: report immediately, but do not turn that report into an unauthorized full audit.
+
+Detailed amendments: [`references/V3_1_AMENDMENTS.md`](./references/V3_1_AMENDMENTS.md).
+
+## Asset model
+
+Classification describes the asset's authority/nature:
 
 ```text
-references/ASSET_FIRST_IMPLEMENTATION_READY_PROTOCOL.md
-references/INTAKE_DISCOVERY_PROTOCOL.md
-references/VISUAL_HANDOFF_PROTOCOL.md
-references/GITHUB_HANDOFF_PROTOCOL.md
-references/AGENT_OWNERSHIP_PROTOCOL.md
-references/QA_PROTOCOL.md
+BRAND
+AUTHENTIC
+DEMO
+EDITORIAL
+DECORATIVE
+PLACEHOLDER
+DATA_VISUAL
 ```
 
-Legacy references remain for historical/compatible guidance where they do not conflict with v3.
-
-## Asset classification
+Role describes what it does in the UI:
 
 ```text
-BRAND       exact brand/logo/identity material
-AUTHENTIC   real asset belonging to the exact item
-DEMO        prototype/demo-only asset
-EDITORIAL   content/article imagery
-DECORATIVE  visual decoration without factual item identity
-PLACEHOLDER intentional missing-data visual
-DATA_VISUAL floorplan/map/progress/diagram tied to real data
+HERO
+PROJECT_COVER
+GALLERY
+LOGO
+ICON
+FLOORPLAN
+MAP
+...
 ```
 
-## Master vs delivery
+Master vs delivery:
 
 ```text
-MASTER SOURCE
-= highest-quality source/archive; FHD/4K-class raster or vector as appropriate
-
-WEB DELIVERY
-= implementation-ready file copied/downloaded for the website
+MASTER SOURCE = highest-quality source/archive; FHD/4K/vector as appropriate
+WEB DELIVERY  = implementation-ready file the website actually uses
 ```
 
-The executor normally uses the web delivery file, not the oversized master.
-
-## Deterministic UI handoff
-
-v3 separates:
-
-```text
-ASSET MANIFEST = which visual belongs where
-SPEC/CONTRACT  = implementation values/behavior
-RASTER         = human acceptance + hierarchy/arrangement reference
-```
-
-Core rule:
+## Deterministic UI rule
 
 ```text
 SPEC → COMPOSITION → RASTER
@@ -134,28 +110,39 @@ Never:
 RASTER → measure pixels → magic numbers → code
 ```
 
-If a number is missing, Claude returns `BLOCKED_SPEC` instead of measuring the screenshot.
+Raster is for human acceptance and arrangement. Spec/manifest carries implementation values, mappings, states and behavior.
 
 ## Claude task model
 
-Default ordinary UI task:
-
 ```text
-short contract + exact asset references
+short contract
 → DRIFT / SCOPE / TOKEN pre-flight
 → read 1–3 relevant implementation files by default
 → code
-→ minimum proportional checks
+→ exact mapped assets if needed
+→ proportional checks
 → 3–5 line report
 ```
 
-Blocker signals:
+Blockers:
 
 ```text
 NEED_ASSET
 BLOCKED_SPEC
 TECHNICAL_CONSTRAINT
 ```
+
+## Critical Finding rule
+
+```text
+current action is dangerous
+→ stop that harmful action + report
+
+existing unrelated critical bug discovered
+→ report immediately + continue current task if safe/independent
+```
+
+No Critical Finding grants permission for a broad unsanctioned audit/refactor.
 
 ## Package
 
@@ -165,6 +152,7 @@ webbyLucifer/
 ├── VERSION
 ├── CHANGELOG.md
 ├── references/
+│   ├── V3_1_AMENDMENTS.md
 │   ├── ASSET_FIRST_IMPLEMENTATION_READY_PROTOCOL.md
 │   ├── INTAKE_DISCOVERY_PROTOCOL.md
 │   ├── VISUAL_HANDOFF_PROTOCOL.md
@@ -173,21 +161,8 @@ webbyLucifer/
 │   ├── QA_PROTOCOL.md
 │   └── legacy/supporting references...
 ├── schemas/
-│   ├── project-intake.schema.json
-│   ├── asset-count-plan.schema.json
-│   ├── asset-manifest.schema.json
-│   ├── handoff.schema.json
-│   └── existing supporting schemas...
 ├── templates/
-│   ├── PROJECT_INTAKE.example.json
-│   ├── ASSET_COUNT_PLAN.example.json
-│   ├── ASSET_MANIFEST.example.json
-│   ├── HANDOFF.example.json
-│   ├── CLAUDE_TASK.md
-│   ├── UI_SETUP_CHECKLIST.md
-│   └── existing supporting templates...
-└── scripts/
-    └── webby-validate.py
+└── scripts/webby-validate.py
 ```
 
 ## Validator
@@ -196,20 +171,7 @@ webbyLucifer/
 python scripts/webby-validate.py /path/to/project
 ```
 
-For v3 `IMPLEMENTATION_READY_UI`, the validator can catch important machine-verifiable failures such as:
-
-- asset count not reported to user;
-- incomplete readiness flags;
-- missing Drive access declaration;
-- missing asset manifest;
-- AUTHENTIC/DATA_VISUAL without item mapping;
-- master marked low-res-derived;
-- missing web delivery mapping;
-- delivery usage outside `allowedUsage`;
-- delivery file exceeding declared max weight;
-- remaining blocking requests.
-
-The validator cannot judge artistic quality. Asset/UI quality and final acceptance remain human/design-authority responsibilities.
+v3.1 validation distinguishes `NEW_REDESIGN` from fast-path tasks, validates current-session Drive proof when Drive/HYBRID is used, and can verify required icon inventory entries against actual `role=ICON` assets.
 
 ## Canonical repository
 
