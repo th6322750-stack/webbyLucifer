@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "status": "REPORTED",
+  "projectId": "example-project",
+  "createdAt": "<iso-8601>",
+  "qualityPolicy": {
+    "rasterMasterMinimum": "FHD_CLASS",
+    "rasterMasterPreferred": "4K_CLASS",
+    "heroPreferred": "4K_CLASS",
+    "allowLowResUpscaleAsAuthority": false,
+    "allowLowResPatchwork": false,
+    "vectorPreferredForBrandIcons": true
+  },
+  "totals": {
+    "all": 12,
+    "existing": 3,
+    "chatgptCreateOrPrepare": 7,
+    "userMustSupply": 2,
+    "fhdClass": 4,
+    "fourKClass": 6,
+    "vector": 2
+  },
+  "routes": [
+    {
+      "route": "/",
+      "sections": [
+        {
+          "section": "hero",
+          "visibleItemCount": 1,
+          "assets": [
+            {
+              "assetId": "home-hero",
+              "role": "HERO",
+              "quantity": 1,
+              "classification": "DEMO",
+              "sourceStatus": "CHATGPT_CREATE",
+              "masterQuality": "4K_CLASS",
+              "responsiveStrategy": "ONE_MASTER_WITH_DECLARED_CROP",
+              "identityRequired": false,
+              "notes": "Full-bleed hero; subject safe area required"
+            }
+          ]
+        },
+        {
+          "section": "featured-projects",
+          "visibleItemCount": 4,
+          "assets": [
+            {
+              "assetId": "featured-project-covers",
+              "role": "PROJECT_CARD",
+              "quantity": 4,
+              "classification": "AUTHENTIC",
+              "sourceStatus": "USER_SUPPLY_OR_EXISTING",
+              "masterQuality": "4K_CLASS",
+              "responsiveStrategy": "ONE_MASTER_WITH_DECLARED_CROP",
+              "identityRequired": true,
+              "notes": "Each cover must map to the exact project item; no index-based reuse"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "reportedToUser": true,
+  "approvedToStartProduction": true
+}

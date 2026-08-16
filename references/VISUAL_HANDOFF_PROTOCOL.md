@@ -1,261 +1,350 @@
-# Visual-First Handoff Protocol — v2.1
+# Visual Handoff Protocol — v3.0
 
 ## Purpose
 
-webbyLucifer v2.1 keeps ChatGPT as the full visual authority and Claude as the implementation authority, but changes how approved UI is transferred into implementation.
-
-The default principle is:
+v3 separates three authorities that were previously mixed together:
 
 ```text
-VISUAL FIRST
-CONTRACT SECOND
+ASSET MANIFEST = WHICH VISUAL RESOURCE IS ALLOWED / WHERE IT BELONGS
+SPEC / CONTRACT = IMPLEMENTATION NUMBERS + RESPONSIVE + STATE + MOTION + BEHAVIOR
+RASTER REFERENCE = HUMAN VISUAL ACCEPTANCE + PAGE HIERARCHY / ARRANGEMENT
 ```
 
-Do not spend tokens describing what an executor can reliably see in an approved full-page render. Use structured contracts for behavior, state, responsive rules, data, navigation, motion, constraints, and any decision that is not safely inferable from the visual truth.
+This removes the old failure mode:
+
+```text
+beautiful raster
+→ executor measures pixels
+→ magic ratios / arbitrary gaps
+→ implementation drifts
+→ repeated screenshot/fix loop
+```
 
 ---
 
-## 1. Approved visual truth
+## 1. Two kinds of render
 
-After GĐ1/GĐ2 approval, ChatGPT SHOULD publish full-page renders for every implementation-relevant route and required viewport.
+### A. Asset render / asset production
 
-Recommended project structure:
+Image generation may be used to create appropriate production assets such as hero photography, lifestyle imagery, editorial imagery, backgrounds and decorative art when fabrication is allowed.
 
-```text
-.webby/
-└── visual-handoff/
-    ├── routes.json
-    ├── home-desktop.png
-    ├── home-mobile.png
-    ├── product-desktop.png
-    └── product-mobile.png
-```
+The output is not automatically a final web asset. It must pass productionization, identity classification and quality checks.
 
-The approved renders are visual truth for visible presentation. They do not replace authoritative original assets, native/vector sources, or explicit interaction/responsive/data contracts.
+### B. Final UI reference render
 
-Recommended authority order when applicable:
+The final page reference must be composed from:
 
 ```text
-1. approved original/source asset
-2. approved full-page render
-3. approved structured Master/design source
-4. explicit visual/behavior contract
-5. browser implementation
+actual frozen asset pack
++ declared geometry
++ declared typography
++ real/representative content
++ actual project constraints/tokens when they exist
++ declared responsive behavior
 ```
 
-If the browser differs from approved visual truth, the implementation is fixed. Do not rewrite the approved design merely to match an easier implementation.
+It must not be a free-form image-generation hallucination of the whole page.
 
 ---
 
-## 2. Visual handoff package
+## 2. Deterministic composition
 
-GĐ3 SHOULD publish a `VISUAL_HANDOFF_PACKAGE` containing:
+A deterministic composition is a UI composition whose important geometry comes from declared values rather than being inferred later from pixels.
 
-- approved route renders;
-- viewport identity for each render;
-- route-to-render mapping;
-- authoritative asset references;
-- only the contracts needed for information not fully visible in renders;
-- active handoff/lock/revision metadata.
+Example:
 
-Example `routes.json`:
-
-```json
-{
-  "schemaVersion": 1,
-  "routes": {
-    "/": {
-      "desktop": "home-desktop.png",
-      "mobile": "home-mobile.png"
-    },
-    "/product": {
-      "desktop": "product-desktop.png",
-      "mobile": "product-mobile.png"
-    }
-  }
-}
+```text
+canvas: 1440
+container: 1240
+columns: 4
+gap: 16
+cardRatio: 4/3
+sectionPaddingY: 64
+heading: 32/40/700
 ```
 
-When `routes.json` exists, it SHOULD conform to `schemas/visual-handoff.schema.json`.
+These values are implementation inputs. The raster is an output of them.
+
+Hard direction:
+
+```text
+SPEC → COMPOSITION → RASTER
+```
+
+Forbidden direction:
+
+```text
+RASTER → MEASURE → SPEC
+```
 
 ---
 
-## 3. Minimal invisible-behavior contract
+## 3. “Look, do not measure” rule
 
-Do not duplicate clear visible information into large prose/JSON contracts unless deterministic implementation requires it.
+Claude/executor MAY look at an approved raster to understand:
 
-Contracts SHOULD focus on:
+- section order;
+- visual hierarchy;
+- composition/arrangement;
+- relative emphasis;
+- which supplied visual is being referred to.
 
-- responsive composition not fully represented by supplied viewports;
-- hover/focus/active behavior;
-- motion and transition behavior;
-- navigation and route targets;
-- dynamic states such as loading, empty, error, authenticated, selected;
-- CMS/API/data binding;
-- accessibility behavior that is not visually obvious;
-- conditional visibility;
-- functional constraints and `mustNot` rules;
-- exact geometry only when visual fidelity materially depends on it.
+Claude/executor MUST NOT use the raster as a ruler to invent:
+
+- pixel gaps;
+- container widths;
+- custom aspect ratios;
+- font sizes;
+- offsets;
+- breakpoints;
+- crop positions.
+
+If a required numeric value is missing from the implementation authority:
+
+```text
+BLOCKED_SPEC: <missing value>
+```
+
+Do not create magic geometry such as `199/144` because a screenshot happened to measure that way.
+
+---
+
+## 4. Asset completeness before final approval
+
+For an `APPROVED FINAL` reference:
+
+```text
+EVERY VISIBLE PRODUCTION ASSET
+→ must exist in the frozen pack
+→ must have an explicit mapping/usage
+→ or must intentionally be a declared PLACEHOLDER/state
+```
+
+Examples:
+
+- render shows 8 unique project cards → pack must map all 8 visible images;
+- gallery shows 5 photos → the 5 photos must exist and map to that gallery/item;
+- a floorplan shown as factual → the actual data visual must exist;
+- a missing-image design may intentionally show a placeholder if that is the approved state.
+
+Claude must never make up missing images merely to make the implementation resemble the raster.
+
+---
+
+## 5. Asset identity vs presentation
+
+Identity and presentation are separate.
+
+Example model:
+
+```text
+ITEM: project:sun-galaxy-complex
+FILE: project-sun-galaxy-cover.avif
+
+USAGE:
+  project-card:
+    ratio: 4/3
+    objectPosition:
+      mobile: 68% 50%
+      desktop: 64% 50%
+
+  project-detail-hero:
+    ratio: 16/7
+    objectPosition:
+      mobile: 72% 45%
+      desktop: 50% 40%
+```
+
+`objectPosition` belongs to `(asset × usage/frame)`, not globally to the image.
+
+Use `ALLOWED_USAGE` to prevent correct-looking but semantically wrong reuse.
+
+---
+
+## 6. Source/master and web delivery
+
+A high-resolution master is not necessarily the file the browser should load.
+
+```text
+MASTER SOURCE
+= high-quality authority/archive, FHD/4K-class raster or vector where appropriate
+
+WEB DELIVERY
+= the implementation-ready file derived from the master
+```
+
+The manifest should identify both when applicable.
+
+Claude normally uses the delivery file. Do not point the implementation directly at a huge 4K PNG merely because it is the source master.
+
+Runtime optimizers such as framework image optimization do not replace art direction, safe areas, identity mapping or mobile crop decisions.
+
+---
+
+## 7. Responsive reference strategy
+
+Do not choose reference widths only because they are common device sizes. Use the actual project layout breakpoints.
+
+Recommended strategy:
+
+```text
+1. mobile representative width (commonly ~390, project-dependent)
+2. exact breakpoint where desktop/tablet composition first changes
+3. exact wide/container behavior breakpoint
+4. 1920 only when full-width/full-bleed behavior needs large-screen review
+```
 
 Rule:
 
-```text
-IMAGE = VISIBLE FORM
-CONTRACT = INVISIBLE OR AMBIGUOUS BEHAVIOR
-```
+> Inspect the boundary where the layout becomes hardest, not only a comfortable width well above the breakpoint.
 
-A component map or placement map MAY still contain precise information when needed. v2.1 does not remove those contracts; it prevents unnecessary duplication.
+If the project uses a 900px desktop transition, 900 is more informative than 1024 for catching the tightest desktop state.
 
 ---
 
-## 4. Route-scoped context loading
+## 8. Existing-polish vs redesign mode
 
-Executors SHOULD consume only the context required for the active route/component.
+### EXISTING POLISH
 
-For example, implementing `/product` normally requires:
-
-```text
-product approved renders
-+ product assets
-+ product responsive rules
-+ product interactions/states
-+ shared tokens/components actually used
-```
-
-Do not load every project contract into model context by default.
-
-Preferred rules:
+When the user wants to preserve the current structure and fix visual details:
 
 ```text
-ROUTE-SCOPED CONTEXT
-COMPONENT-SCOPED CONTEXT
-ON-DEMAND CONTRACT LOADING
+current browser screenshot = CURRENT evidence
+ChatGPT annotation/spec = TARGET
+Claude implements the explicit deltas
 ```
 
-This is a token-efficiency rule and must not reduce implementation correctness.
+A new full-page target render is not required for every small polish task.
+
+### NEW / REDESIGN
+
+When the page/section is being materially redesigned:
+
+```text
+asset plan
+→ frozen asset pack
+→ deterministic composition
+→ final user-approved reference
+→ implementation contract
+```
+
+Do not treat the old browser screenshot as target authority in a redesign.
 
 ---
 
-## 5. GĐ4 visual reconstruction
+## 9. Content authority
 
-Before writing implementation code for an approved route, Claude/executor SHOULD inspect the route's approved render(s) and reconstruct:
+When real content exists, use real content in the final reference, especially Vietnamese text whose wrapping/diacritics affect layout.
 
-- section hierarchy;
-- containers and grids;
-- typography hierarchy;
-- spacing relationships;
-- cards and controls;
-- imagery treatment;
-- borders, radii and shadows;
-- alignment and layering;
-- visible responsive differences between supplied viewports.
-
-Then combine this visible evidence with the minimal contract.
-
-Hard rule:
+When content can change later, define a content envelope such as:
 
 ```text
-VISIBLE APPROVED UI MUST BE DERIVED FROM APPROVED VISUAL TRUTH WHEN AVAILABLE.
+title: maxLines 2; clamp; tested short/long Vietnamese values
+location: maxLines 1; ellipsis
+price: noWrap; tested with representative longest formatted value
 ```
 
-Claude MUST NOT claim a visible UI decision is undefined merely because it is absent from text when it is clear in an approved render.
-
-If a material UI decision is not clear in the render and is not defined by a contract, the existing request lifecycle applies:
-
-```text
-MISSING APPROVED UI != CLAUDE DESIGNS IT
-```
+Do not use artificially short copy merely to make the approved render look cleaner.
 
 ---
 
-## 6. Implementation targets
+## 10. State authority
 
-Visual reconstruction is implementation-target agnostic.
+ChatGPT owns the visual treatment of runtime states that materially change layout.
 
-### MODE A — CODE
-
-Default for coded projects:
+Common states when applicable:
 
 ```text
-Approved Render
-→ visual reconstruction
-→ React / Next.js / Vue / HTML/CSS / selected stack
+NORMAL
+LONG_TEXT
+SHORT_TEXT
+IMAGE_MISSING
+PARTIAL_DATA
+EMPTY
+FEW_ITEMS
+LOADING
+ERROR
 ```
 
-### MODE B — ELEMENTOR
+Do not create a separate full-page render for every state. Prefer a compact component state sheet only for states whose layout actually differs.
 
-Use only when the project explicitly targets WordPress + Elementor:
+If a real runtime state exists but no visual rule exists and it cannot safely reuse the normal style:
 
 ```text
-Approved Render
-→ visual reconstruction
-→ Elementor-compatible JSON/template
-→ WordPress import
+BLOCKED_SPEC: missing visual state
 ```
 
-Elementor is an implementation target, not the default architecture and not a replacement for webbyLucifer's authority, revision, QA, or request rules.
+Claude must not silently invent the state.
 
 ---
 
-## 7. Handoff gate additions
+## 11. Motion authority
 
-When approved renders are part of the project, `UI_SETUP_COMPLETE` SHOULD additionally verify:
+Motion belongs to Design Authority, not to implementation improvisation.
+
+When needed, specify:
 
 ```text
-[ ] every required route has its required approved viewport render(s)
-[ ] route-to-render mappings resolve to existing files
-[ ] active renders belong to the current UI revision/commit
-[ ] no stale render is referenced by the active handoff
-[ ] non-visible behavior needed for implementation is explicitly contracted
+trigger
+duration
+easing
+distance
+stagger
+orchestration/order
+never-animate list
+reduced-motion behavior
 ```
 
-If a required render is missing and the route cannot be implemented without visual invention, `UI_SETUP_COMPLETE` remains false for that scope.
+If a clear motion spec cannot be achieved with the current implementation architecture/performance budget, Claude reports:
+
+```text
+TECHNICAL_CONSTRAINT
+```
+
+with concise evidence rather than silently changing the feel.
 
 ---
 
-## 8. Visual QA loop
+## 12. Final visual package
 
-After implementation:
+A v3 visual handoff can contain:
 
 ```text
-IMPLEMENTATION
-↓
-RUN REAL WEBSITE
-↓
-CAPTURE BROWSER SCREENSHOT AT MATCHING VIEWPORT
-↓
-COMPARE AGAINST APPROVED RENDER
-↓
-PUBLISH DEFECTS
-↓
-EXECUTOR FIXES
-↓
-RE-CAPTURE / RE-QA
+USER-APPROVED RASTER REFERENCES
++ DETERMINISTIC GEOMETRY / TYPE / RESPONSIVE RULES
++ ASSET MANIFEST + DRIVE REFERENCES
++ REQUIRED STATE RULES/SHEET
++ MOTION RULES WHEN APPLICABLE
++ SHORT IMPLEMENTATION CONTRACT
 ```
 
-ChatGPT owns visual acceptance. The executor does not self-approve visual parity.
-
-The approved render is expected state. The browser screenshot is implementation evidence.
+The raster does not need to duplicate every implementation number in visible annotations; the structured spec carries those numbers.
 
 ---
 
-## 9. Non-regression rules
+## 13. Approval distinction
 
-v2.1 does NOT remove or weaken:
+```text
+VISUAL_DIRECTION_APPROVED
+= user approves how it looks
 
-- GĐ1→GĐ7 phase order;
-- user approval gates;
-- source-first asset authority;
-- canonical SVG rules;
-- `HANDOFF.json`;
-- `WEBBY_LOCK.json`;
-- deterministic UI revision/commit;
-- stale-handoff protection;
-- ownership boundaries;
-- request lifecycle;
-- implementation receipts;
-- validator usage;
-- backend/CMS phase;
-- final ChatGPT visual QA.
+IMPLEMENTATION_READY_UI
+= user-approved UI + complete assets + delivery + mappings + semantic geometry + responsive + states + motion-or-N/A
+```
 
-The change is specifically how visible UI information is handed to implementation: prefer approved visual truth over redundant token-heavy description.
+Only `IMPLEMENTATION_READY_UI` is the normal handoff state for Claude.
+
+---
+
+## 14. Screenshots after implementation
+
+Browser screenshots are evidence, not an automatic loop.
+
+Do not require a screenshot matrix after every task. Use screenshots when:
+
+- the user asks to see the result;
+- diagnosing a visual/runtime issue;
+- a responsive/new-layout smoke check genuinely benefits from visual evidence;
+- a QA phase explicitly requires evidence.
+
+The user is final visual acceptance authority. Claude does not self-approve visual parity.

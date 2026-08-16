@@ -1,50 +1,137 @@
-# Agent Ownership Protocol
+# Agent Ownership Protocol — webbyLucifer v3.0
 
 ## Purpose
 
-Prevent ChatGPT and Claude from silently editing the same source of truth.
+Prevent user, ChatGPT and Claude from silently owning the same decision layer.
 
 ```text
-CHATGPT = VISUAL TRUTH OWNER
-CLAUDE = IMPLEMENTATION TRUTH OWNER
+USER    = FINAL ACCEPTANCE AUTHORITY
+CHATGPT = DESIGN / UI / ASSET / STATE / MOTION AUTHORITY
+CLAUDE  = IMPLEMENTATION AUTHORITY
 ```
 
-## Default ownership
+Ownership is about decision authority, not Git permissions.
 
-### ChatGPT-owned / Claude read-only unless explicitly reassigned
+---
 
-- approved visual Masters/renders;
-- `.webby/HANDOFF.json` and `.webby/WEBBY_LOCK.json` active UI declarations;
-- route/section/component/placement/typography/token/responsive/interactions visual contracts;
-- `assets/source/**` visual source authority;
-- `assets/production/**` approved visual resources;
-- `.webby/qa/**` acceptance and visual defect records.
+## 1. User-owned decisions
 
-### Claude-owned / ChatGPT review-only by default
+The user owns final approval of the real website and any explicit product/business preference, including when applicable:
 
-- frontend implementation source;
-- backend/server implementation;
-- implementation architecture and configuration;
-- tests owned by implementation;
-- `.webby/implementation/**`;
-- `.webby/requests/**` request creation/consumption state, except ChatGPT may resolve supplied UI resources.
+- whether the final interface is accepted;
+- whether a major layout should be full-width, boxed or mixed when the reference does not decide it;
+- business/content priority;
+- whether a visual direction change is approved;
+- whether a technical tradeoff that changes the approved experience is acceptable.
 
-## Rules
+ChatGPT may recommend; it must not silently overwrite an explicit user decision.
 
-1. Ownership is about decision authority, not Git permissions.
-2. Claude must not modify an approved visual contract to make implementation easier.
-3. ChatGPT performing QA should publish a defect rather than silently redesigning implementation code.
-4. User instructions can explicitly reassign ownership for a project.
-5. Generated framework wrappers may be Claude-owned while canonical SVG/assets remain ChatGPT-owned.
-6. If a required visual resource is missing, use the request loop.
-7. If an implementation change requires a design change, obtain explicit visual approval and publish a new UI revision.
+---
 
-## Conflict state
+## 2. ChatGPT-owned decisions
 
-If both agents modified the same authoritative visual contract without explicit reassignment:
+Claude read-only unless explicitly reassigned:
+
+- approved visual direction and page composition;
+- asset count/requirements;
+- asset classification and identity mapping;
+- master/delivery asset authority;
+- Drive asset package and manifest;
+- typography/color/spacing/geometry intent;
+- full-width/boxed/mixed layout decision after user confirmation/evidence;
+- responsive design intent;
+- image crop/object-position/safe-area rules;
+- visual states and placeholders;
+- motion language;
+- approved raster references;
+- implementation contracts for visual scope;
+- design/asset defect resolution.
+
+Claude MUST NOT change these simply because another implementation is easier.
+
+---
+
+## 3. Claude-owned decisions
+
+Within the approved contract, Claude owns implementation details that do not change the approved experience, for example:
+
+- framework-native component/code structure;
+- safe refactors needed to implement the contract;
+- data wiring and backend architecture within agreed requirements;
+- technical implementation of accessibility/semantics;
+- targeted tests;
+- implementation-only configuration;
+- implementation receipts/commit history.
+
+If a technical decision would visibly change the approved design, responsive behavior, content state or motion, it is no longer implementation-only.
+
+---
+
+## 4. Claude forbidden authority
+
+Claude must not independently:
+
+```text
+redesign approved UI
+choose a different full-width/boxed strategy
+search the web for replacement assets
+generate missing images
+substitute a “similar” asset
+map identity-bearing images by array index
+invent a brand icon or redraw one for convenience
+invent loading/empty/missing states when not specified
+invent premium motion/animation
+measure raster screenshots to derive geometry
+rewrite the visual contract to match easier code
+silently broaden a small UI task into a repo-wide redesign/audit
+```
+
+---
+
+## 5. Missing information signals
+
+Use concise blocker categories:
+
+```text
+NEED_ASSET
+= a required asset/file is missing from the authoritative pack
+
+BLOCKED_SPEC
+= the design/spec is missing, ambiguous or contradictory
+
+TECHNICAL_CONSTRAINT
+= the spec is clear, but current code/stack/assets/performance/runtime cannot satisfy it as written
+```
+
+Claude should continue unaffected work when safe, but must not invent a replacement for the blocked item.
+
+---
+
+## 6. Error ownership after user review
+
+When the user rejects the real implementation, classify before editing:
+
+```text
+DESIGN ERROR
+→ ChatGPT revises design/spec and obtains user approval as needed
+
+ASSET ERROR
+→ ChatGPT creates/fixes/productionizes the asset and updates Drive/manifest
+
+IMPLEMENTATION ERROR
+→ Claude fixes the code to the existing approved contract
+```
+
+This classification prevents every visual complaint from becoming another redesign/audit loop.
+
+---
+
+## 7. Conflict state
+
+If both agents changed the same authoritative design/asset contract without explicit reassignment:
 
 ```text
 OWNERSHIP_CONFLICT
 ```
 
-Do not resolve by choosing the newest file automatically. Return to the authoritative owner and user-approved intent.
+Do not pick the newest file automatically. Return to the user-approved intent and the authoritative owner.

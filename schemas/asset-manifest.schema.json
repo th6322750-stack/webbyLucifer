@@ -1,29 +1,90 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "webbyLucifer Asset Manifest",
+  "$id": "https://webbylucifer.dev/schemas/asset-manifest.schema.json",
+  "title": "webbyLucifer Asset Manifest v3",
   "type": "object",
-  "required": ["version", "assets"],
+  "required": ["version", "assetStore", "assets"],
   "properties": {
-    "version": {"type": "integer", "minimum": 1},
-    "uiCommit": {"type": "string"},
+    "version": {"const": 3},
+    "uiRevision": {"type": ["integer", "null"], "minimum": 1},
+    "assetStore": {
+      "type": "object",
+      "required": ["type", "folderRef"],
+      "properties": {
+        "type": {"enum": ["GOOGLE_DRIVE", "USER_APPROVED_ALTERNATIVE"]},
+        "folderRef": {"type": "string", "minLength": 1},
+        "claudeAccessVerified": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "qualityPolicy": {"type": "object", "additionalProperties": true},
     "assets": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "production", "category"],
+        "required": ["id", "classification", "role", "master", "delivery", "allowedUsage", "presentationByUsage"],
         "properties": {
           "id": {"type": "string", "minLength": 1},
-          "category": {"type": "string", "minLength": 1},
-          "source": {"type": ["string", "null"]},
-          "production": {"type": "string", "minLength": 1},
-          "sha256": {"type": ["string", "null"], "pattern": "^[a-fA-F0-9]{64}$"},
-          "mime": {"type": ["string", "null"]},
-          "byteSize": {"type": ["integer", "null"], "minimum": 0},
+          "classification": {"enum": ["BRAND", "AUTHENTIC", "DEMO", "EDITORIAL", "DECORATIVE", "PLACEHOLDER", "DATA_VISUAL"]},
+          "item": {"type": ["string", "null"]},
+          "identityRequired": {"type": "boolean"},
+          "role": {"type": "string", "minLength": 1},
           "authoritative": {"type": "boolean"},
-          "reconstructed": {"type": "boolean"},
-          "usedBy": {"type": "array", "items": {"type": "string"}},
+          "master": {
+            "type": "object",
+            "required": ["qualityClass", "fileName", "format", "nativeOrAuthoritativeHighRes", "derivedFromLowRes"],
+            "properties": {
+              "qualityClass": {"enum": ["FHD_CLASS", "4K_CLASS", "VECTOR"]},
+              "driveFileRef": {"type": ["string", "null"]},
+              "fileName": {"type": "string", "minLength": 1},
+              "width": {"type": ["integer", "null"], "minimum": 1},
+              "height": {"type": ["integer", "null"], "minimum": 1},
+              "format": {"type": "string", "minLength": 1},
+              "sha256": {"type": ["string", "null"], "pattern": "^[a-fA-F0-9]{64}$"},
+              "nativeOrAuthoritativeHighRes": {"type": "boolean"},
+              "derivedFromLowRes": {"type": "boolean"}
+            },
+            "additionalProperties": true
+          },
+          "delivery": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["usage", "fileName", "destinationPath", "format"],
+              "properties": {
+                "usage": {"type": "string", "minLength": 1},
+                "driveFileRef": {"type": ["string", "null"]},
+                "fileName": {"type": "string", "minLength": 1},
+                "destinationPath": {"type": "string", "minLength": 1},
+                "width": {"type": ["integer", "null"], "minimum": 1},
+                "height": {"type": ["integer", "null"], "minimum": 1},
+                "format": {"type": "string", "minLength": 1},
+                "byteSize": {"type": ["integer", "null"], "minimum": 0},
+                "maxWeight": {"type": ["integer", "null"], "minimum": 0},
+                "transparent": {"type": ["boolean", "null"]},
+                "dominantColor": {"type": ["string", "null"]},
+                "sha256": {"type": ["string", "null"], "pattern": "^[a-fA-F0-9]{64}$"}
+              },
+              "additionalProperties": true
+            }
+          },
+          "allowedUsage": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+          "presentationByUsage": {"type": "object", "additionalProperties": true},
+          "priority": {"enum": ["above-fold", "high", "normal", "lazy"]},
+          "livePolicy": {"enum": ["ALLOWED", "DEMO_ONLY", "PLACEHOLDER_ONLY", "DATA_BOUND"]},
           "mustNot": {"type": "array", "items": {"type": "string"}}
         },
+        "allOf": [
+          {
+            "if": {"properties": {"classification": {"enum": ["AUTHENTIC", "DATA_VISUAL"]}}},
+            "then": {"required": ["item"]}
+          },
+          {
+            "if": {"properties": {"identityRequired": {"const": true}}},
+            "then": {"properties": {"item": {"type": "string", "minLength": 1}}}
+          }
+        ],
         "additionalProperties": true
       }
     }

@@ -1,5 +1,53 @@
 # Changelog
 
+## 3.0.0 — 2026-08-17
+
+### Added
+
+- **Asset-First Implementation-Ready UI** protocol as the new canonical center of the workflow;
+- mandatory **Asset Count Plan before asset production**, including user-visible counts for existing, ChatGPT-produced and user-required assets;
+- high-resolution raster source policy: Full-HD-class minimum for production-authoritative raster masters, 4K-class preferred, especially hero/full-bleed imagery;
+- hard ban on low-resolution patchwork and on presenting simple low-res enlargement as a true high-resolution source authority;
+- Google Drive as the default heavy asset delivery store, with GitHub focused on code and lightweight versioned contracts/state;
+- asset taxonomy: `BRAND / AUTHENTIC / DEMO / EDITORIAL / DECORATIVE / PLACEHOLDER / DATA_VISUAL`;
+- identity mapping (`ITEM`) and `ALLOWED_USAGE` enforcement model;
+- master-source vs web-delivery asset separation;
+- usage-specific crop/object-position/safe-area model;
+- deterministic UI composition rule: **spec creates render; render never creates spec**;
+- hard **“look at raster, do not measure raster”** rule for implementation;
+- `VISUAL_DIRECTION_APPROVED` vs `IMPLEMENTATION_READY_UI` as distinct states;
+- `IMPLEMENTATION_READY_UI` readiness gate covering assets, Drive, mapping, geometry, responsive, state and motion readiness;
+- short Claude implementation task contract with only `DRIFT / SCOPE / TOKEN` pre-flight checks;
+- explicit blocker vocabulary: `NEED_ASSET / BLOCKED_SPEC / TECHNICAL_CONSTRAINT`;
+- user as final visual acceptance authority;
+- user-facing terminology rule requiring plain-Vietnamese explanation of material English/specialist terms;
+- `references/ASSET_FIRST_IMPLEMENTATION_READY_PROTOCOL.md`;
+- `schemas/asset-count-plan.schema.json` and `templates/ASSET_COUNT_PLAN.example.json`;
+- v3 asset manifest schema/template with Drive references, master quality, identity, usage, delivery and presentation metadata.
+
+### Changed
+
+- GĐ0 now includes repository/branch/remote-local drift/Drive/Vercel/data-source readiness plus the major full-width/boxed/mixed layout decision;
+- full-page AI raster is no longer sufficient implementation authority;
+- raster is now primarily human acceptance/hierarchy evidence, while spec/manifest carry implementation numbers and mappings;
+- Claude no longer performs long planning, repo-wide audit, external design research, asset search/generation/substitution, screenshot matrices or full visual self-QA by default for ordinary scoped UI work;
+- default ordinary UI context targets 1–3 relevant implementation files;
+- screenshot comparison changed from a default visual reconstruction loop to optional evidence used only when it adds value;
+- QA now separates asset QA, proportional technical checks, user visual acceptance and later functional QA;
+- Google Drive access is checked before asset handoff; images visible only in chat are not considered delivered;
+- asset completeness now requires every visible approved-final production asset to exist in the frozen pack or be an intentional declared placeholder/state;
+- v3 validator checks implementation-ready flags, Asset Count Plan reporting, Drive access, v3 asset identity/quality/delivery constraints and max-weight rules;
+- handoff schema now uses `NOT_READY / VISUAL_DIRECTION_APPROVED / IMPLEMENTATION_READY_UI / SUPERSEDED`.
+
+### Preserved
+
+- ChatGPT remains Design/UI authority;
+- Claude remains implementation authority;
+- deterministic revision/lock concepts remain available;
+- request/blocker lifecycle remains available;
+- implementation receipts and stable defect IDs remain available;
+- useful v2.x and v1 reference material remains compatible only where it does not conflict with v3 hard rules.
+
 ## 2.2.0 — 2026-08-11
 
 ### Added
@@ -18,30 +66,11 @@
 
 ### Changed
 
-- canonical workflow is now `GĐ0 → GĐ1 → GĐ2 → GĐ3 → GĐ4 → GĐ5 → GĐ6 → GĐ7`;
-- the old baseline `GĐ1.P PROJECT INTAKE / EVIDENCE LOCK` responsibility is absorbed into GĐ0 to avoid duplicate intake;
+- canonical workflow became `GĐ0 → GĐ1 → GĐ2 → GĐ3 → GĐ4 → GĐ5 → GĐ6 → GĐ7`;
+- the old baseline `GĐ1.P PROJECT INTAKE / EVIDENCE LOCK` responsibility was absorbed into GĐ0 to avoid duplicate intake;
 - `SKILL.md` was condensed into a lower-token orchestration entrypoint while retaining hard rules and phase-specific protocol references;
 - GĐ1 may not begin while an unresolved material `HARD_GAP` can change design direction, personalization, conversion logic or scope;
 - GĐ0 prioritizes the smallest useful set of high-information questions instead of a fixed generic questionnaire.
-
-### Preserved
-
-- GĐ1→GĐ7 responsibilities and ownership;
-- ChatGPT as full visual/UI authority;
-- Claude as implementation authority;
-- GitHub as versioned exchange/state layer;
-- Visual-First Handoff from v2.1;
-- approved render as visible UI truth;
-- minimal invisible/ambiguous behavior contract;
-- route-scoped/context-on-demand token rules;
-- source-first production asset rules;
-- WEB/MOBILE final UI requirements;
-- SVG production pipeline;
-- deterministic UI revision and `WEBBY_LOCK.json`;
-- stale-handoff protection;
-- request lifecycle;
-- implementation receipts;
-- approved-render ↔ browser-screenshot visual QA loop.
 
 ## 2.1.0 — 2026-08-11
 
@@ -51,36 +80,15 @@
 - approved full-page render as primary visible UI truth;
 - `.webby/visual-handoff/routes.json` route/viewport mapping;
 - `visual-handoff.schema.json`;
-- optional `visualHandoff` and scoped-context metadata in `HANDOFF.json` schema;
 - route-scoped, component-scoped and on-demand contract loading rules;
 - explicit Visual Reconstruction step before implementation;
 - CODE implementation target plus optional WordPress + Elementor target;
-- approved-render ↔ browser-screenshot QA loop;
-- validator checks for visual handoff route mappings, missing renders and optional UI revision/commit mismatches.
+- approved-render ↔ browser-screenshot QA loop.
 
 ### Changed
 
-- handoff principle is now **VISUAL FIRST — CONTRACT SECOND**;
-- visible UI should be derived from approved renders instead of duplicated into token-heavy prose/contracts;
-- contracts focus on responsive behavior, interactions, dynamic states, navigation, data/CMS/API binding, accessibility and ambiguous/non-visible decisions;
-- component/placement contracts remain available when exact deterministic structure or geometry is materially needed;
-- `UI_SETUP_COMPLETE` now accounts for required approved renders when Visual-First Handoff is used;
-- QA now explicitly treats approved render as expected visual state and browser screenshot as implementation evidence.
-
-### Preserved
-
-- GĐ1→GĐ7 phase ownership and order;
-- ChatGPT as full visual/UI authority;
-- Claude as implementation authority;
-- GitHub as versioned exchange/state layer;
-- source-first production asset rules;
-- WEB/MOBILE final UI requirements;
-- SVG production pipeline;
-- deterministic UI revision and `WEBBY_LOCK.json`;
-- stale-handoff protection;
-- missing-UI request lifecycle;
-- implementation receipts;
-- ChatGPT visual QA → Claude fix loop.
+- handoff principle became **VISUAL FIRST — CONTRACT SECOND**;
+- visible UI was derived from approved renders instead of duplicated into token-heavy prose/contracts.
 
 ## 2.0.0 — 2026-08-10
 
@@ -94,21 +102,3 @@
 - implementation receipt contract;
 - structured QA defect contract;
 - dependency-light `webby-validate.py` validator.
-
-### Changed
-
-- `SKILL.md` became a v2 orchestration entrypoint;
-- the full v1 GĐ1→GĐ7 workflow is preserved unchanged as `references/WORKFLOW_BASELINE_V1.md` and incorporated by reference;
-- `UI_SETUP_COMPLETE` was strengthened from a human checklist to a machine-verifiable handoff gate when tooling is available.
-
-### Preserved
-
-- ChatGPT remains full visual/UI authority;
-- Claude remains implementation authority;
-- GitHub remains the versioned exchange/state layer;
-- GĐ1→GĐ7 phase ownership and order;
-- source-first production asset rules;
-- WEB/MOBILE final UI requirements;
-- SVG production pipeline;
-- missing-UI request loop;
-- ChatGPT visual QA → Claude fix loop.

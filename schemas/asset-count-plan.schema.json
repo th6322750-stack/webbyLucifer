@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://webbylucifer.dev/schemas/asset-count-plan.schema.json",
+  "title": "webbyLucifer Asset Count Plan",
+  "type": "object",
+  "required": ["schemaVersion", "status", "projectId", "totals", "routes", "reportedToUser"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "status": {"enum": ["PLANNED", "REPORTED", "APPROVED", "SUPERSEDED"]},
+    "projectId": {"type": "string", "minLength": 1},
+    "createdAt": {"type": "string"},
+    "qualityPolicy": {"type": "object", "additionalProperties": true},
+    "totals": {
+      "type": "object",
+      "required": ["all"],
+      "properties": {
+        "all": {"type": "integer", "minimum": 0},
+        "existing": {"type": "integer", "minimum": 0},
+        "chatgptCreateOrPrepare": {"type": "integer", "minimum": 0},
+        "userMustSupply": {"type": "integer", "minimum": 0},
+        "fhdClass": {"type": "integer", "minimum": 0},
+        "fourKClass": {"type": "integer", "minimum": 0},
+        "vector": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": true
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["route", "sections"],
+        "properties": {
+          "route": {"type": "string", "minLength": 1},
+          "sections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["section", "assets"],
+              "properties": {
+                "section": {"type": "string", "minLength": 1},
+                "visibleItemCount": {"type": "integer", "minimum": 0},
+                "assets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["assetId", "role", "quantity", "classification", "sourceStatus", "masterQuality"],
+                    "properties": {
+                      "assetId": {"type": "string", "minLength": 1},
+                      "role": {"type": "string", "minLength": 1},
+                      "quantity": {"type": "integer", "minimum": 1},
+                      "classification": {"enum": ["BRAND", "AUTHENTIC", "DEMO", "EDITORIAL", "DECORATIVE", "PLACEHOLDER", "DATA_VISUAL"]},
+                      "sourceStatus": {"enum": ["EXISTING", "CHATGPT_CREATE", "CHATGPT_PREPARE", "USER_SUPPLY_OR_EXISTING", "USER_MUST_SUPPLY"]},
+                      "masterQuality": {"enum": ["FHD_CLASS", "4K_CLASS", "VECTOR"]},
+                      "responsiveStrategy": {"type": ["string", "null"]},
+                      "identityRequired": {"type": "boolean"},
+                      "notes": {"type": ["string", "null"]}
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "reportedToUser": {"type": "boolean"},
+    "approvedToStartProduction": {"type": "boolean"}
+  },
+  "additionalProperties": true
+}

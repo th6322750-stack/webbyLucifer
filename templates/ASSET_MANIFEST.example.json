@@ -1,31 +1,137 @@
 {
-  "version": 2,
-  "uiCommit": "<ui-package-commit>",
+  "version": 3,
+  "uiRevision": 1,
+  "assetStore": {
+    "type": "GOOGLE_DRIVE",
+    "folderRef": "<drive-folder-id-or-url>",
+    "claudeAccessVerified": true
+  },
+  "qualityPolicy": {
+    "rasterMasterMinimum": "FHD_CLASS",
+    "rasterMasterPreferred": "4K_CLASS",
+    "heroPreferred": "4K_CLASS",
+    "allowLowResUpscaleAsAuthority": false,
+    "allowLowResPatchwork": false
+  },
   "assets": [
     {
-      "id": "hero-gold-wave",
-      "category": "ORNAMENT",
-      "source": "assets/source/vectors/hero-gold-wave.source.svg",
-      "production": "assets/production/svg/hero-gold-wave.svg",
-      "format": "SVG",
-      "mime": "image/svg+xml",
-      "sha256": null,
-      "byteSize": null,
+      "id": "project-sun-galaxy-cover",
+      "classification": "AUTHENTIC",
+      "item": "project:sun-galaxy-complex",
+      "identityRequired": true,
+      "role": "PROJECT_COVER",
       "authoritative": true,
-      "reconstructed": false,
-      "routes": ["/"],
-      "sections": ["hero"],
-      "usedBy": ["cmp.hero.home"],
-      "colorPolicy": "FIXED_BRAND",
-      "accessibility": "DECORATIVE",
-      "containsRaster": false,
-      "containsExternalRefs": false,
-      "containsScripts": false,
-      "qa": "PASS",
+      "master": {
+        "qualityClass": "4K_CLASS",
+        "driveFileRef": "<drive-file-id-or-url>",
+        "fileName": "project-sun-galaxy-cover-master.png",
+        "width": 3840,
+        "height": 2560,
+        "format": "PNG",
+        "sha256": null,
+        "nativeOrAuthoritativeHighRes": true,
+        "derivedFromLowRes": false
+      },
+      "delivery": [
+        {
+          "usage": "project-card",
+          "driveFileRef": "<drive-file-id-or-url>",
+          "fileName": "project-sun-galaxy-cover.webp",
+          "destinationPath": "public/assets/projects/project-sun-galaxy-cover.webp",
+          "width": 1600,
+          "height": 1200,
+          "format": "WEBP",
+          "byteSize": 320000,
+          "maxWeight": 450000,
+          "transparent": false,
+          "dominantColor": "#D4CEC4",
+          "sha256": null
+        }
+      ],
+      "allowedUsage": ["project-card", "project-related", "project-detail-hero"],
+      "presentationByUsage": {
+        "project-card": {
+          "ratio": "4/3",
+          "fit": "cover",
+          "objectPosition": {
+            "mobile": "68% 50%",
+            "desktop": "64% 50%"
+          },
+          "safeArea": {
+            "x": 0.18,
+            "y": 0.12,
+            "width": 0.64,
+            "height": 0.76
+          }
+        },
+        "project-detail-hero": {
+          "ratio": "16/7",
+          "fit": "cover",
+          "objectPosition": {
+            "mobile": "72% 45%",
+            "desktop": "50% 40%"
+          }
+        }
+      },
+      "priority": "above-fold",
+      "livePolicy": "ALLOWED",
       "mustNot": [
-        "replace with another visual",
-        "redraw with CSS",
-        "change approved colors"
+        "use for another project item",
+        "map by array index",
+        "replace with a similar stock image",
+        "measure raster to invent a new crop ratio"
+      ]
+    },
+    {
+      "id": "home-hero-demo",
+      "classification": "DEMO",
+      "item": null,
+      "identityRequired": false,
+      "role": "HERO",
+      "authoritative": true,
+      "master": {
+        "qualityClass": "4K_CLASS",
+        "driveFileRef": "<drive-file-id-or-url>",
+        "fileName": "home-hero-master.png",
+        "width": 3840,
+        "height": 1536,
+        "format": "PNG",
+        "sha256": null,
+        "nativeOrAuthoritativeHighRes": true,
+        "derivedFromLowRes": false
+      },
+      "delivery": [
+        {
+          "usage": "home-hero",
+          "driveFileRef": "<drive-file-id-or-url>",
+          "fileName": "home-hero.webp",
+          "destinationPath": "public/assets/hero/home-hero.webp",
+          "width": 2560,
+          "height": 1024,
+          "format": "WEBP",
+          "byteSize": 390000,
+          "maxWeight": 450000,
+          "transparent": false,
+          "dominantColor": "#7A6E63",
+          "sha256": null
+        }
+      ],
+      "allowedUsage": ["home-hero"],
+      "presentationByUsage": {
+        "home-hero": {
+          "ratio": "5/2",
+          "fit": "cover",
+          "objectPosition": {
+            "mobile": "72% 50%",
+            "desktop": "50% 50%"
+          }
+        }
+      },
+      "priority": "above-fold",
+      "livePolicy": "DEMO_ONLY",
+      "mustNot": [
+        "present as an authentic named property image",
+        "substitute without Design Authority approval"
       ]
     }
   ]

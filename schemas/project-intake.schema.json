@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://webbylucifer.dev/schemas/project-intake.schema.json",
-  "title": "webbyLucifer Project Intake",
+  "title": "webbyLucifer Project Intake v2",
   "type": "object",
-  "required": ["schemaVersion", "status", "project", "goal", "audience", "scope", "gaps"],
+  "required": ["schemaVersion", "status", "project", "goal", "audience", "scope", "layout", "environment", "gaps"],
   "properties": {
-    "schemaVersion": {"const": 1},
+    "schemaVersion": {"const": 2},
     "status": {"enum": ["IN_PROGRESS", "INTAKE_COMPLETE"]},
     "updatedAt": {"type": "string"},
     "project": {
@@ -34,6 +34,7 @@
       },
       "additionalProperties": true
     },
+    "businessPriority": {"type": "array", "items": {"type": "string"}},
     "brand": {"type": "object", "additionalProperties": true},
     "content": {"type": "object", "additionalProperties": true},
     "assets": {"type": "array", "items": {"type": "object", "additionalProperties": true}},
@@ -47,7 +48,27 @@
       },
       "additionalProperties": true
     },
-    "technical": {"type": "object", "additionalProperties": true},
+    "layout": {
+      "type": "object",
+      "required": ["mode"],
+      "properties": {
+        "mode": {"enum": ["FULL_WIDTH", "FULL_BLEED_WITH_CONTAINER", "BOXED", "MIXED", "NOT_YET_MATERIAL"]},
+        "confirmedBy": {"type": ["string", "null"]},
+        "notes": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    },
+    "environment": {
+      "type": "object",
+      "properties": {
+        "github": {"type": "object", "additionalProperties": true},
+        "drive": {"type": "object", "additionalProperties": true},
+        "vercel": {"type": "object", "additionalProperties": true},
+        "dataSource": {"type": "object", "additionalProperties": true},
+        "envSecretsReadiness": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    },
     "mustHave": {"type": "array", "items": {"type": "string"}},
     "mustNotHave": {"type": "array", "items": {"type": "string"}},
     "personalizationSignals": {"type": "array", "items": {"type": "string"}},

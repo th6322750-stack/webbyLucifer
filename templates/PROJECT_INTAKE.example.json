@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "status": "INTAKE_COMPLETE",
   "project": {
     "name": "Example Project",
@@ -15,6 +15,7 @@
     "needs": ["clarity", "trust", "fast contact"],
     "trustSignals": ["real work", "clear process"]
   },
+  "businessPriority": ["primary offer first", "secondary offer later"],
   "brand": {},
   "content": {},
   "assets": [],
@@ -22,9 +23,36 @@
   "scope": {
     "routes": ["/"],
     "features": ["contact CTA"],
-    "responsive": ["desktop", "mobile"]
+    "responsive": ["mobile", "desktop", "wide when applicable"]
   },
-  "technical": {},
+  "layout": {
+    "mode": "FULL_BLEED_WITH_CONTAINER",
+    "confirmedBy": "USER_OR_REFERENCE",
+    "notes": "Background/media may be full width; readable content remains constrained"
+  },
+  "environment": {
+    "github": {
+      "repository": "owner/repo",
+      "branch": "main",
+      "chatgptRemoteAccess": true,
+      "claudeAccess": true,
+      "claudeLocalUnpushedDrift": "UNKNOWN_OR_NONE"
+    },
+    "drive": {
+      "connected": true,
+      "folderRef": "<project-drive-folder>",
+      "claudeDownloadVerified": true
+    },
+    "vercel": {
+      "requiredForCurrentPhase": false,
+      "projectRef": null
+    },
+    "dataSource": {
+      "type": "CMS_OR_SHEET_OR_API",
+      "ref": null
+    },
+    "envSecretsReadiness": "KNOWN_OR_NOT_APPLICABLE"
+  },
   "mustHave": [],
   "mustNotHave": [],
   "personalizationSignals": ["Audience prioritizes speed and trust"],
@@ -33,7 +61,7 @@
     {
       "field": "exampleSoftGap",
       "status": "SOFT_GAP",
-      "note": "May be resolved during production without changing design direction"
+      "note": "May be resolved later without changing UI direction or asset count"
     }
   ]
 }

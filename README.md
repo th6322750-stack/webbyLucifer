@@ -1,119 +1,161 @@
-# webbyLucifer v2.2
+# webbyLucifer v3.0
 
-`webbyLucifer` is a public multi-agent web workflow for taking a project from **raw/incomplete user input → personalized intake → approved full UI → visual-first implementation handoff → Claude implementation → ChatGPT visual QA → production website**.
+`webbyLucifer` is a multi-agent web workflow designed to minimize visual rework by making UI **asset-complete and implementation-ready before the implementation executor starts coding**.
 
 ```text
-CHATGPT = FULL UI AUTHORITY
+USER    = FINAL ACCEPTANCE AUTHORITY
+CHATGPT = DESIGN / UI / ASSET / STATE / MOTION AUTHORITY
 CLAUDE  = IMPLEMENTATION AUTHORITY
-GITHUB  = VERSIONED EXCHANGE LAYER / SHARED PROJECT STATE
+DRIVE   = HEAVY ASSET DELIVERY AUTHORITY
+GITHUB  = CODE + LIGHTWEIGHT VERSIONED CONTRACT/STATE
+VERCEL  = OPTIONAL PREVIEW / DEPLOYMENT
 ```
 
 Canonical entrypoint: [`SKILL.md`](./SKILL.md).
 
-## What changed in v2.2
+## Why v3 exists
 
-v2.2 adds a mandatory phase before design:
-
-```text
-GĐ0 — INTAKE / DISCOVERY / PERSONALIZATION
-```
-
-GĐ0 is an adaptive discovery loop, not a fixed questionnaire.
-
-Before asking anything, ChatGPT inspects all information the user already supplied: messages, links, screenshots, files, logo/brand assets, existing website/repository context, products/services, audience clues, content, references, features and technical constraints.
-
-Then it asks only the missing questions that can materially improve or constrain the project.
-
-Central GĐ0 rule:
+Previous visual-first flows could still create expensive loops:
 
 ```text
-READ EXISTING INPUT FIRST
-ASK ONLY WHAT IS MISSING
-DO NOT RE-ASK KNOWN INFORMATION
-DO NOT START GĐ1 WITH A MATERIAL HARD GAP
+AI full-page render
+→ missing/ambiguous asset pack
+→ executor reverse-engineers pixels and chooses substitutes
+→ implementation looks different
+→ screenshot/fix/re-render loop
 ```
 
-The normalized state can be stored as:
+v3 changes the center of gravity:
 
 ```text
-.webby/PROJECT_INTAKE.json
+read/ask material inputs
+→ decompose UI
+→ count assets before producing them
+→ create/collect high-res masters
+→ productionize web delivery assets
+→ freeze one Drive pack + manifest
+→ build deterministic final UI from those exact assets and declared geometry
+→ user approves
+→ implementation-ready gate
+→ short Claude contract
+→ Claude codes without redesign/search/measurement
+→ user accepts real website
 ```
 
-using `schemas/project-intake.schema.json`.
+## Core v3 rules
 
-## Core workflow
+- Asset Count Plan happens before production.
+- Raster masters are Full-HD-class minimum when production-authoritative; 4K-class is preferred, especially hero/full-bleed imagery.
+- Do not use low-resolution patchwork or pretend a small enlarged file is a true high-resolution source.
+- Heavy masters/asset packs go to one Google Drive project folder by default; GitHub is not the default 4K asset dump.
+- Every visible final production asset must exist in the frozen pack or be an intentional declared placeholder/state.
+- Asset identity must map to real `ITEM`s when identity matters; no index-based image guessing.
+- Claude may not search/generate/substitute visual assets.
+- Deterministic values create the final UI reference; Claude may not measure raster pixels to create implementation numbers.
+- `VISUAL_DIRECTION_APPROVED` is not the same as `IMPLEMENTATION_READY_UI`.
+- Claude does no long planning/audit/research for ordinary scoped UI tasks.
+- Screenshot matrices are not a default implementation loop.
+- The user performs final visual acceptance.
+
+## Canonical v3 workflow
 
 ```text
-RAW / PARTIAL USER INPUT
-↓
-GĐ0 — INTAKE / DISCOVERY / PERSONALIZATION     ChatGPT
-↓
-INTAKE_COMPLETE
-↓
-GĐ1 — DESIGN / FULL-PAGE UI                    ChatGPT
-GĐ2 — FULL UI MASTER / DESIGN SYSTEM           ChatGPT
-↓
-USER APPROVAL
-↓
-APPROVED VISUAL TRUTH
-↓
-GĐ3 — VISUAL-FIRST PRODUCTION HANDOFF          ChatGPT
-↓
-APPROVED RENDERS + MINIMAL CONTRACT
-↓
-SCHEMA + LOCK + VALIDATION
-↓
-UI_SETUP_COMPLETE
-↓
-GĐ4 — VISUAL RECONSTRUCTION / IMPLEMENTATION   Claude
-GĐ5 — UX / FRONTEND ENHANCEMENT                Claude
-GĐ6 — BACKEND / CMS / LOGIC                    Claude
-↓
-REAL WEBSITE SCREENSHOT
-↓
-GĐ7 — CHATGPT VISUAL QA ↔ EXECUTOR FIX
-↓
-PRODUCTION_READY
+GĐ0  Intake + environment/resource readiness
+GĐ1  Visual direction/page structure
+GĐ2  UI decomposition + Asset Count Plan
+GĐ3  Asset classification + high-res production
+GĐ4  Productionize + asset QA + Drive freeze
+GĐ5  Deterministic UI composition + responsive/state/motion
+GĐ6  User visual approval
+GĐ7  IMPLEMENTATION_READY_UI gate
+GĐ8  Short implementation contract
+GĐ9  Claude implementation
+GĐ10 Minimum proportional technical checks
+GĐ11 User acceptance of real website
+GĐ12 Functional QA → bug IDs → targeted fixes → final handoff
 ```
 
-## GĐ0 completion gate
-
-`INTAKE_COMPLETE = true` only when the project has enough evidence to design specifically for that user/project rather than produce a generic template.
-
-Typical required understanding:
-
-- what is being designed;
-- who it is for;
-- primary goal / conversion goal;
-- what makes the project distinct;
-- authoritative content/assets/references;
-- pages/routes/features in scope;
-- important must-have and must-not-have constraints;
-- enough personalization signals to guide design;
-- no unresolved `HARD_GAP` that can materially change design or scope.
-
-Missing information is classified as:
+## New/updated v3 protocols
 
 ```text
-KNOWN
-ASSUMED
-SOFT_GAP
-HARD_GAP
-NOT_APPLICABLE
+references/ASSET_FIRST_IMPLEMENTATION_READY_PROTOCOL.md
+references/INTAKE_DISCOVERY_PROTOCOL.md
+references/VISUAL_HANDOFF_PROTOCOL.md
+references/GITHUB_HANDOFF_PROTOCOL.md
+references/AGENT_OWNERSHIP_PROTOCOL.md
+references/QA_PROTOCOL.md
 ```
 
-A `SOFT_GAP` does not automatically block design. A material `HARD_GAP` does.
+Legacy references remain for historical/compatible guidance where they do not conflict with v3.
 
-## Visual-first handoff remains active
-
-v2.2 keeps the v2.1 principle:
+## Asset classification
 
 ```text
-IMAGE    = VISIBLE FORM
-CONTRACT = INVISIBLE / AMBIGUOUS BEHAVIOR
+BRAND       exact brand/logo/identity material
+AUTHENTIC   real asset belonging to the exact item
+DEMO        prototype/demo-only asset
+EDITORIAL   content/article imagery
+DECORATIVE  visual decoration without factual item identity
+PLACEHOLDER intentional missing-data visual
+DATA_VISUAL floorplan/map/progress/diagram tied to real data
 ```
 
-Approved WEB/MOBILE renders carry visible UI truth. Contracts focus on responsive behavior, interactions, state, data/CMS/API binding, accessibility, routing and other information that images cannot safely communicate.
+## Master vs delivery
+
+```text
+MASTER SOURCE
+= highest-quality source/archive; FHD/4K-class raster or vector as appropriate
+
+WEB DELIVERY
+= implementation-ready file copied/downloaded for the website
+```
+
+The executor normally uses the web delivery file, not the oversized master.
+
+## Deterministic UI handoff
+
+v3 separates:
+
+```text
+ASSET MANIFEST = which visual belongs where
+SPEC/CONTRACT  = implementation values/behavior
+RASTER         = human acceptance + hierarchy/arrangement reference
+```
+
+Core rule:
+
+```text
+SPEC → COMPOSITION → RASTER
+```
+
+Never:
+
+```text
+RASTER → measure pixels → magic numbers → code
+```
+
+If a number is missing, Claude returns `BLOCKED_SPEC` instead of measuring the screenshot.
+
+## Claude task model
+
+Default ordinary UI task:
+
+```text
+short contract + exact asset references
+→ DRIFT / SCOPE / TOKEN pre-flight
+→ read 1–3 relevant implementation files by default
+→ code
+→ minimum proportional checks
+→ 3–5 line report
+```
+
+Blocker signals:
+
+```text
+NEED_ASSET
+BLOCKED_SPEC
+TECHNICAL_CONSTRAINT
+```
 
 ## Package
 
@@ -123,82 +165,51 @@ webbyLucifer/
 ├── VERSION
 ├── CHANGELOG.md
 ├── references/
-│   ├── WORKFLOW_BASELINE_V1.md
+│   ├── ASSET_FIRST_IMPLEMENTATION_READY_PROTOCOL.md
 │   ├── INTAKE_DISCOVERY_PROTOCOL.md
 │   ├── VISUAL_HANDOFF_PROTOCOL.md
 │   ├── GITHUB_HANDOFF_PROTOCOL.md
 │   ├── AGENT_OWNERSHIP_PROTOCOL.md
-│   ├── BRANCH_COMMIT_PROTOCOL.md
 │   ├── QA_PROTOCOL.md
-│   ├── KNOWLEDGE_PACK.md
-│   └── SVG_PRODUCTION_PIPELINE.md
+│   └── legacy/supporting references...
 ├── schemas/
 │   ├── project-intake.schema.json
-│   ├── handoff.schema.json
-│   ├── visual-handoff.schema.json
-│   ├── webby-lock.schema.json
+│   ├── asset-count-plan.schema.json
 │   ├── asset-manifest.schema.json
-│   ├── component-map.schema.json
-│   ├── placement-map.schema.json
-│   ├── request.schema.json
-│   ├── implementation-receipt.schema.json
-│   └── qa-defects.schema.json
+│   ├── handoff.schema.json
+│   └── existing supporting schemas...
 ├── templates/
 │   ├── PROJECT_INTAKE.example.json
-│   ├── WEBBY_LOCK.example.json
-│   ├── IMPLEMENTATION_RECEIPT.example.json
-│   ├── QA_DEFECTS.example.json
-│   └── existing v1 starter templates
+│   ├── ASSET_COUNT_PLAN.example.json
+│   ├── ASSET_MANIFEST.example.json
+│   ├── HANDOFF.example.json
+│   ├── CLAUDE_TASK.md
+│   ├── UI_SETUP_CHECKLIST.md
+│   └── existing supporting templates...
 └── scripts/
     └── webby-validate.py
 ```
 
-## Typical project `.webby/`
-
-```text
-.webby/
-├── PROJECT_INTAKE.json
-├── PROJECT_STATE.yaml
-├── HANDOFF.json
-├── WEBBY_LOCK.json
-├── visual-handoff/
-│   ├── routes.json
-│   └── approved WEB/MOBILE renders...
-├── responsive.json
-├── interactions.json
-├── asset-manifest.json
-├── requests/
-├── implementation/
-│   └── IMPLEMENTATION_RECEIPT.json
-└── qa/
-    ├── defects.json
-    └── qa-report.json
-```
-
 ## Validator
-
-Run:
 
 ```bash
 python scripts/webby-validate.py /path/to/project
 ```
 
-For v2.2+ projects declaring `UI_SETUP_COMPLETE`, the validator can reject handoffs when:
+For v3 `IMPLEMENTATION_READY_UI`, the validator can catch important machine-verifiable failures such as:
 
-- `PROJECT_INTAKE.json` is missing;
-- intake is not `INTAKE_COMPLETE`;
-- `HARD_GAP` items remain;
-- core project/audience/goal/scope intake data is absent;
-- no personalization signal is recorded;
-- existing Visual-First handoff/lock/render rules fail.
+- asset count not reported to user;
+- incomplete readiness flags;
+- missing Drive access declaration;
+- missing asset manifest;
+- AUTHENTIC/DATA_VISUAL without item mapping;
+- master marked low-res-derived;
+- missing web delivery mapping;
+- delivery usage outside `allowedUsage`;
+- delivery file exceeding declared max weight;
+- remaining blocking requests.
 
-## Compatibility
-
-v2.2 adds GĐ0 before the existing workflow. GĐ1→GĐ7 ownership and responsibilities remain preserved.
-
-The older `GĐ1.P PROJECT INTAKE / EVIDENCE LOCK` from `references/WORKFLOW_BASELINE_V1.md` is absorbed into GĐ0 in v2.2; agents must not run duplicate intake.
-
-Source-first assets, WEB/MOBILE final UI, SVG production, Visual-First Handoff, revision/lock protection, request lifecycle, implementation receipts and visual QA remain active.
+The validator cannot judge artistic quality. Asset/UI quality and final acceptance remain human/design-authority responsibilities.
 
 ## Canonical repository
 
@@ -206,4 +217,4 @@ Source-first assets, WEB/MOBILE final UI, SVG production, Visual-First Handoff, 
 th6322750-stack/webbyLucifer
 ```
 
-Generalized improvements belong in this repository only after explicit user approval. Do not publish client secrets, proprietary code, unreleased client designs, credentials, personal data or non-redistributable assets here.
+Generalized changes belong here only with explicit user approval. Never publish client secrets, credentials, private data, proprietary client code or non-redistributable assets into this public skill repository.

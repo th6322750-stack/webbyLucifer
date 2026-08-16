@@ -1,43 +1,134 @@
-# GitHub Handoff Protocol — webbyLucifer v2
+# GitHub + Drive Handoff Protocol — webbyLucifer v3.0
 
-## Core ownership
+## Core model
 
 ```text
-CHATGPT = FULL UI AUTHORITY
-CLAUDE = IMPLEMENTATION AUTHORITY
-GITHUB = VERSIONED EXCHANGE LAYER / SHARED PROJECT STATE
+USER    = FINAL ACCEPTANCE AUTHORITY
+CHATGPT = DESIGN/UI/ASSET AUTHORITY
+CLAUDE  = IMPLEMENTATION AUTHORITY
+GITHUB  = CODE + LIGHTWEIGHT VERSIONED CONTRACT/STATE
+DRIVE   = HEAVY ASSET PACK DELIVERY
+VERCEL  = OPTIONAL PREVIEW/DEPLOYMENT
 ```
 
-The full design/implementation workflow is defined by `SKILL.md` plus `references/WORKFLOW_BASELINE_V1.md`. This document defines the v2 GitHub exchange contract.
+---
 
-## 1. Required project handoff
+## 1. GitHub is not the default heavy-asset dump
 
-Before implementation, ChatGPT SHOULD publish:
+GitHub should primarily contain:
+
+```text
+source code
+small project configuration
+machine-readable handoff/lock state
+asset manifest / asset count plan
+short implementation contract
+implementation receipts
+bug/QA records when useful
+```
+
+Large 4K masters and bulk asset packs default to one Google Drive project folder after asset production begins.
+
+Web delivery files may ultimately be copied into the implementation repository when the framework/deployment needs local static files; the canonical master/archive can remain in Drive.
+
+---
+
+## 2. GĐ0 access check
+
+Before implementation handoff, establish:
+
+```text
+GitHub repository
+branch
+ChatGPT remote access
+Claude repo access
+Claude local unpushed drift status
+Google Drive folder access
+whether Vercel preview is required
+```
+
+Do not assume `remote == Claude local`.
+
+---
+
+## 3. Recommended project `.webby/`
+
+Keep the implementation exchange small:
 
 ```text
 .webby/
-├── PROJECT_STATE.yaml
+├── PROJECT_INTAKE.json
+├── ASSET_COUNT_PLAN.json
 ├── HANDOFF.json
 ├── WEBBY_LOCK.json
 ├── CLAUDE_TASK.md
-├── visual-contract.json
 ├── asset-manifest.json
-├── component-map.json
-├── placement-map.json
-├── route-map.json
-├── section-map.json
-├── typography.json
-├── tokens.json
-├── responsive.json
-├── interactions.json
+├── visual-handoff/
+│   └── routes.json / light references when used
 ├── requests/
 ├── implementation/
+│   └── IMPLEMENTATION_RECEIPT.json
 └── qa/
+    └── defects.json
 ```
 
-## 2. Active UI identity
+Do not require the executor to load every optional map/token file if the active contract does not need it.
 
-The active handoff SHOULD identify:
+---
+
+## 4. Drive package
+
+Recommended:
+
+```text
+PROJECT_NAME/
+├── 01_MASTER_ASSETS/
+├── 02_WEB_DELIVERY/
+├── 03_BRAND/
+├── 04_PROJECTS/
+├── 05_RENTALS/
+├── 06_EDITORIAL/
+├── 07_DATA_VISUAL/
+├── 08_PLACEHOLDERS/
+├── 09_MANIFEST/
+└── 10_FINAL_UI_REFERENCE/
+```
+
+Before `IMPLEMENTATION_READY_UI`, confirm:
+
+```text
+Drive folder exists
+Claude can access/download
+manifest points to exact files/IDs/paths
+all required visible assets exist
+```
+
+An image only visible in chat is not considered delivered.
+
+---
+
+## 5. Handoff status
+
+Recommended v3 states:
+
+```text
+NOT_READY
+VISUAL_DIRECTION_APPROVED
+IMPLEMENTATION_READY_UI
+SUPERSEDED
+```
+
+`VISUAL_DIRECTION_APPROVED` means the user likes the visible design.
+
+`IMPLEMENTATION_READY_UI` means the package also has sufficient assets/mapping/spec/responsive/state/motion information for implementation without invention.
+
+Claude starts ordinary UI implementation only from `IMPLEMENTATION_READY_UI`.
+
+---
+
+## 6. Active UI identity and lock
+
+The handoff should identify:
 
 ```text
 handoffId
@@ -48,133 +139,119 @@ createdAt
 status
 ```
 
-The lock file repeats the active identity and lists contract files/assets that belong to that handoff.
+`WEBBY_LOCK.json` may lock lightweight contract/manifest files in Git.
 
-## 3. UI_SETUP_COMPLETE
+Do not force massive Drive binaries into Git merely for lock purposes. Record Drive IDs/paths/checksums in the manifest when available.
 
-The baseline visual checklist remains mandatory. v2 additionally requires deterministic handoff state, lock consistency, no known hard UI blocker and validation when available.
+---
 
-If validation fails:
+## 7. Claude consume protocol
 
 ```text
-UI_SETUP_COMPLETE = false
+confirm branch/local state
+↓
+DRIFT CHECK
+↓
+read short CLAUDE_TASK
+↓
+read only required manifest/spec inputs
+↓
+confirm exact Drive assets are accessible
+↓
+SCOPE CHECK
+↓
+TOKEN CHECK
+↓
+read 1–3 relevant implementation files by default
+↓
+code
+↓
+minimum proportional checks
+↓
+short report / receipt
 ```
 
-## 4. Lock contract
+Do not use a 500-line implementation prompt as a substitute for a complete UI package.
 
-`.webby/WEBBY_LOCK.json` records the exact contract state expected by the executor. File entries may include `sha256` when tooling can calculate it.
+---
 
-A lock is not a substitute for Git commit identity; it complements Git history with explicit handoff scope.
+## 8. Drift handling
 
-## 5. Claude consume protocol
+`DRIFT` means Claude local code differs from the remote/current state that ChatGPT used when preparing the contract.
+
+If `CURRENT` no longer matches materially:
 
 ```text
-git pull
-↓
-read HANDOFF.json
-↓
-read WEBBY_LOCK.json
-↓
-compare active UI revision/commit with previously consumed UI state
-↓
-run validator when available
-↓
-read CLAUDE_TASK + maps/assets
-↓
-record consumed UI state
-↓
-implement static parity
+BLOCKED_SPEC: remote/local drift invalidates CURRENT assumption
 ```
 
-If current active UI changed materially after Claude's consumed revision:
+or report the exact technical scope conflict.
+
+Do not knowingly code from a stale assumption.
+
+---
+
+## 9. Missing asset/spec handling
+
+Use:
 
 ```text
-STALE_HANDOFF
+NEED_ASSET
+BLOCKED_SPEC
+TECHNICAL_CONSTRAINT
 ```
 
-Do not silently continue from the obsolete UI state.
+Never search for a replacement image merely to unblock yourself.
 
-## 6. Ownership boundaries
-
-Read `references/AGENT_OWNERSHIP_PROTOCOL.md`.
-
-Claude must not modify active ChatGPT-owned visual contracts/assets merely to simplify implementation. ChatGPT should not rewrite Claude-owned implementation code during ordinary visual QA.
-
-## 7. Missing UI request lifecycle
-
-Recommended lifecycle:
+When ChatGPT resolves a missing asset:
 
 ```text
-OPEN → ACKNOWLEDGED → RESOLVED → CONSUMED → CLOSED
+create/fix high-res master as applicable
+→ create delivery
+→ upload Drive
+→ update manifest
+→ notify executor of exact item/file/usage
 ```
 
-A resolution SHOULD identify the resolution commit/revision and affected files.
+---
 
-Hard rule:
+## 10. Implementation receipt
+
+Keep it concise. At a meaningful milestone, record when useful:
 
 ```text
-MISSING APPROVED UI != CLAUDE DESIGNS IT
+consumedUiRevision / commit
+implementationCommit
+changed files/routes/components
+technical checks
+asset mapping status
+open blockers
+preview URL if available
 ```
 
-## 8. Implementation receipt
+Long narrative implementation reports are not required for ordinary UI tasks.
 
-After a meaningful implementation milestone Claude SHOULD publish:
+---
 
-```text
-.webby/implementation/IMPLEMENTATION_RECEIPT.json
-```
+## 11. Vercel
 
-It records consumed UI state, implementation commit, implemented scope, build/test state and unresolved requests/blockers.
+Vercel is optional.
 
-## 9. QA exchange
+Use it when the user wants an online preview, production deployment or browser-based acceptance environment.
 
-ChatGPT reviews the browser against approved visual truth and writes stable defect IDs to `.webby/qa/defects.json` or an equivalent contract conforming to the v2 QA schema.
+Do not block asset planning, design or ordinary local implementation merely because Vercel is not connected, unless the task specifically depends on deployment behavior.
 
-Claude fixes against defect IDs and marks them `FIXED_PENDING_QA`. ChatGPT re-tests and closes or reopens them.
+---
 
-## 10. Commit traceability
-
-Recommended commit prefixes:
+## 12. Forbidden shortcuts
 
 ```text
-webby(ui):
-webby(lock):
-webby(request):
-webby(impl):
-webby(qa):
-webby(fix):
-```
-
-See `references/BRANCH_COMMIT_PROTOCOL.md`.
-
-## 11. Forbidden shortcuts
-
-- handoff without deterministic active UI state when Git state is available;
-- Claude silently substituting missing UI assets/fonts/icons;
-- Claude mutating visual contracts to make code easier;
-- ChatGPT declaring UI setup complete despite known hard blockers;
-- continuing from a materially stale UI handoff;
-- self-closing visual QA defects without ChatGPT re-acceptance;
-- publishing client/private material to the public canonical skill repository.
-
-## 12. Final model
-
-```text
-CHATGPT UI PACKAGE
-↓
-HANDOFF + LOCK + VALIDATION
-↓
-UI_SETUP_COMPLETE
-↓
-CLAUDE CONSUMES EXACT UI STATE
-↓
-IMPLEMENTATION + RECEIPT
-↓
-CHATGPT QA DEFECT CONTRACT
-↓
-CLAUDE FIX
-↓
-CHATGPT ACCEPTANCE
-↓
-PRODUCTION_READY
+Claude substitutes missing assets
+Claude searches/generates visual resources independently
+Claude measures raster to invent geometry
+Claude audits the whole repo for a small scoped UI task
+Claude assumes remote == local without checking when drift is plausible
+ChatGPT marks implementation-ready while Drive/manifest/asset mapping is incomplete
+heavy master assets are pushed into Git by default without need
+screenshot loops are used as a replacement for a complete spec
 ```
